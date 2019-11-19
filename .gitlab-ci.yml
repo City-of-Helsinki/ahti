@@ -1,0 +1,32 @@
+# Mandatory include
+include:
+  - project: 'city-of-helsinki/kuva/ci-cd-config/ci-configuration'
+    ref: v1
+    file: '/.gitlab-ci-template.yml'
+
+# These variables are available for all stages
+variables:
+  DB_MIGRATE: /app/.prod/on_deploy.sh
+  SERVICE_PORT: "8000"
+
+# Build stage must be included and it must extend .build.
+build:
+  extends: .build
+
+review:
+  # These variables are available only for review env and are merged with the general variables defined above.
+  variables:
+    K8S_SECRET_ALLOWED_HOSTS: "*"
+    K8S_SECRET_DEBUG: 1
+
+staging:
+  # By default the staging environment is created from the master-branch.
+  # Here we define that it should be created from the branch called "develop" instead.
+  only:
+    refs:
+      - develop
+  # These variables are available only for staging env and are merged with the general variables defined above.
+  variables:
+    K8S_SECRET_ALLOWED_HOSTS: "*"
+    K8S_SECRET_SECRET_KEY: "$GL_QA_DJANGO_SECRET_KEY"
+    K8S_SECRET_TOKEN_AUTH_AUTHSERVER_URL: "https://tunnistamo.test.kuva.hel.ninja/openid"
