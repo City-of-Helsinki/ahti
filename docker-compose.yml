@@ -1,0 +1,39 @@
+version: '3.7'
+services:
+    postgres:
+        image: helsinkitest/postgis:10-2.5-alpine
+        restart: on-failure
+        environment:
+            POSTGRES_USER: ahti
+            POSTGRES_PASSWORD: ahti
+            POSTGRES_DB: ahti
+        ports:
+            - 5435:5432
+        volumes:
+          - pgdata:/var/lib/postgresql/data
+        container_name: ahti-db
+
+    django:
+        build:
+            context: .
+            target: development
+        env_file:
+            - docker-compose.env.yaml
+        environment:
+            DATABASE_URL: postgres://ahti:ahti@ahti-db/ahti
+            DATABASE_HOST: ahti-db.helsinki
+        volumes:
+            - .:/app
+        ports:
+            - 8082:8082
+        depends_on:
+            - postgres
+        container_name: ahti-backend
+
+volumes:
+    pgdata:
+        driver: local
+
+networks:
+    default:
+        name: helsinki

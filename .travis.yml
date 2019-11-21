@@ -1,0 +1,30 @@
+branches: {only: [master, develop]}
+sudo: false
+language: python
+python: 3.8
+cache: pip
+
+addons:
+  postgresql: "10"
+  apt:
+    packages:
+    - postgresql-10-postgis-2.5
+
+matrix:
+  include:
+    - name: Unit tests
+      env: DATABASE_URL=postgis:///ahti SECRET_KEY=topsecret123
+      services: [postgresql]
+      install: pip install -r requirements.txt -r requirements-dev.txt
+      before_script:
+        - psql -U postgres -c "create extension postgis"
+        - createdb ahti
+      script: pytest -ra -vv --doctest-modules --cov=.
+      after_success: pip install codecov && codecov
+
+    - name: Style
+      install: pip install -r requirements.txt -r requirements-dev.txt
+      script:
+        - black --check .
+        - flake8
+        - isort -c
