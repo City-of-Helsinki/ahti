@@ -80,8 +80,18 @@ The project is now running at [localhost:8082](http://localhost:8082)
 
 ## Code format
 
-This project uses [`black`](https://github.com/ambv/black) for Python code formatting.
-We follow the basic config, without any modifications. Basic `black` commands:
+This project uses
+[`black`](https://github.com/ambv/black),
+[`flake8`](https://gitlab.com/pycqa/flake8) and
+[`isort`](https://github.com/timothycrosley/isort)
+for code formatting and quality checking. Project follows the basic
+black config, without any modifications.
+
+Basic `black` commands:
 
 * To let `black` do its magic: `black .`
 * To see which files `black` would change: `black --check .`
+
+[`pre-commit`](https://pre-commit.com/) can be used to install and
+run all the formatting tools as git hooks automatically before a
+commit.
