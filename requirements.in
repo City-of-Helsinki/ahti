@@ -6,4 +6,5 @@ django-graphql-jwt
 django-helusers
 graphene-django
 psycopg2
+requests
 sentry-sdk
