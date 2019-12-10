@@ -149,6 +149,7 @@ OIDC_API_TOKEN_AUTH = {
 }
 
 PARLER_LANGUAGES = {None: ({"code": "fi"}, {"code": "sv"}, {"code": "en"})}
+PARLER_DEFAULT_LANGUAGE_CODE = "en"
 
 GRAPHENE = {
     "SCHEMA": "ahti.schema.schema",
