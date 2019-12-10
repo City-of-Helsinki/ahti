@@ -96,6 +96,7 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     "django.contrib.gis",
     "corsheaders",
+    "parler",
     "graphene_django",
     # local apps
     "users",
@@ -147,6 +148,7 @@ OIDC_API_TOKEN_AUTH = {
     "REQUIRE_API_SCOPE_FOR_AUTHENTICATION": env.bool("TOKEN_AUTH_REQUIRE_SCOPE_PREFIX"),
 }
 
+PARLER_LANGUAGES = {None: ({"code": "fi"}, {"code": "sv"}, {"code": "en"})}
 
 GRAPHENE = {
     "SCHEMA": "ahti.schema.schema",

@@ -4,6 +4,7 @@ django-environ
 django-graphql-geojson
 django-graphql-jwt
 django-helusers
+django-parler
 graphene-django
 psycopg2
 requests
