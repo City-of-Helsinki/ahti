@@ -102,6 +102,7 @@ INSTALLED_APPS = [
     "users",
     "utils",
     "features",
+    "features.importers.dummy",
 ]
 
 MIDDLEWARE = [
