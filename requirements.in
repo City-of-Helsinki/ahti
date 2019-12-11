@@ -1,6 +1,7 @@
 Django
 django-cors-headers
 django-environ
+django-filter
 django-graphql-geojson
 django-graphql-jwt
 django-helusers
