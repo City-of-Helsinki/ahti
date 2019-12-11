@@ -101,6 +101,7 @@ INSTALLED_APPS = [
     # local apps
     "users",
     "utils",
+    "features",
 ]
 
 MIDDLEWARE = [
@@ -147,6 +148,8 @@ OIDC_API_TOKEN_AUTH = {
     "ISSUER": env.str("TOKEN_AUTH_AUTHSERVER_URL"),
     "REQUIRE_API_SCOPE_FOR_AUTHENTICATION": env.bool("TOKEN_AUTH_REQUIRE_SCOPE_PREFIX"),
 }
+
+DEFAULT_SRID = 4326  # WGS84
 
 PARLER_LANGUAGES = {None: ({"code": "fi"}, {"code": "sv"}, {"code": "en"})}
 PARLER_DEFAULT_LANGUAGE_CODE = "en"
