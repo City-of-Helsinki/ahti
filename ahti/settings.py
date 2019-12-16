@@ -102,7 +102,8 @@ INSTALLED_APPS = [
     "users",
     "utils",
     "features",
-    "features.importers.dummy",
+    # "features.importers.dummy",
+    "features.importers.myhelsinki_places",
 ]
 
 MIDDLEWARE = [
