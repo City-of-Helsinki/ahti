@@ -25,11 +25,17 @@ if [[ "$CREATE_SUPERUSER" = "1" ]]; then
     echo "Admin user created with credentials admin:admin (email: admin@example.com)"
 fi
 
+# Import / update feature data in the DB
+if [[ "$IMPORT_FEATURES" = "1" ]]; then
+    ./manage.py import_features
+    echo "Imported features from configured sources"
+fi
+
 # Start server
 if [[ ! -z "$@" ]]; then
     "$@"
 elif [[ "$DEV_SERVER" = "1" ]]; then
-    python ./manage.py runserver 0.0.0.0:8082
+    ./manage.py runserver 0.0.0.0:8082
 else
     uwsgi --ini .prod/uwsgi.ini
 fi
