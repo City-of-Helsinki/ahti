@@ -1,3 +1,11 @@
-from django.contrib import admin  # noqa: F401
+from django.contrib.gis import admin
+from parler.admin import TranslatableAdmin
 
-# Register your models here.
+from features.models import Feature
+
+
+@admin.register(Feature)
+class FeatureAdmin(TranslatableAdmin, admin.OSMGeoAdmin):
+    list_display = ("name", "source_id")
+    search_fields = ("translations__name", "source_id")
+    ordering = ("translations__name",)
