@@ -1,11 +1,23 @@
+from abc import ABCMeta, abstractmethod
+
 from features.models import SourceType
 
 
-class FeatureImporterBase:
+class FeatureImporterBase(metaclass=ABCMeta):
+    @property
+    @abstractmethod
+    def feature_id_prefix(self):
+        pass
 
-    feature_id_prefix = None
-    source_system = None
-    source_type = None
+    @property
+    @abstractmethod
+    def source_system(self):
+        pass
+
+    @property
+    @abstractmethod
+    def source_type(self):
+        pass
 
     def get_source_type(self):
         st, created = SourceType.objects.get_or_create(
@@ -13,10 +25,10 @@ class FeatureImporterBase:
         )
         return st
 
+    @abstractmethod
     def import_features(self):
         """This method should result in data being imported from a source into Features.
 
         - Creates a features.models.SourceType if one doesn't exists.
         - Creates or updates features.models.Feature instances.
         """
-        raise NotImplementedError("This needs to be implement in a subclass.")
