@@ -12,6 +12,7 @@
    * Set entrypoint/startup variables according to taste.
      * `CREATE_SUPERUSER`, creates a superuser with credentials `admin`:`admin` (admin@example.com)
      * `APPLY_MIGRATIONS`, applies migrations on startup
+     * `IMPORT_FEATURES`, imports features from configured sources on startup
 
 2. Run `docker-compose up`
 

@@ -96,10 +96,14 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     "django.contrib.gis",
     "corsheaders",
+    "parler",
     "graphene_django",
     # local apps
     "users",
     "utils",
+    "features",
+    # "features.importers.dummy",
+    "features.importers.myhelsinki_places",
 ]
 
 MIDDLEWARE = [
@@ -147,6 +151,10 @@ OIDC_API_TOKEN_AUTH = {
     "REQUIRE_API_SCOPE_FOR_AUTHENTICATION": env.bool("TOKEN_AUTH_REQUIRE_SCOPE_PREFIX"),
 }
 
+DEFAULT_SRID = 4326  # WGS84
+
+PARLER_LANGUAGES = {None: ({"code": "fi"}, {"code": "sv"}, {"code": "en"})}
+PARLER_DEFAULT_LANGUAGE_CODE = "en"
 
 GRAPHENE = {
     "SCHEMA": "ahti.schema.schema",
