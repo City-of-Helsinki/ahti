@@ -8,4 +8,5 @@ pytest
 pytest-cov
 pytest-django
 pytest-mock
+requests-mock
 snapshottest

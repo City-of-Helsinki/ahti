@@ -8,6 +8,8 @@ appdirs==1.4.3            # via black
 attrs==19.3.0             # via black, pytest
 backcall==0.1.0           # via ipython
 black==19.10b0
+certifi==2019.11.28       # via requests
+chardet==3.0.4            # via requests
 click==7.0                # via black
 coverage==4.5.4           # via pytest-cov
 decorator==4.4.1          # via ipython, traitlets
@@ -17,6 +19,7 @@ faker==3.0.0              # via factory-boy
 fastdiff==0.2.0           # via snapshottest
 flake8==3.7.9
 freezegun==0.3.12
+idna==2.8                 # via requests
 importlib-metadata==1.2.0  # via pluggy, pytest
 ipython-genutils==0.2.0   # via traitlets
 ipython==7.10.1
@@ -43,13 +46,16 @@ pytest-mock==1.13.0
 pytest==5.3.1
 python-dateutil==2.8.1    # via faker, freezegun
 regex==2019.12.9          # via black
-six==1.13.0               # via faker, freezegun, packaging, python-dateutil, snapshottest, traitlets
+requests-mock==1.7.0
+requests==2.22.0          # via requests-mock
+six==1.13.0               # via faker, freezegun, packaging, python-dateutil, requests-mock, snapshottest, traitlets
 snapshottest==0.5.1
 termcolor==1.1.0          # via snapshottest
 text-unidecode==1.3       # via faker
 toml==0.10.0              # via black
 traitlets==4.3.3          # via ipython
 typed-ast==1.4.0          # via black
+urllib3==1.25.7           # via requests
 wasmer==0.3.0             # via fastdiff
 wcwidth==0.1.7            # via prompt-toolkit, pytest
 zipp==0.6.0               # via importlib-metadata
