@@ -23,6 +23,7 @@ class MyHelsinkiImporter(FeatureImporterBase):
         for place in places["data"]:
             values = {
                 "name": place["name"]["fi"],
+                "url": place["info_url"],
                 "mapped_at": timezone.now(),
                 "source_modified_at": parse_datetime(place["modified_at"]),
                 "geometry": Point(

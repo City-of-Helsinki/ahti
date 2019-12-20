@@ -56,6 +56,7 @@ def test_data_for_feature_is_correct(requests_mock, importer, places_response):
     f = Feature.objects.get(source_id="myhelsinki:place:2792")
     assert f.source_type.system == "myhelsinki.fi"
     assert f.name == "Isosaari"
+    assert f.url == "http://www.visitisosaari.fi"
     assert f.source_modified_at == datetime.datetime(2019, 4, 4, 13, 5, 12).replace(
         tzinfo=utc
     )
