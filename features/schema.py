@@ -34,7 +34,7 @@ class Feature(graphql_geojson.GeoJSONType):
 
     name = graphene.String()
 
-    modified_at = graphene.DateTime()
+    modified_at = graphene.DateTime(required=True)
 
     def resolve_modified_at(self, info, **kwargs):
         return self.mapped_at
