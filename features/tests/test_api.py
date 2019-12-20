@@ -30,12 +30,14 @@ query Features {
         }
         properties {
           name
+          url
           sourceId
           createdAt
           modifiedAt
           translations {
             languageCode
             name
+            url
           }
           sourceType {
             system
@@ -53,10 +55,14 @@ query Features {
 def test_features_query(snapshot, api_client):
     st = SourceTypeFactory(system="test", type="test")
     FeatureFactory(
-        source_type=st, geometry=Point(24.940967, 60.168683),
+        source_type=st,
+        geometry=Point(24.940967, 60.168683),
+        url="https://ahti1.localhost",
     )
     FeatureFactory(
-        source_type=st, geometry=Point(24.952222, 60.169494),
+        source_type=st,
+        geometry=Point(24.952222, 60.169494),
+        url="https://ahti2.localhost",
     )
 
     executed = api_client.execute(FEATURES_QUERY)

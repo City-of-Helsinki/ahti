@@ -23,7 +23,14 @@ snapshots["test_features_query 1"] = {
                             "name": "Place 0",
                             "sourceId": "test:0",
                             "sourceType": {"system": "test", "type": "test"},
-                            "translations": [{"languageCode": "FI", "name": "Place 0"}],
+                            "translations": [
+                                {
+                                    "languageCode": "FI",
+                                    "name": "Place 0",
+                                    "url": "https://ahti1.localhost",
+                                }
+                            ],
+                            "url": "https://ahti1.localhost",
                         },
                         "type": "Feature",
                     }
@@ -41,7 +48,14 @@ snapshots["test_features_query 1"] = {
                             "name": "Place 1",
                             "sourceId": "test:1",
                             "sourceType": {"system": "test", "type": "test"},
-                            "translations": [{"languageCode": "FI", "name": "Place 1"}],
+                            "translations": [
+                                {
+                                    "languageCode": "FI",
+                                    "name": "Place 1",
+                                    "url": "https://ahti2.localhost",
+                                }
+                            ],
+                            "url": "https://ahti2.localhost",
                         },
                         "type": "Feature",
                     }
