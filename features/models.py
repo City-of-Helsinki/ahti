@@ -38,7 +38,10 @@ class Feature(TranslatableModel, TimestampedModel):
     translations = TranslatedFields(
         name=models.CharField(
             verbose_name=_("name"), max_length=200, help_text=_("Name of the feature")
-        )
+        ),
+        url=models.URLField(
+            verbose_name=_("url"), blank=True, help_text=_("URL of the feature")
+        ),
     )
     geometry = models.GeometryField(
         verbose_name=_("geometry"),
