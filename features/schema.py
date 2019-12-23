@@ -22,7 +22,6 @@ class Feature(graphql_geojson.GeoJSONType):
     class Meta:
         fields = (
             "id",
-            "source_id",
             "geometry",
             "created_at",
             "translations",
@@ -32,9 +31,13 @@ class Feature(graphql_geojson.GeoJSONType):
         geojson_field = "geometry"
         interfaces = (relay.Node,)
 
+    ahti_id = graphene.String(required=True)
     name = graphene.String()
     url = graphene.String()
     modified_at = graphene.DateTime(required=True)
+
+    def resolve_ahti_id(self, info, **kwargs):
+        return self.source_id
 
     def resolve_modified_at(self, info, **kwargs):
         return self.mapped_at

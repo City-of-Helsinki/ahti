@@ -31,7 +31,7 @@ query Features {
         properties {
           name
           url
-          sourceId
+          ahtiId
           createdAt
           modifiedAt
           translations {
