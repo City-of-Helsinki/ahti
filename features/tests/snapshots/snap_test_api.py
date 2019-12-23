@@ -21,7 +21,7 @@ snapshots["test_features_query 1"] = {
                             "createdAt": "2019-12-16T12:00:01+00:00",
                             "modifiedAt": "2019-12-16T12:00:01+00:00",
                             "name": "Place 0",
-                            "sourceType": {"system": "test", "type": "test"},
+                            "source": {"id": "sid0", "system": "test", "type": "test"},
                             "translations": [
                                 {
                                     "languageCode": "FI",
@@ -45,7 +45,7 @@ snapshots["test_features_query 1"] = {
                             "createdAt": "2019-12-16T12:00:01+00:00",
                             "modifiedAt": "2019-12-16T12:00:01+00:00",
                             "name": "Place 1",
-                            "sourceType": {"system": "test", "type": "test"},
+                            "source": {"id": "sid1", "system": "test", "type": "test"},
                             "translations": [
                                 {
                                     "languageCode": "FI",

@@ -38,9 +38,10 @@ query Features {
             name
             url
           }
-          sourceType {
+          source {
             system
             type
+            id
           }
         }
       }
