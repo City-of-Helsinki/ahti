@@ -44,7 +44,7 @@ def test_source_type_get_created(requests_mock, importer):
     importer.import_features()
 
     assert SourceType.objects.count() == 1
-    SourceType.objects.get(system="myhelsinki.fi", type="places")
+    SourceType.objects.get(system="myhelsinki", type="place")
 
 
 @freeze_time("2019-12-16 12:00:01")
@@ -53,8 +53,8 @@ def test_data_for_feature_is_correct(requests_mock, importer, places_response):
 
     importer.import_features()
 
-    f = Feature.objects.get(source_id="myhelsinki:place:2792")
-    assert f.source_type.system == "myhelsinki.fi"
+    st = SourceType.objects.first()
+    f = Feature.objects.get(source_type=st, source_id="2792")
     assert f.name == "Isosaari"
     assert f.url == "http://www.visitisosaari.fi"
     assert f.source_modified_at == datetime.datetime(2019, 4, 4, 13, 5, 12).replace(
@@ -68,7 +68,8 @@ def test_geometry_is_correct(requests_mock, importer, places_response):
 
     importer.import_features()
 
-    f = Feature.objects.get(source_id="myhelsinki:place:2792")
+    st = SourceType.objects.first()
+    f = Feature.objects.get(source_type=st, source_id="2792")
     assert isinstance(f.geometry, Point)
     assert f.geometry.x == 25.052854537963867
     assert f.geometry.y == 60.10136032104492

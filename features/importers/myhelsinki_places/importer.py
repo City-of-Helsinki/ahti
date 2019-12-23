@@ -10,9 +10,8 @@ from features.models import Feature
 
 class MyHelsinkiImporter(FeatureImporterBase):
 
-    feature_id_prefix = "myhelsinki:place:"
-    source_system = "myhelsinki.fi"
-    source_type = "places"
+    source_system = "myhelsinki"
+    source_type = "place"
 
     def import_features(self):
         st = self.get_source_type()
@@ -35,7 +34,7 @@ class MyHelsinkiImporter(FeatureImporterBase):
             }
 
             Feature.objects.language("fi").update_or_create(
-                source_id=f"{self.feature_id_prefix}{place['id']}", defaults=values,
+                source_type=st, source_id=f"{place['id']}", defaults=values,
             )
 
 
