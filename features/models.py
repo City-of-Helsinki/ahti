@@ -25,9 +25,8 @@ class SourceType(models.Model):
 class Feature(TranslatableModel, TimestampedModel):
     source_id = models.CharField(
         verbose_name=_("source identifier"),
-        unique=True,
         max_length=200,
-        help_text=_("Unique identifier indicating the source"),
+        help_text=_("Identifier for the feature in the source"),
     )
     source_type = models.ForeignKey(
         SourceType,
@@ -63,6 +62,11 @@ class Feature(TranslatableModel, TimestampedModel):
         verbose_name = _("feature")
         verbose_name_plural = _("features")
         ordering = ("id",)
+        constraints = [
+            models.UniqueConstraint(
+                fields=["source_type", "source_id"], name="unique_source_feature"
+            ),
+        ]
 
     def __str__(self):
         return self.safe_translation_getter("name", super().__str__())
