@@ -16,7 +16,6 @@ snapshots["test_features_query 1"] = {
                             "coordinates": [24.940967, 60.168683],
                             "type": "Point",
                         },
-                        "id": "RmVhdHVyZTo3",
                         "properties": {
                             "ahtiId": "test:0",
                             "createdAt": "2019-12-16T12:00:01+00:00",
@@ -41,7 +40,6 @@ snapshots["test_features_query 1"] = {
                             "coordinates": [24.952222, 60.169494],
                             "type": "Point",
                         },
-                        "id": "RmVhdHVyZTo4",
                         "properties": {
                             "ahtiId": "test:1",
                             "createdAt": "2019-12-16T12:00:01+00:00",

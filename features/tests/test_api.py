@@ -22,7 +22,6 @@ query Features {
   features {
     edges {
       node {
-        id
         type
         geometry {
           type
