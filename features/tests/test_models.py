@@ -17,3 +17,5 @@ def test_feature():
 
     assert SourceType.objects.count() == 1
     assert Feature.objects.count() == 1
+    f = Feature.objects.first()
+    assert f.ahti_id == f"{f.source_type.system}:{f.source_type.type}:{f.source_id}"

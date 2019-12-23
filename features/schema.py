@@ -36,10 +36,7 @@ class Feature(graphql_geojson.GeoJSONType):
     url = graphene.String()
     modified_at = graphene.DateTime(required=True)
 
-    def resolve_ahti_id(self, info, **kwargs):
-        return self.source_id
-
-    def resolve_modified_at(self, info, **kwargs):
+    def resolve_modified_at(self: models.Feature, info, **kwargs):
         return self.mapped_at
 
 

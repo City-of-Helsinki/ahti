@@ -17,7 +17,7 @@ snapshots["test_features_query 1"] = {
                             "type": "Point",
                         },
                         "properties": {
-                            "ahtiId": "test:0",
+                            "ahtiId": "test:test:sid0",
                             "createdAt": "2019-12-16T12:00:01+00:00",
                             "modifiedAt": "2019-12-16T12:00:01+00:00",
                             "name": "Place 0",
@@ -41,7 +41,7 @@ snapshots["test_features_query 1"] = {
                             "type": "Point",
                         },
                         "properties": {
-                            "ahtiId": "test:1",
+                            "ahtiId": "test:test:sid1",
                             "createdAt": "2019-12-16T12:00:01+00:00",
                             "modifiedAt": "2019-12-16T12:00:01+00:00",
                             "name": "Place 1",

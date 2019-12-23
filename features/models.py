@@ -70,3 +70,7 @@ class Feature(TranslatableModel, TimestampedModel):
 
     def __str__(self):
         return self.safe_translation_getter("name", super().__str__())
+
+    @property
+    def ahti_id(self):
+        return f"{self.source_type.system}:{self.source_type.type}:{self.source_id}"
