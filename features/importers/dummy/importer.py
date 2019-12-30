@@ -7,7 +7,6 @@ from features.models import Feature
 
 class DummyImporter(FeatureImporterBase):
 
-    feature_id_prefix = "dummy:"
     source_system = "Dummy data"
     source_type = "dummy"
 
@@ -21,26 +20,26 @@ class DummyImporter(FeatureImporterBase):
 
         # Feature - Kolmen sepän patsas
         feature, created = Feature.objects.language("fi").update_or_create(
-            source_id=f"{self.feature_id_prefix}1",
+            source_type=st,
+            source_id="1",
             defaults={
                 "name": "Kolmen sepän patsas",
                 "geometry": GEOSGeometry(
                     '{"type": "Point", "coordinates": [24.940967, 60.168683]}'
                 ),
-                "source_type": st,
                 **timestamps,
             },
         )
 
         # Feature - Aleksanteri II patsas
         feature, created = Feature.objects.language("fi").update_or_create(
-            source_id=f"{self.feature_id_prefix}2",
+            source_type=st,
+            source_id="2",
             defaults={
                 "name": "Aleksanteri II patsas",
                 "geometry": GEOSGeometry(
                     '{"type": "Point", "coordinates": [24.952222, 60.169494]}'
                 ),
-                "source_type": st,
                 **timestamps,
             },
         )
@@ -86,11 +85,11 @@ class DummyImporter(FeatureImporterBase):
         """
         )
         feature, created = Feature.objects.language("fi").update_or_create(
-            source_id=f"{self.feature_id_prefix}3",
+            source_type=st,
+            source_id="3",
             defaults={
                 "name": "Lautta: Kauppatori - Vallisaari",
                 "geometry": route,
-                "source_type": st,
                 **timestamps,
             },
         )

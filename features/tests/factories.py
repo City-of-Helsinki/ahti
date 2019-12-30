@@ -19,7 +19,8 @@ class FeatureFactory(factory.django.DjangoModelFactory):
         model = Feature
 
     name = factory.Sequence(lambda n: "Place %d" % n)
-    source_id = factory.Sequence(lambda n: "test:%d" % n)
+    url = factory.Faker("uri")
+    source_id = factory.Sequence(lambda n: "sid%d" % n)
     source_type = factory.SubFactory(SourceTypeFactory)
     source_modified_at = factory.LazyFunction(timezone.now)
     mapped_at = factory.LazyFunction(timezone.now)

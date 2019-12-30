@@ -6,11 +6,6 @@ from features.models import SourceType
 class FeatureImporterBase(metaclass=ABCMeta):
     @property
     @abstractmethod
-    def feature_id_prefix(self):
-        pass
-
-    @property
-    @abstractmethod
     def source_system(self):
         pass
 

@@ -16,14 +16,20 @@ snapshots["test_features_query 1"] = {
                             "coordinates": [24.940967, 60.168683],
                             "type": "Point",
                         },
-                        "id": "RmVhdHVyZTox",
                         "properties": {
+                            "ahtiId": "test:test:sid0",
                             "createdAt": "2019-12-16T12:00:01+00:00",
                             "modifiedAt": "2019-12-16T12:00:01+00:00",
                             "name": "Place 0",
-                            "sourceId": "test:0",
-                            "sourceType": {"system": "test", "type": "test"},
-                            "translations": [{"languageCode": "FI", "name": "Place 0"}],
+                            "source": {"id": "sid0", "system": "test", "type": "test"},
+                            "translations": [
+                                {
+                                    "languageCode": "FI",
+                                    "name": "Place 0",
+                                    "url": "https://ahti1.localhost",
+                                }
+                            ],
+                            "url": "https://ahti1.localhost",
                         },
                         "type": "Feature",
                     }
@@ -34,14 +40,20 @@ snapshots["test_features_query 1"] = {
                             "coordinates": [24.952222, 60.169494],
                             "type": "Point",
                         },
-                        "id": "RmVhdHVyZToy",
                         "properties": {
+                            "ahtiId": "test:test:sid1",
                             "createdAt": "2019-12-16T12:00:01+00:00",
                             "modifiedAt": "2019-12-16T12:00:01+00:00",
                             "name": "Place 1",
-                            "sourceId": "test:1",
-                            "sourceType": {"system": "test", "type": "test"},
-                            "translations": [{"languageCode": "FI", "name": "Place 1"}],
+                            "source": {"id": "sid1", "system": "test", "type": "test"},
+                            "translations": [
+                                {
+                                    "languageCode": "FI",
+                                    "name": "Place 1",
+                                    "url": "https://ahti2.localhost",
+                                }
+                            ],
+                            "url": "https://ahti2.localhost",
                         },
                         "type": "Feature",
                     }

@@ -1,0 +1,326 @@
+{
+  "meta": {
+    "count": "2"
+  },
+  "data": [
+    {
+      "id": "2792",
+      "name": {
+        "fi": "Isosaari",
+        "en": "Isosaari",
+        "sv": "Mjölö",
+        "zh": "大岛"
+      },
+      "source_type": {
+        "id": 2,
+        "name": "Matko"
+      },
+      "info_url": "http://www.visitisosaari.fi",
+      "modified_at": "2019-04-04T13:05:12.000Z",
+      "location": {
+        "lat": 60.10136032104492,
+        "lon": 25.052854537963867,
+        "address": {
+          "street_address": "Isosaari",
+          "postal_code": "00860",
+          "locality": "Helsinki"
+        }
+      },
+      "description": {
+        "intro": null,
+        "body": "Helsingin ulkosaariston helmi Isosaari sijaitsee Helsinkiin johtavan meriväylän alkupäässä. Saari on 1600-luvun puolivälistä saakka toiminut maamerkkinä merenkulkijoille, kalastuksen tukikohtana, sotilassaarena ja tutkimuskeskuksena. Vuodesta 2017 valtio on vuokrannut saaren virkistys- ja matkailukäyttöön Suomen Saaristokuljetus Oy:lle. Saari on suurilta osin metsän peittämä ja luonto on monipuolista. Isosaaressa on kaksi hiekkarantaa. Hiekkarannat sijaitsevat saaren pohjoispäässä, laiva- ja vierasvenesataman, saunojen ja Upseerikerhon läheisyydessä. Upseerikerho tarjoaa vieraille tunnelman lisäksi myös maukasta ruokaa. Kerholla ja sen 100-paikkaisella merenrantaterassilla voi nauttia kauniina kesäpäivänä juomista, ruuista ja maisemista Helsingin eteläisimmän hiekkarannan ääressä. Isosaaren pohjoisrannalla sijaitsevat kolme saunaa joita vuokrataan osana tilausristeilyjä, reittiliikenteen laivalla tai omalla veneellä saapuville. Yleisöristeilypäivinä Haapala-sauna on lämpimänä vierailijoille maksutta. Yleisövuoroilla sekä miehille että naisille on omat pukuhuoneet, suihkut ja saunatilat ovat yhteiset. Uimapuku suihkussa ja saunassa on pakollinen. Omat pyyhkeet ja pesuaineet mukaan! \r\n\r\nIsosaarella on 9-reikäinen golf-kenttä ja se on Suomen vaativin par-3 kenttä. Väylien pituudet ovat 60-150 metrin välillä. Varaukset Golf-risteilyille etukäteen ja omat välineet mukaan! \r\n\r\nSaarella on myös merkitty telttailualue. \r\n\r\nIsosaareen ja Vallisaareen liikennöidään toukokuun alusta syyskuun loppuun\r\nReittiliikenteen lähtöpaikka on Kauppatorilla Suomenlinnan lautan länsipuolella sijaitseva pistolaituri. Liput suositellaan ostamaan nettikaupasta etukäteen.",
+        "images": [
+          {
+            "url": "https://edit.myhelsinki.fi/sites/default/files/styles/api_1980x1020/public/2017-07/Isosaari%20terassia%202.jpg?h=c6980913&itok=IaPXo6mp",
+            "copyright_holder": "Isosaari",
+            "license_type": {
+              "id": 1,
+              "name": "All rights reserved."
+            }
+          }
+        ]
+      },
+      "tags": [
+        {
+          "id": "matko2:92",
+          "name": "Golf"
+        },
+        {
+          "id": "matko2:47",
+          "name": "Island"
+        },
+        {
+          "id": "matko2:a-:Curated",
+          "name": "Curated"
+        },
+        {
+          "id": "matko1:4",
+          "name": "SIGHTS & ATTRACTIONS"
+        },
+        {
+          "id": "matko2:31",
+          "name": "Swimming"
+        },
+        {
+          "id": "matko2:32",
+          "name": "Beach"
+        },
+        {
+          "id": "matko2:17",
+          "name": "Sauna"
+        },
+        {
+          "id": "matko1:5",
+          "name": "NATURE & SPORTS"
+        }
+      ],
+      "opening_hours": {
+        "hours": [
+          {
+            "weekday_id": 1,
+            "opens": null,
+            "closes": null,
+            "open24h": false
+          },
+          {
+            "weekday_id": 2,
+            "opens": null,
+            "closes": null,
+            "open24h": false
+          },
+          {
+            "weekday_id": 3,
+            "opens": null,
+            "closes": null,
+            "open24h": false
+          },
+          {
+            "weekday_id": 4,
+            "opens": null,
+            "closes": null,
+            "open24h": false
+          },
+          {
+            "weekday_id": 5,
+            "opens": null,
+            "closes": null,
+            "open24h": false
+          },
+          {
+            "weekday_id": 6,
+            "opens": null,
+            "closes": null,
+            "open24h": false
+          },
+          {
+            "weekday_id": 7,
+            "opens": null,
+            "closes": null,
+            "open24h": false
+          }
+        ],
+        "openinghours_exception": ""
+      }
+    },
+    {
+      "id": "416",
+      "name": {
+        "fi": "Suomenlinnan merilinnoitus",
+        "en": "Suomenlinna Sea Fortress",
+        "sv": "Sveaborgs sjöfästning",
+        "zh": "芬兰堡海上要塞"
+      },
+      "source_type": {
+        "id": 2,
+        "name": "Matko"
+      },
+      "info_url": "http://www.suomenlinna.fi",
+      "modified_at": "2019-01-15T15:53:59.000Z",
+      "location": {
+        "lat": 60.14891815185547,
+        "lon": 24.984798431396484,
+        "address": {
+          "street_address": "Suomenlinna",
+          "postal_code": "00190",
+          "locality": "Helsinki"
+        }
+      },
+      "description": {
+        "intro": null,
+        "body": "Suomenlinnan merilinnoitus on upea Unescon maailmanperintökohde ja yksi Suomen suosituimmista nähtävyyksistä. Suomenlinna on saanut muotonsa historiallisten vaiheiden kautta osana Ruotsin, Venäjän ja Suomen puolustusta. Linnoitus on museoineen, ravintoloineen ja tapahtumineen mieleenpainuva kokemus kaikenikäisille. Linnoitus sijaitsee Helsingin edustalla ja sinne pääsee ympäri vuoden helposti HSL:n lautalla Kauppatorilta. Kesäisin Suomenlinnaan kulkee myös vesibussi. Kesäkuukausina opastettuja kävelykierroksia järjestetään päivittäin suomeksi, ruotsiksi, englanniksi, venäjäksi ja määrättyinä aikoina myös kiinaksi. Talvikaudella kierroksia järjestetään viikonloppuisin englanniksi, keväällä myös venäjäksi. Kierrokset alkavat Suomenlinnakeskuksesta ja kestävät noin tunnin. Liput kierrokselle voit ostaa paikan päällä Suomenlinnakeskuksesta tai etukäteen netissä.",
+        "images": [
+          {
+            "url": "https://edit.myhelsinki.fi/sites/default/files/styles/api_1980x1020/public/2018-09/suomenlinna_aino_heininen_suomenlinnan_hoitokunta_location_only.jpg?h=a77b26fc&itok=55YR1tIm",
+            "copyright_holder": "Aino Heininen / Suomenlinnan hoitokunta",
+            "license_type": {
+              "id": 2,
+              "name": "MyHelsinki license type A"
+            }
+          },
+          {
+            "url": "https://edit.myhelsinki.fi/sites/default/files/styles/api_1980x1020/public/2018-09/suomenlinna_kesalla_suomen_ilmakuva_suomenlinnan_hoitokunta_location_only.jpg?h=deaec4b9&itok=fh-Wj_dU",
+            "copyright_holder": "Suomen Ilmakuva / Suomenlinnan hoitokunta",
+            "license_type": {
+              "id": 2,
+              "name": "MyHelsinki license type A"
+            }
+          },
+          {
+            "url": "https://edit.myhelsinki.fi/sites/default/files/styles/api_1980x1020/public/2018-09/suomenlinna_suomen_ilmakuva_suomenlinnan_hoitokunta_location_only.jpg?h=603de84b&itok=L7heeTHT",
+            "copyright_holder": "Suomen Ilmakuva / Suomenlinnan hoitokunta",
+            "license_type": {
+              "id": 2,
+              "name": "MyHelsinki license type A"
+            }
+          }
+        ]
+      },
+      "tags": [
+        {
+          "id": "matko2:25",
+          "name": "Church"
+        },
+        {
+          "id": "matko2:122",
+          "name": "Free"
+        },
+        {
+          "id": "matko2:240",
+          "name": "Family"
+        },
+        {
+          "id": "matko2:47",
+          "name": "Island"
+        },
+        {
+          "id": "matko2:a-:Curated",
+          "name": "Curated"
+        },
+        {
+          "id": "matko1:4",
+          "name": "SIGHTS & ATTRACTIONS"
+        },
+        {
+          "id": "matko2:218",
+          "name": "Viewpoint"
+        },
+        {
+          "id": "matko2:21",
+          "name": "Art"
+        },
+        {
+          "id": "matko2:251",
+          "name": "Monument"
+        },
+        {
+          "id": "matko2:22",
+          "name": "Gallery"
+        },
+        {
+          "id": "matko2:15",
+          "name": "Banquet"
+        },
+        {
+          "id": "matko2:165",
+          "name": "Activity"
+        },
+        {
+          "id": "matko2:77",
+          "name": "History"
+        },
+        {
+          "id": "matko2:24",
+          "name": "Architecture"
+        },
+        {
+          "id": "matko2:181",
+          "name": "Sea"
+        },
+        {
+          "id": "matko2:19",
+          "name": "MainAttraction"
+        },
+        {
+          "id": "matko2:20",
+          "name": "Park"
+        },
+        {
+          "id": "matko2:74",
+          "name": "Nature"
+        }
+      ],
+      "opening_hours": {
+        "hours": [
+          {
+            "weekday_id": 1,
+            "opens": null,
+            "closes": null,
+            "open24h": false
+          },
+          {
+            "weekday_id": 2,
+            "opens": null,
+            "closes": null,
+            "open24h": false
+          },
+          {
+            "weekday_id": 3,
+            "opens": null,
+            "closes": null,
+            "open24h": false
+          },
+          {
+            "weekday_id": 4,
+            "opens": null,
+            "closes": null,
+            "open24h": false
+          },
+          {
+            "weekday_id": 5,
+            "opens": null,
+            "closes": null,
+            "open24h": false
+          },
+          {
+            "weekday_id": 6,
+            "opens": null,
+            "closes": null,
+            "open24h": false
+          },
+          {
+            "weekday_id": 7,
+            "opens": null,
+            "closes": null,
+            "open24h": false
+          }
+        ],
+        "openinghours_exception": "Suomenlinna on Helsingin kaupunginosa ja avoinna ympäri vuoden. Katso palvelujen aukioloajat aukiolo- ja tapahtumakalenterista Suomenlinnan verkkosivuilta."
+      }
+    }
+  ],
+  "tags": {
+    "matko1:4": "SIGHTS & ATTRACTIONS",
+    "matko1:5": "NATURE & SPORTS",
+    "matko2:122": "Free",
+    "matko2:15": "Banquet",
+    "matko2:165": "Activity",
+    "matko2:17": "Sauna",
+    "matko2:181": "Sea",
+    "matko2:19": "MainAttraction",
+    "matko2:20": "Park",
+    "matko2:21": "Art",
+    "matko2:218": "Viewpoint",
+    "matko2:22": "Gallery",
+    "matko2:24": "Architecture",
+    "matko2:240": "Family",
+    "matko2:25": "Church",
+    "matko2:251": "Monument",
+    "matko2:31": "Swimming",
+    "matko2:32": "Beach",
+    "matko2:47": "Island",
+    "matko2:74": "Nature",
+    "matko2:77": "History",
+    "matko2:92": "Golf",
+    "matko2:a-:Curated": "Curated"
+  }
+}
