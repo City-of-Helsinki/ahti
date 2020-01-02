@@ -74,3 +74,44 @@ class Feature(TranslatableModel, TimestampedModel):
     @property
     def ahti_id(self):
         return f"{self.source_type.system}:{self.source_type.type}:{self.source_id}"
+
+
+class Image(models.Model):
+    feature = models.ForeignKey(
+        Feature,
+        on_delete=models.CASCADE,
+        related_name="images",
+        verbose_name=_("feature"),
+    )
+    url = models.URLField(verbose_name=_("url"), max_length=2000)
+    copyright_owner = models.CharField(
+        verbose_name=_("copyright owner"), max_length=200
+    )
+    license = models.ForeignKey(
+        "License",
+        on_delete=models.CASCADE,
+        related_name="images",
+        verbose_name=_("license"),
+    )
+
+    class Meta:
+        verbose_name = _("image")
+        verbose_name_plural = _("images")
+        ordering = ("id",)
+
+    def __str__(self):
+        return self.url
+
+
+class License(TranslatableModel):
+    translations = TranslatedFields(
+        name=models.CharField(verbose_name=_("name"), max_length=200),
+    )
+
+    class Meta:
+        verbose_name = _("license")
+        verbose_name_plural = _("licenses")
+        ordering = ("id",)
+
+    def __str__(self):
+        return self.safe_translation_getter("name", super().__str__())

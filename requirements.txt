@@ -24,6 +24,7 @@ graphene==2.1.8           # via graphene-django
 graphql-core==2.2.1       # via django-graphql-jwt, graphene, graphene-django, graphql-relay
 graphql-relay==2.0.1      # via graphene
 idna==2.8                 # via requests
+jmespath==0.9.4
 promise==2.2.1            # via graphene-django, graphql-core, graphql-relay
 psycopg2==2.8.4
 pyasn1==0.4.8             # via rsa
