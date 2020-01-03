@@ -17,11 +17,6 @@ class FeatureSource(ObjectType):
     )
 
 
-class SourceType(DjangoObjectType):
-    class Meta:
-        model = models.SourceType
-
-
 class FeatureTranslations(DjangoObjectType):
     class Meta:
         model = apps.get_model("features", "FeatureTranslation")
