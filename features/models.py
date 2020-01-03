@@ -57,6 +57,7 @@ class Feature(TranslatableModel, TimestampedModel):
             "Most recent time when the feature was mapped from the source data"
         ),
     )
+    tags = models.ManyToManyField("Tag", related_name="features", through="FeatureTag")
 
     class Meta:
         verbose_name = _("feature")
@@ -115,3 +116,33 @@ class License(TranslatableModel):
 
     def __str__(self):
         return self.safe_translation_getter("name", super().__str__())
+
+
+class Tag(TranslatableModel):
+    id = models.CharField(max_length=200, primary_key=True)
+    translations = TranslatedFields(
+        name=models.CharField(verbose_name=_("name"), max_length=200),
+    )
+
+    class Meta:
+        verbose_name = _("tag")
+        verbose_name_plural = _("tags")
+        ordering = ("id",)
+
+    def __str__(self):
+        return self.id
+
+
+class FeatureTag(TimestampedModel):
+    feature = models.ForeignKey(Feature, on_delete=models.CASCADE)
+    tag = models.ForeignKey(Tag, on_delete=models.CASCADE)
+
+    class Meta:
+        verbose_name = _("feature tag")
+        verbose_name_plural = _("feature tags")
+        ordering = ("id",)
+        constraints = [
+            models.UniqueConstraint(
+                fields=["feature", "tag"], name="unique_feature_tag"
+            ),
+        ]
