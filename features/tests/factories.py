@@ -3,7 +3,7 @@ from django.contrib.gis.geos import Point
 from django.utils import timezone
 from factory.random import randgen
 
-from features.models import Feature, Image, License, SourceType
+from features.models import Feature, Image, License, SourceType, Tag
 
 
 class SourceTypeFactory(factory.django.DjangoModelFactory):
@@ -46,3 +46,11 @@ class ImageFactory(factory.django.DjangoModelFactory):
     copyright_owner = factory.Faker("name")
     feature = factory.SubFactory(FeatureFactory)
     license = factory.SubFactory(LicenseFactory)
+
+
+class TagFactory(factory.django.DjangoModelFactory):
+    class Meta:
+        model = Tag
+
+    id = factory.Sequence(lambda n: "ahti:tag:%d" % n)
+    name = factory.Sequence(lambda n: "Tag %d" % n)
