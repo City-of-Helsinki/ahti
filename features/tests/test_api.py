@@ -6,7 +6,12 @@ from graphql_relay import to_global_id
 
 from ahti.schema import schema
 from features.schema import Feature
-from features.tests.factories import FeatureFactory, ImageFactory, SourceTypeFactory
+from features.tests.factories import (
+    FeatureFactory,
+    ImageFactory,
+    SourceTypeFactory,
+    TagFactory,
+)
 
 
 @pytest.fixture(autouse=True)
@@ -114,6 +119,33 @@ def test_features_image_query(snapshot, api_client):
                 license {
                   name
                 }
+              }
+            }
+          }
+        }
+      }
+    }
+    """
+    )
+    snapshot.assert_match(executed)
+
+
+def test_features_tags_query(snapshot, api_client):
+    feature = FeatureFactory()
+    feature.tags.set(
+        [TagFactory(id=f"ahti:{num}", name=f"Tag {num}") for num in range(2)]
+    )
+
+    executed = api_client.execute(
+        """
+    query FeatureImages {
+      features {
+        edges {
+          node {
+            properties {
+              tags {
+                id
+                name
               }
             }
           }

@@ -84,3 +84,22 @@ snapshots["test_features_image_query 1"] = {
         }
     }
 }
+
+snapshots["test_features_tags_query 1"] = {
+    "data": {
+        "features": {
+            "edges": [
+                {
+                    "node": {
+                        "properties": {
+                            "tags": [
+                                {"id": "ahti:0", "name": "Tag 0"},
+                                {"id": "ahti:1", "name": "Tag 1"},
+                            ]
+                        }
+                    }
+                }
+            ]
+        }
+    }
+}
