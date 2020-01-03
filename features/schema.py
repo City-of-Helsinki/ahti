@@ -37,7 +37,7 @@ class License(DjangoObjectType):
         model = models.License
         fields = ("name",)
 
-    name = graphene.String()
+    name = graphene.String(required=True)
 
 
 class Tag(DjangoObjectType):
