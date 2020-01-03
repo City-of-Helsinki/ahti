@@ -17,15 +17,27 @@ class FeatureSource(ObjectType):
     )
 
 
-class SourceType(DjangoObjectType):
-    class Meta:
-        model = models.SourceType
-        interfaces = (relay.Node,)
-
-
 class FeatureTranslations(DjangoObjectType):
     class Meta:
         model = apps.get_model("features", "FeatureTranslation")
+
+
+class Image(DjangoObjectType):
+    class Meta:
+        model = models.Image
+        fields = (
+            "url",
+            "copyright_owner",
+            "license",
+        )
+
+
+class License(DjangoObjectType):
+    class Meta:
+        model = models.License
+        fields = ("name",)
+
+    name = graphene.String()
 
 
 class Feature(graphql_geojson.GeoJSONType):
@@ -35,6 +47,7 @@ class Feature(graphql_geojson.GeoJSONType):
             "geometry",
             "created_at",
             "translations",
+            "images",
         )
         model = models.Feature
         geojson_field = "geometry"

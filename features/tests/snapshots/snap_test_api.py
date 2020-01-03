@@ -20,12 +20,12 @@ snapshots["test_features_query 1"] = {
                             "ahtiId": "test:test:sid0",
                             "createdAt": "2019-12-16T12:00:01+00:00",
                             "modifiedAt": "2019-12-16T12:00:01+00:00",
-                            "name": "Place 0",
+                            "name": "Place X",
                             "source": {"id": "sid0", "system": "test", "type": "test"},
                             "translations": [
                                 {
                                     "languageCode": "FI",
-                                    "name": "Place 0",
+                                    "name": "Place X",
                                     "url": "https://ahti1.localhost",
                                 }
                             ],
@@ -44,12 +44,12 @@ snapshots["test_features_query 1"] = {
                             "ahtiId": "test:test:sid1",
                             "createdAt": "2019-12-16T12:00:01+00:00",
                             "modifiedAt": "2019-12-16T12:00:01+00:00",
-                            "name": "Place 1",
+                            "name": "Place Y",
                             "source": {"id": "sid1", "system": "test", "type": "test"},
                             "translations": [
                                 {
                                     "languageCode": "FI",
-                                    "name": "Place 1",
+                                    "name": "Place Y",
                                     "url": "https://ahti2.localhost",
                                 }
                             ],
@@ -58,6 +58,28 @@ snapshots["test_features_query 1"] = {
                         "type": "Feature",
                     }
                 },
+            ]
+        }
+    }
+}
+
+snapshots["test_features_image_query 1"] = {
+    "data": {
+        "features": {
+            "edges": [
+                {
+                    "node": {
+                        "properties": {
+                            "images": [
+                                {
+                                    "copyrightOwner": "Photo Grapher",
+                                    "license": {"name": "License 0"},
+                                    "url": "https://ahti1.localhost/image.png",
+                                }
+                            ]
+                        }
+                    }
+                }
             ]
         }
     }

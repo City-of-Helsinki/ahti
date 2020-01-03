@@ -3,7 +3,7 @@ from django.contrib.gis.geos import Point
 from django.utils import timezone
 from factory.random import randgen
 
-from features.models import Feature, SourceType
+from features.models import Feature, Image, License, SourceType
 
 
 class SourceTypeFactory(factory.django.DjangoModelFactory):
@@ -19,7 +19,7 @@ class FeatureFactory(factory.django.DjangoModelFactory):
         model = Feature
 
     name = factory.Sequence(lambda n: "Place %d" % n)
-    url = factory.Faker("uri")
+    url = factory.Faker("url")
     source_id = factory.Sequence(lambda n: "sid%d" % n)
     source_type = factory.SubFactory(SourceTypeFactory)
     source_modified_at = factory.LazyFunction(timezone.now)
@@ -29,3 +29,20 @@ class FeatureFactory(factory.django.DjangoModelFactory):
             24.915 + randgen.uniform(0, 0.040), 60.154 + randgen.uniform(0, 0.022)
         )
     )
+
+
+class LicenseFactory(factory.django.DjangoModelFactory):
+    class Meta:
+        model = License
+
+    name = factory.Sequence(lambda n: "License %d" % n)
+
+
+class ImageFactory(factory.django.DjangoModelFactory):
+    class Meta:
+        model = Image
+
+    url = factory.Faker("image_url")
+    copyright_owner = factory.Faker("name")
+    feature = factory.SubFactory(FeatureFactory)
+    license = factory.SubFactory(LicenseFactory)
