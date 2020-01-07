@@ -7,7 +7,7 @@ from django.contrib.gis.geos import Point
 from django.utils import timezone
 from django.utils.dateparse import parse_datetime
 
-from features.importers.base import FeatureImporterBase
+from features.importers.base import FeatureImporterBase, TagMapper
 from features.models import Feature, Image, License, SourceType
 
 feature_expression = jmespath.compile(
@@ -23,6 +23,10 @@ data[*].{
         url:url,
         copyright_owner: copyright_holder,
         license: license_type.name
+    },
+    tags: tags[*].{
+        id:id,
+        name:name
     }
 }
 """
@@ -34,6 +38,14 @@ class MyHelsinkiImporter(FeatureImporterBase):
     source_system = "myhelsinki"
     source_type = "place"
 
+    tag_config = {
+        "rules": [{"mapped_names": ["Island"], "id": "island", "name": "saaristo"}],
+        "whitelist": [],
+    }
+
+    def __init__(self):
+        self.tag_mapper = TagMapper(self.tag_config)
+
     def import_features(self):
         st = self.get_source_type()
 
@@ -43,6 +55,7 @@ class MyHelsinkiImporter(FeatureImporterBase):
         for place in feature_expression.search(places):
             feature = self.import_feature(place, st)
             self.import_feature_images(feature, place["images"])
+            self.import_feature_tags(feature, place["tags"])
 
     @staticmethod
     def import_feature(place: dict, st: SourceType) -> Feature:
@@ -86,6 +99,13 @@ class MyHelsinkiImporter(FeatureImporterBase):
                 url=url,
                 defaults={"copyright_owner": copyright_owner, "license": license},
             )
+
+    def import_feature_tags(self, feature: Feature, tags: Iterable[dict]):
+        """Imports and sets tags for the given feature."""
+        if not tags:
+            tags = []
+        feature_tags = [tag for tag in map(self.tag_mapper.get_tag, tags) if tag]
+        feature.tags.set(feature_tags)
 
 
 class MyHelsinkiPlacesClient:
