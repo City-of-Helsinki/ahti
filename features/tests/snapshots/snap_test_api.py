@@ -19,11 +19,13 @@ snapshots["test_features_query 1"] = {
                         "properties": {
                             "ahtiId": "test:test:sid0",
                             "createdAt": "2019-12-16T12:00:01+00:00",
+                            "description": "Place X description",
                             "modifiedAt": "2019-12-16T12:00:01+00:00",
                             "name": "Place X",
                             "source": {"id": "sid0", "system": "test", "type": "test"},
                             "translations": [
                                 {
+                                    "description": "Place X description",
                                     "languageCode": "FI",
                                     "name": "Place X",
                                     "url": "https://ahti1.localhost",
@@ -43,11 +45,13 @@ snapshots["test_features_query 1"] = {
                         "properties": {
                             "ahtiId": "test:test:sid1",
                             "createdAt": "2019-12-16T12:00:01+00:00",
+                            "description": "Place Y description",
                             "modifiedAt": "2019-12-16T12:00:01+00:00",
                             "name": "Place Y",
                             "source": {"id": "sid1", "system": "test", "type": "test"},
                             "translations": [
                                 {
+                                    "description": "Place Y description",
                                     "languageCode": "FI",
                                     "name": "Place Y",
                                     "url": "https://ahti2.localhost",

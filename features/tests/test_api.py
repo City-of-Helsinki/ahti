@@ -30,12 +30,14 @@ def test_features_query(snapshot, api_client):
     FeatureFactory(
         source_type=st,
         name="Place X",
+        description="Place X description",
         geometry=Point(24.940967, 60.168683),
         url="https://ahti1.localhost",
     )
     FeatureFactory(
         source_type=st,
         name="Place Y",
+        description="Place Y description",
         geometry=Point(24.952222, 60.169494),
         url="https://ahti2.localhost",
     )
@@ -53,6 +55,7 @@ def test_features_query(snapshot, api_client):
             }
             properties {
               name
+              description
               url
               ahtiId
               createdAt
@@ -60,6 +63,7 @@ def test_features_query(snapshot, api_client):
               translations {
                 languageCode
                 name
+                description
                 url
               }
               source {
