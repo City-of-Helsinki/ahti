@@ -15,6 +15,7 @@ feature_expression = jmespath.compile(
 data[*].{
     id: id,
     name: name.fi,
+    description: description.body,
     url: info_url,
     modified_at: modified_at,
     lon: location.lon,
@@ -61,6 +62,7 @@ class MyHelsinkiImporter(FeatureImporterBase):
     def import_feature(place: dict, st: SourceType) -> Feature:
         values = {
             "name": place["name"],
+            "description": place["description"],
             "url": place["url"],
             "mapped_at": timezone.now(),
             "source_modified_at": parse_datetime(place["modified_at"]),
