@@ -41,6 +41,7 @@ class Feature(TranslatableModel, TimestampedModel):
         url=models.URLField(
             verbose_name=_("url"), blank=True, help_text=_("URL of the feature")
         ),
+        description=models.TextField(verbose_name=_("description"), blank=True),
     )
     geometry = models.GeometryField(
         verbose_name=_("geometry"),
