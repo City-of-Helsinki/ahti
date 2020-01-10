@@ -19,6 +19,7 @@ class FeatureFactory(factory.django.DjangoModelFactory):
         model = Feature
 
     name = factory.Sequence(lambda n: "Place %d" % n)
+    description = factory.Sequence(lambda n: "Place %d description" % n)
     url = factory.Faker("url")
     source_id = factory.Sequence(lambda n: "sid%d" % n)
     source_type = factory.SubFactory(SourceTypeFactory)

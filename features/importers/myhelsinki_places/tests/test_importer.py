@@ -58,6 +58,7 @@ def test_data_for_feature_is_correct(requests_mock, importer, places_response):
     st = SourceType.objects.first()
     f = Feature.objects.get(source_type=st, source_id="2792")
     assert f.name == "Isosaari"
+    assert f.description == pytest_regex(r".*ulkosaariston helmi Isosaari.*")
     assert f.url == "http://www.visitisosaari.fi"
     assert f.source_modified_at == datetime.datetime(2019, 4, 4, 13, 5, 12).replace(
         tzinfo=utc
