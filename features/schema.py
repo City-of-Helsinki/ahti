@@ -37,7 +37,15 @@ class License(DjangoObjectType):
         model = models.License
         fields = ("name",)
 
-    name = graphene.String()
+    name = graphene.String(required=True)
+
+
+class Tag(DjangoObjectType):
+    class Meta:
+        model = models.Tag
+        fields = ("id",)
+
+    name = graphene.String(required=True)
 
 
 class Feature(graphql_geojson.GeoJSONType):
@@ -46,8 +54,9 @@ class Feature(graphql_geojson.GeoJSONType):
             "id",
             "geometry",
             "created_at",
-            "translations",
             "images",
+            "tags",
+            "translations",
         )
         model = models.Feature
         geojson_field = "geometry"
