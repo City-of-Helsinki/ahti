@@ -3,7 +3,7 @@ from django.contrib.gis.geos import Point
 from django.utils import timezone
 from factory.random import randgen
 
-from features.models import Feature, Image, License, SourceType, Tag
+from features.models import ContactInfo, Feature, Image, License, SourceType, Tag
 
 
 class SourceTypeFactory(factory.django.DjangoModelFactory):
@@ -55,3 +55,15 @@ class TagFactory(factory.django.DjangoModelFactory):
 
     id = factory.Sequence(lambda n: "ahti:tag:%d" % n)
     name = factory.Sequence(lambda n: "Tag %d" % n)
+
+
+class ContactInfoFactory(factory.django.DjangoModelFactory):
+    class Meta:
+        model = ContactInfo
+
+    feature = factory.SubFactory(FeatureFactory)
+    street_address = factory.Faker("address")
+    postal_code = factory.Faker("postcode", locale="fi_FI")
+    municipality = factory.Faker("city", locale="fi_FI")
+    phone_number = factory.Faker("phone_number")
+    email = factory.Faker("company_email")
