@@ -107,3 +107,27 @@ snapshots["test_features_tags_query 1"] = {
         }
     }
 }
+
+snapshots["test_feature_contact_info 1"] = {
+    "data": {
+        "features": {
+            "edges": [
+                {
+                    "node": {
+                        "properties": {
+                            "contactInfo": {
+                                "address": {
+                                    "municipality": "Helsinki",
+                                    "postalCode": "00170",
+                                    "streetAddress": "Katariinankatu 3",
+                                },
+                                "email": "ahti@localhost",
+                                "phoneNumber": "+358401234567",
+                            }
+                        }
+                    }
+                }
+            ]
+        }
+    }
+}

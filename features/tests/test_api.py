@@ -7,6 +7,7 @@ from graphql_relay import to_global_id
 from ahti.schema import schema
 from features.schema import Feature
 from features.tests.factories import (
+    ContactInfoFactory,
     FeatureFactory,
     ImageFactory,
     SourceTypeFactory,
@@ -150,6 +151,41 @@ def test_features_tags_query(snapshot, api_client):
               tags {
                 id
                 name
+              }
+            }
+          }
+        }
+      }
+    }
+    """
+    )
+    snapshot.assert_match(executed)
+
+
+def test_feature_contact_info(snapshot, api_client):
+    ContactInfoFactory(
+        street_address="Katariinankatu 3",
+        postal_code="00170",
+        municipality="Helsinki",
+        email="ahti@localhost",
+        phone_number="+358401234567",
+    )
+
+    executed = api_client.execute(
+        """
+    query FeatureContactInfo {
+      features {
+        edges {
+          node {
+            properties {
+              contactInfo {
+                address {
+                  streetAddress
+                  postalCode
+                  municipality
+                }
+                email
+                phoneNumber
               }
             }
           }
