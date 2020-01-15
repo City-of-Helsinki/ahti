@@ -30,6 +30,7 @@ def test_features_query(snapshot, api_client):
     st = SourceTypeFactory(system="test", type="test")
     FeatureFactory(
         source_type=st,
+        source_id="sid0",
         name="Place X",
         description="Place X description",
         geometry=Point(24.940967, 60.168683),
@@ -37,6 +38,7 @@ def test_features_query(snapshot, api_client):
     )
     FeatureFactory(
         source_type=st,
+        source_id="sid1",
         name="Place Y",
         description="Place Y description",
         geometry=Point(24.952222, 60.169494),
