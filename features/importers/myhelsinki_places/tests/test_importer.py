@@ -1,4 +1,5 @@
 import datetime
+import json
 from pathlib import PurePath
 
 import pytest
@@ -9,7 +10,8 @@ from utils.pytest import pytest_regex
 
 from features.importers.base import TagMapper
 from features.importers.myhelsinki_places.importer import MyHelsinkiImporter
-from features.models import Feature, Image, License, SourceType, Tag
+from features.models import ContactInfo, Feature, Image, License, SourceType, Tag
+from features.tests.factories import ContactInfoFactory
 
 PLACES_URL = "//open-api.myhelsinki.fi/v1/places/"
 
@@ -28,12 +30,12 @@ def importer():
 def places_response():
     path = PurePath(__file__).parent.joinpath("responses", "places_response.json")
     with open(path.as_posix(), "r") as f:
-        response = f.read()
+        response = json.loads(f.read())
     return response
 
 
 def test_import_all_features_from_source(requests_mock, importer, places_response):
-    requests_mock.get(PLACES_URL, text=places_response)
+    requests_mock.get(PLACES_URL, json=places_response)
 
     importer.import_features()
 
@@ -51,7 +53,7 @@ def test_source_type_get_created(requests_mock, importer):
 
 @freeze_time("2019-12-16 12:00:01")
 def test_data_for_feature_is_correct(requests_mock, importer, places_response):
-    requests_mock.get(PLACES_URL, text=places_response)
+    requests_mock.get(PLACES_URL, json=places_response)
 
     importer.import_features()
 
@@ -67,7 +69,7 @@ def test_data_for_feature_is_correct(requests_mock, importer, places_response):
 
 
 def test_geometry_is_correct(requests_mock, importer, places_response):
-    requests_mock.get(PLACES_URL, text=places_response)
+    requests_mock.get(PLACES_URL, json=places_response)
 
     importer.import_features()
 
@@ -79,7 +81,7 @@ def test_geometry_is_correct(requests_mock, importer, places_response):
 
 
 def test_images_are_imported_for_features(requests_mock, importer, places_response):
-    requests_mock.get(PLACES_URL, text=places_response)
+    requests_mock.get(PLACES_URL, json=places_response)
 
     importer.import_features()
 
@@ -91,7 +93,7 @@ def test_images_are_imported_for_features(requests_mock, importer, places_respon
 
 
 def test_updating_images(requests_mock, importer, places_response):
-    requests_mock.get(PLACES_URL, text=places_response)
+    requests_mock.get(PLACES_URL, json=places_response)
 
     importer.import_features()
     importer.import_features()
@@ -100,7 +102,7 @@ def test_updating_images(requests_mock, importer, places_response):
 
 
 def test_image_licenses_are_imported(requests_mock, importer, places_response):
-    requests_mock.get(PLACES_URL, text=places_response)
+    requests_mock.get(PLACES_URL, json=places_response)
 
     importer.import_features()
 
@@ -108,7 +110,7 @@ def test_image_licenses_are_imported(requests_mock, importer, places_response):
 
 
 def test_image_licenses_is_set_for_an_image(requests_mock, importer, places_response):
-    requests_mock.get(PLACES_URL, text=places_response)
+    requests_mock.get(PLACES_URL, json=places_response)
 
     importer.import_features()
 
@@ -131,7 +133,7 @@ def test_image_licenses_is_set_for_an_image(requests_mock, importer, places_resp
 def test_tags_are_imported_based_on_whitelisting(
     requests_mock, importer, places_response
 ):
-    requests_mock.get(PLACES_URL, text=places_response)
+    requests_mock.get(PLACES_URL, json=places_response)
     tag_config = {"whitelist": ["Island"]}
     importer.tag_mapper = TagMapper(tag_config)
 
@@ -145,7 +147,7 @@ def test_tags_are_imported_based_on_mapping_rules(
     requests_mock, importer, places_response
 ):
     """Importing tags from external source into internal tags."""
-    requests_mock.get(PLACES_URL, text=places_response)
+    requests_mock.get(PLACES_URL, json=places_response)
     tag_config = {
         "rules": [{"mapped_names": ["Island"], "id": "island", "name": "saaristo"}],
     }
@@ -158,7 +160,7 @@ def test_tags_are_imported_based_on_mapping_rules(
 
 
 def test_tags_are_linked_to_features(requests_mock, importer, places_response):
-    requests_mock.get(PLACES_URL, text=places_response)
+    requests_mock.get(PLACES_URL, json=places_response)
     tag_config = {"rules": [], "whitelist": ["Island"]}
     importer.tag_mapper = TagMapper(tag_config)
 
@@ -169,3 +171,30 @@ def test_tags_are_linked_to_features(requests_mock, importer, places_response):
 
     assert feature.tags.count() == 1
     assert tag in feature.tags.all()
+
+
+def test_contact_info_is_imported_for_a_feature(
+    requests_mock, importer, places_response
+):
+    requests_mock.get(PLACES_URL, json=places_response)
+
+    importer.import_features()
+
+    f = Feature.objects.get(source_id="2792")
+    assert f.contact_info.street_address == "Isosaari"
+    assert f.contact_info.postal_code == "00860"
+    assert f.contact_info.municipality == "Helsinki"
+
+
+def test_contact_info_is_deleted(requests_mock, importer, places_response):
+    """When address data is not provided, existing ContactInfo will get deleted."""
+    ContactInfoFactory(
+        feature__source_type=importer.get_source_type(), feature__source_id="2792"
+    )
+    for place in places_response["data"]:
+        place["location"]["address"] = None
+    requests_mock.get(PLACES_URL, json=places_response)
+
+    importer.import_features()
+
+    assert ContactInfo.objects.count() == 0

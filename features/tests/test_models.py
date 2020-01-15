@@ -1,7 +1,8 @@
 import pytest
 
-from features.models import Feature, Image, License, SourceType, Tag
+from features.models import ContactInfo, Feature, Image, License, SourceType, Tag
 from features.tests.factories import (
+    ContactInfoFactory,
     FeatureFactory,
     ImageFactory,
     LicenseFactory,
@@ -48,3 +49,11 @@ def test_tag():
     TagFactory()
 
     assert Tag.objects.count() == 1
+
+
+@pytest.mark.django_db
+def test_contact_info():
+    ContactInfoFactory()
+
+    assert ContactInfo.objects.count() == 1
+    assert Feature.objects.count() == 1

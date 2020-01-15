@@ -7,6 +7,27 @@ from graphene_django import DjangoConnectionField, DjangoObjectType
 from features import models
 
 
+class Address(ObjectType):
+    street_address = graphene.String()
+    postal_code = graphene.String()
+    municipality = graphene.String()
+
+
+class ContactInfo(DjangoObjectType):
+    class Meta:
+        model = models.ContactInfo
+        fields = ("email", "phone_number")
+
+    address = graphene.Field(Address)
+
+    def resolve_address(self: models.ContactInfo, info, **kwargs):
+        return {
+            "street_address": self.street_address,
+            "postal_code": self.postal_code,
+            "municipality": self.municipality,
+        }
+
+
 class FeatureSource(ObjectType):
     """Source information for a feature."""
 
@@ -54,6 +75,7 @@ class Feature(graphql_geojson.GeoJSONType):
             "id",
             "geometry",
             "created_at",
+            "contact_info",
             "images",
             "tags",
             "translations",

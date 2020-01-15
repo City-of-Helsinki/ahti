@@ -147,3 +147,28 @@ class FeatureTag(TimestampedModel):
                 fields=["feature", "tag"], name="unique_feature_tag"
             ),
         ]
+
+
+class ContactInfo(models.Model):
+    feature = models.OneToOneField(
+        Feature,
+        verbose_name=_("feature"),
+        related_name="contact_info",
+        on_delete=models.CASCADE,
+    )
+    street_address = models.CharField(
+        verbose_name=_("street address"), blank=True, max_length=200
+    )
+    postal_code = models.CharField(
+        verbose_name=_("postal code"), blank=True, max_length=10
+    )
+    municipality = models.CharField(_("municipality"), max_length=64, blank=True)
+    phone_number = models.CharField(
+        verbose_name=_("phone number"), max_length=32, blank=True
+    )
+    email = models.EmailField(verbose_name=_("email"), blank=True)
+
+    class Meta:
+        verbose_name = _("contact info")
+        verbose_name_plural = _("contact info")
+        ordering = ("id",)

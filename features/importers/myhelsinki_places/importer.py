@@ -8,7 +8,7 @@ from django.utils import timezone
 from django.utils.dateparse import parse_datetime
 
 from features.importers.base import FeatureImporterBase, TagMapper
-from features.models import Feature, Image, License, SourceType
+from features.models import ContactInfo, Feature, Image, License, SourceType
 
 feature_expression = jmespath.compile(
     """
@@ -20,6 +20,11 @@ data[*].{
     modified_at: modified_at,
     lon: location.lon,
     lat: location.lat,
+    address: {
+        street_address: location.address.street_address,
+        postal_code: location.address.postal_code
+        municipality: location.address.locality
+    }
     images: description.images[*].{
         url:url,
         copyright_owner: copyright_holder,
@@ -57,6 +62,7 @@ class MyHelsinkiImporter(FeatureImporterBase):
             feature = self.import_feature(place, st)
             self.import_feature_images(feature, place["images"])
             self.import_feature_tags(feature, place["tags"])
+            self.import_feature_contact_info(feature, place["address"])
 
     @staticmethod
     def import_feature(place: dict, st: SourceType) -> Feature:
@@ -108,6 +114,27 @@ class MyHelsinkiImporter(FeatureImporterBase):
             tags = []
         feature_tags = [tag for tag in map(self.tag_mapper.get_tag, tags) if tag]
         feature.tags.set(feature_tags)
+
+    def import_feature_contact_info(self, feature: Feature, address: dict):
+        """Imports contact info for the given feature."""
+
+        if not (
+            address["street_address"]
+            or address["postal_code"]
+            or address["municipality"]
+        ):
+            # Delete existing address if source doesn't provide this information
+            if hasattr(feature, "contact_info"):
+                feature.contact_info.delete()
+        else:
+            ContactInfo.objects.update_or_create(
+                feature=feature,
+                defaults={
+                    "street_address": address["street_address"] or "",
+                    "postal_code": address["postal_code"] or "",
+                    "municipality": address["municipality"] or "",
+                },
+            )
 
 
 class MyHelsinkiPlacesClient:
