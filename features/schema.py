@@ -56,7 +56,7 @@ class Image(DjangoObjectType):
 class License(DjangoObjectType):
     class Meta:
         model = models.License
-        fields = ("name",)
+        fields = ("id",)
 
     name = graphene.String(required=True)
 
