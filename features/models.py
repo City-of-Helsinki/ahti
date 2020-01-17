@@ -4,6 +4,7 @@ from parler.models import TranslatableModel, TranslatedFields
 from utils.models import TimestampedModel
 
 from ahti import settings
+from features.enums import Weekday
 
 
 class SourceType(models.Model):
@@ -171,4 +172,57 @@ class ContactInfo(models.Model):
     class Meta:
         verbose_name = _("contact info")
         verbose_name_plural = _("contact info")
+        ordering = ("id",)
+
+
+class OpeningHoursPeriod(TranslatableModel):
+    feature = models.ForeignKey(
+        Feature,
+        on_delete=models.CASCADE,
+        related_name="opening_hours_periods",
+        verbose_name=_("feature"),
+    )
+    valid_from = models.DateField(
+        blank=True,
+        null=True,
+        verbose_name=_("valid from"),
+        help_text=_("First day of validity"),
+    )
+    valid_to = models.DateField(
+        blank=True,
+        null=True,
+        verbose_name=_("valid to"),
+        help_text=_("Last day of validity"),
+    )
+    translations = TranslatedFields(
+        comment=models.TextField(blank=True, verbose_name=_("comment")),
+    )
+
+    class Meta:
+        verbose_name = _("opening hours period")
+        verbose_name_plural = _("opening hours periods")
+        ordering = ("id",)
+
+
+class OpeningHours(models.Model):
+    period = models.ForeignKey(
+        OpeningHoursPeriod,
+        on_delete=models.CASCADE,
+        related_name="opening_hours",
+        verbose_name=_("opening hours"),
+    )
+    day = models.IntegerField(choices=Weekday.choices)
+    opens = models.TimeField(
+        blank=True, null=True, verbose_name=_("opens"), help_text=_("Time of opening")
+    )
+    closes = models.TimeField(
+        blank=True, null=True, verbose_name=_("closes"), help_text=_("Time of closing")
+    )
+    all_day = models.BooleanField(
+        default=False, verbose_name=_("all day"), help_text=_("Open all day")
+    )
+
+    class Meta:
+        verbose_name = _("opening hours")
+        verbose_name_plural = _("opening hours")
         ordering = ("id",)
