@@ -1,4 +1,5 @@
 branches: {only: [master, develop]}
+dist: bionic
 sudo: false
 language: python
 python: 3.8
