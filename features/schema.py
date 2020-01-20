@@ -5,6 +5,11 @@ from graphene import ObjectType, relay
 from graphene_django import DjangoConnectionField, DjangoObjectType
 
 from features import models
+from features.enums import Weekday
+
+WeekdayEnum = graphene.Enum.from_enum(
+    Weekday, description=lambda e: e.label if e else ""
+)
 
 
 class Address(ObjectType):
@@ -69,6 +74,30 @@ class Tag(DjangoObjectType):
     name = graphene.String(required=True)
 
 
+class OpeningHoursPeriod(DjangoObjectType):
+    class Meta:
+        model = models.OpeningHoursPeriod
+        fields = (
+            "valid_from",
+            "valid_to",
+            "opening_hours",
+        )
+
+    comment = graphene.String()
+
+
+class OpeningHours(DjangoObjectType):
+    class Meta:
+        model = models.OpeningHours
+        fields = (
+            "opens",
+            "closes",
+            "all_day",
+        )
+
+    day = WeekdayEnum(required=True)
+
+
 class Feature(graphql_geojson.GeoJSONType):
     class Meta:
         fields = (
@@ -77,6 +106,7 @@ class Feature(graphql_geojson.GeoJSONType):
             "created_at",
             "contact_info",
             "images",
+            "opening_hours_periods",
             "tags",
             "translations",
         )
