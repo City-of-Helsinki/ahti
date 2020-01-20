@@ -1,11 +1,22 @@
 import pytest
 
-from features.models import ContactInfo, Feature, Image, License, SourceType, Tag
+from features.models import (
+    ContactInfo,
+    Feature,
+    Image,
+    License,
+    OpeningHours,
+    OpeningHoursPeriod,
+    SourceType,
+    Tag,
+)
 from features.tests.factories import (
     ContactInfoFactory,
     FeatureFactory,
     ImageFactory,
     LicenseFactory,
+    OpeningHoursFactory,
+    OpeningHoursPeriodFactory,
     SourceTypeFactory,
     TagFactory,
 )
@@ -56,4 +67,21 @@ def test_contact_info():
     ContactInfoFactory()
 
     assert ContactInfo.objects.count() == 1
+    assert Feature.objects.count() == 1
+
+
+@pytest.mark.django_db
+def test_opening_hours_period():
+    OpeningHoursPeriodFactory()
+
+    assert OpeningHoursPeriod.objects.count() == 1
+    assert Feature.objects.count() == 1
+
+
+@pytest.mark.django_db
+def test_opening_hours():
+    OpeningHoursFactory()
+
+    assert OpeningHours.objects.count() == 1
+    assert OpeningHoursPeriod.objects.count() == 1
     assert Feature.objects.count() == 1
