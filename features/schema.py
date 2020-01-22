@@ -86,7 +86,7 @@ class Feature(graphql_geojson.GeoJSONType):
 
     ahti_id = graphene.String(required=True)
     source = graphene.Field(FeatureSource, required=True)
-    name = graphene.String()
+    name = graphene.String(required=True)
     description = graphene.String()
     url = graphene.String()
     modified_at = graphene.DateTime(required=True)

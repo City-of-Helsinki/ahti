@@ -154,7 +154,7 @@ OIDC_API_TOKEN_AUTH = {
 DEFAULT_SRID = 4326  # WGS84
 
 PARLER_LANGUAGES = {None: ({"code": "fi"}, {"code": "sv"}, {"code": "en"})}
-PARLER_DEFAULT_LANGUAGE_CODE = "en"
+PARLER_DEFAULT_LANGUAGE_CODE = "fi"
 
 GRAPHENE = {
     "SCHEMA": "ahti.schema.schema",
