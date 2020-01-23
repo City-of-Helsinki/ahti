@@ -1,3 +1,5 @@
+import datetime
+
 import pytest
 from django.contrib.gis.geos import Point
 from freezegun import freeze_time
@@ -5,11 +7,14 @@ from graphene.test import Client
 from graphql_relay import to_global_id
 
 from ahti.schema import schema
+from features.enums import Weekday
 from features.schema import Feature
 from features.tests.factories import (
     ContactInfoFactory,
     FeatureFactory,
     ImageFactory,
+    OpeningHoursFactory,
+    OpeningHoursPeriodFactory,
     SourceTypeFactory,
     TagFactory,
 )
@@ -188,6 +193,50 @@ def test_feature_contact_info(snapshot, api_client):
                 }
                 email
                 phoneNumber
+              }
+            }
+          }
+        }
+      }
+    }
+    """
+    )
+    snapshot.assert_match(executed)
+
+
+def test_feature_opening_hours(snapshot, api_client):
+    ohp = OpeningHoursPeriodFactory(
+        valid_from=datetime.date(2020, 5, 1),
+        valid_to=datetime.date(2020, 8, 31),
+        comment="Comment",
+    )
+    OpeningHoursFactory(
+        period=ohp,
+        day=Weekday.MONDAY,
+        opens=datetime.time(17),
+        closes=datetime.time(23),
+    )
+    OpeningHoursFactory(
+        period=ohp, day=Weekday.TUESDAY, opens=None, closes=None, all_day=True
+    )
+
+    executed = api_client.execute(
+        """
+    query FeatureOpeningHours {
+      features {
+        edges {
+          node {
+            properties {
+              openingHoursPeriods {
+                validFrom
+                validTo
+                comment
+                openingHours {
+                  day
+                  opens
+                  closes
+                  allDay
+                }
               }
             }
           }

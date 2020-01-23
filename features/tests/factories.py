@@ -3,7 +3,16 @@ from django.contrib.gis.geos import Point
 from django.utils import timezone
 from factory.random import randgen
 
-from features.models import ContactInfo, Feature, Image, License, SourceType, Tag
+from features.models import (
+    ContactInfo,
+    Feature,
+    Image,
+    License,
+    OpeningHours,
+    OpeningHoursPeriod,
+    SourceType,
+    Tag,
+)
 
 
 class SourceTypeFactory(factory.django.DjangoModelFactory):
@@ -67,3 +76,22 @@ class ContactInfoFactory(factory.django.DjangoModelFactory):
     municipality = factory.Faker("city", locale="fi_FI")
     phone_number = factory.Faker("phone_number")
     email = factory.Faker("company_email")
+
+
+class OpeningHoursPeriodFactory(factory.django.DjangoModelFactory):
+    class Meta:
+        model = OpeningHoursPeriod
+
+    feature = factory.SubFactory(FeatureFactory)
+    valid_from = factory.Faker("date_between", start_date="-1y", end_date="today")
+    valid_to = factory.Faker("date_between", start_date="today", end_date="+1y")
+
+
+class OpeningHoursFactory(factory.django.DjangoModelFactory):
+    class Meta:
+        model = OpeningHours
+
+    period = factory.SubFactory(OpeningHoursPeriodFactory)
+    day = factory.Faker("pyint", min_value=1, max_value=7)
+    opens = factory.Faker("time_object")
+    closes = factory.Faker("time_object")

@@ -131,3 +131,39 @@ snapshots["test_feature_contact_info 1"] = {
         }
     }
 }
+
+snapshots["test_feature_opening_hours 1"] = {
+    "data": {
+        "features": {
+            "edges": [
+                {
+                    "node": {
+                        "properties": {
+                            "openingHoursPeriods": [
+                                {
+                                    "comment": "Comment",
+                                    "openingHours": [
+                                        {
+                                            "allDay": False,
+                                            "closes": "23:00:00",
+                                            "day": "MONDAY",
+                                            "opens": "17:00:00",
+                                        },
+                                        {
+                                            "allDay": True,
+                                            "closes": None,
+                                            "day": "TUESDAY",
+                                            "opens": None,
+                                        },
+                                    ],
+                                    "validFrom": "2020-05-01",
+                                    "validTo": "2020-08-31",
+                                }
+                            ]
+                        }
+                    }
+                }
+            ]
+        }
+    }
+}

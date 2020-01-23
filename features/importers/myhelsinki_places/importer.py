@@ -5,10 +5,19 @@ import requests
 from django.conf import settings
 from django.contrib.gis.geos import Point
 from django.utils import timezone
-from django.utils.dateparse import parse_datetime
+from django.utils.dateparse import parse_datetime, parse_time
 
+from features.enums import Weekday
 from features.importers.base import FeatureImporterBase, TagMapper
-from features.models import ContactInfo, Feature, Image, License, SourceType
+from features.models import (
+    ContactInfo,
+    Feature,
+    Image,
+    License,
+    OpeningHours,
+    OpeningHoursPeriod,
+    SourceType,
+)
 
 feature_expression = jmespath.compile(
     """
@@ -33,6 +42,15 @@ data[*].{
     tags: tags[*].{
         id:id,
         name:name
+    }
+    opening_hours: {
+        hours: opening_hours.hours[*].{
+            day: weekday_id,
+            opens: opens,
+            closes: closes,
+            all_day: open24h
+        }
+        comment: opening_hours.openinghours_exception
     }
 }
 """
@@ -63,6 +81,7 @@ class MyHelsinkiImporter(FeatureImporterBase):
             self.import_feature_images(feature, place["images"])
             self.import_feature_tags(feature, place["tags"])
             self.import_feature_contact_info(feature, place["address"])
+            self.import_opening_hours(feature, place["opening_hours"])
 
     @staticmethod
     def import_feature(place: dict, st: SourceType) -> Feature:
@@ -117,7 +136,6 @@ class MyHelsinkiImporter(FeatureImporterBase):
 
     def import_feature_contact_info(self, feature: Feature, address: dict):
         """Imports contact info for the given feature."""
-
         if not (
             address["street_address"]
             or address["postal_code"]
@@ -135,6 +153,46 @@ class MyHelsinkiImporter(FeatureImporterBase):
                     "municipality": address["municipality"] or "",
                 },
             )
+
+    def import_opening_hours(self, feature: Feature, opening_hours: dict):
+        """Imports opening hours for the given feature."""
+
+        def has_data(hours):
+            return bool(hours["opens"] or hours["closes"] or hours["all_day"])
+
+        filtered_hours = filter(has_data, opening_hours["hours"])
+        hours = list(filtered_hours)
+
+        if opening_hours["comment"] or hours:
+            ohps = OpeningHoursPeriod.objects.filter(feature=feature)
+            if ohps.count() > 1:
+                # MyHelsinki places API provides only one set of opening hours,
+                # start from a clean state.
+                ohps.delete()
+
+            ohp, created = OpeningHoursPeriod.objects.get_or_create(
+                feature=feature, defaults={"comment": opening_hours["comment"]}
+            )
+
+            for h in hours:
+                day = Weekday(h["day"])
+                OpeningHours.objects.get_or_create(
+                    period=ohp,
+                    day=day,
+                    defaults={
+                        "opens": parse_time(h["opens"]) if h["opens"] else None,
+                        "closes": parse_time(h["closes"]) if h["closes"] else None,
+                        "all_day": h["all_day"],
+                    },
+                )
+
+            # Delete existing opening hours missing from the data
+            ohp.opening_hours.exclude(
+                day__in=[Weekday(h["day"]) for h in hours]
+            ).delete()
+        else:
+            # Delete any existing opening hours data since its falsy.
+            OpeningHoursPeriod.objects.filter(feature=feature).delete()
 
 
 class MyHelsinkiPlacesClient:
