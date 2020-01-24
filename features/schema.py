@@ -102,9 +102,10 @@ class Feature(graphql_geojson.GeoJSONType):
     class Meta:
         fields = (
             "id",
-            "geometry",
+            "category",
             "created_at",
             "contact_info",
+            "geometry",
             "images",
             "opening_hours_periods",
             "tags",
