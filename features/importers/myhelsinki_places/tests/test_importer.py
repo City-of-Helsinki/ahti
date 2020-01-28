@@ -1,8 +1,5 @@
 import datetime
-import json
-from pathlib import PurePath
 
-import pytest
 from django.contrib.gis.geos import Point
 from django.utils.timezone import utc
 from freezegun import freeze_time
@@ -10,29 +7,11 @@ from utils.pytest import pytest_regex
 
 from features.enums import Weekday
 from features.importers.base import TagMapper
-from features.importers.myhelsinki_places.importer import MyHelsinkiImporter
+from features.importers.myhelsinki_places.importer import MyHelsinkiPlacesClient
 from features.models import ContactInfo, Feature, Image, License, SourceType, Tag
 from features.tests.factories import ContactInfoFactory, OpeningHoursFactory
 
-PLACES_URL = "//open-api.myhelsinki.fi/v1/places/"
-
-
-@pytest.fixture(autouse=True)
-def autouse_db(db):
-    pass
-
-
-@pytest.fixture
-def importer():
-    return MyHelsinkiImporter()
-
-
-@pytest.fixture
-def places_response():
-    path = PurePath(__file__).parent.joinpath("responses", "places_response.json")
-    with open(path.as_posix(), "r") as f:
-        response = json.loads(f.read())
-    return response
+PLACES_URL = MyHelsinkiPlacesClient.base_url + MyHelsinkiPlacesClient.places_url
 
 
 def test_import_all_features_from_source(requests_mock, importer, places_response):
