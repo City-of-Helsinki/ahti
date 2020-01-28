@@ -46,6 +46,7 @@ class FeatureSource(ObjectType):
 class FeatureTranslations(DjangoObjectType):
     class Meta:
         model = apps.get_model("features", "FeatureTranslation")
+        exclude = ("id", "master")
 
 
 class Image(DjangoObjectType):
