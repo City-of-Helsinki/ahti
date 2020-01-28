@@ -8,7 +8,7 @@ from django.utils import timezone
 from django.utils.dateparse import parse_datetime, parse_time
 
 from features.enums import Weekday
-from features.importers.base import FeatureImporterBase, TagMapper
+from features.importers.base import CategoryMapper, FeatureImporterBase, TagMapper
 from features.models import (
     ContactInfo,
     Feature,
@@ -61,14 +61,17 @@ class MyHelsinkiImporter(FeatureImporterBase):
 
     source_system = "myhelsinki"
     source_type = "place"
-
     tag_config = {
         "rules": [{"mapped_names": ["Island"], "id": "island", "name": "saaristo"}],
         "whitelist": [],
     }
+    category_config = {
+        "rules": [{"mapped_names": ["Island"], "id": "island", "name": "Saaret"}],
+    }
 
     def __init__(self):
         self.tag_mapper = TagMapper(self.tag_config)
+        self.category_mapper = CategoryMapper(self.category_config)
 
     def import_features(self):
         st = self.get_source_type()
@@ -80,6 +83,7 @@ class MyHelsinkiImporter(FeatureImporterBase):
             feature = self.import_feature(place, st)
             self.import_feature_images(feature, place["images"])
             self.import_feature_tags(feature, place["tags"])
+            self.import_feature_category(feature, place["tags"])
             self.import_feature_contact_info(feature, place["address"])
             self.import_opening_hours(feature, place["opening_hours"])
 
@@ -133,6 +137,22 @@ class MyHelsinkiImporter(FeatureImporterBase):
             tags = []
         feature_tags = [tag for tag in map(self.tag_mapper.get_tag, tags) if tag]
         feature.tags.set(feature_tags)
+
+    def import_feature_category(self, feature: Feature, tags: Iterable[dict]):
+        """Imports and set category for the given Feature.
+
+        Categories are mapped based on features tags. Pre-existing
+        categories on features are not updated.
+        """
+        if feature.category:
+            return
+
+        for tag in tags:
+            category = self.category_mapper.get_category(tag)
+
+            if category:
+                feature.category = category
+                Feature.objects.filter(pk=feature.pk).update(category=category)
 
     def import_feature_contact_info(self, feature: Feature, address: dict):
         """Imports contact info for the given feature."""
