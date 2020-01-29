@@ -1,4 +1,5 @@
 import datetime
+import math
 
 from django.contrib.gis.geos import Point
 from django.utils.timezone import utc
@@ -53,5 +54,5 @@ def test_geometry_is_correct(requests_mock, importer, places_response):
     st = SourceType.objects.first()
     f = Feature.objects.get(source_type=st, source_id="2792")
     assert isinstance(f.geometry, Point)
-    assert f.geometry.x == 25.052854537963867
-    assert f.geometry.y == 60.10136032104492
+    assert math.isclose(f.geometry.x, 25.052854537963867)
+    assert math.isclose(f.geometry.y, 60.10136032104492)
