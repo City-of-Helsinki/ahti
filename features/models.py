@@ -68,6 +68,13 @@ class Feature(TranslatableModel, TimestampedModel):
         verbose_name=_("category"),
     )
     tags = models.ManyToManyField("Tag", related_name="features", through="FeatureTag")
+    parents = models.ManyToManyField(
+        "self",
+        symmetrical=False,
+        related_name="children",
+        verbose_name=_("parents"),
+        help_text=_("Parents of this feature (e.g. stops along a route etc.)"),
+    )
 
     class Meta:
         verbose_name = _("feature")
