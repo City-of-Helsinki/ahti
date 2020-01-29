@@ -104,6 +104,7 @@ INSTALLED_APPS = [
     "features",
     # "features.importers.dummy",
     "features.importers.myhelsinki_places",
+    "categories",
 ]
 
 MIDDLEWARE = [

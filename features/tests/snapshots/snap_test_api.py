@@ -167,3 +167,23 @@ snapshots["test_feature_opening_hours 1"] = {
         }
     }
 }
+
+snapshots["test_feature_category 1"] = {
+    "data": {
+        "features": {
+            "edges": [
+                {
+                    "node": {
+                        "properties": {
+                            "category": {
+                                "description": "Island description",
+                                "id": "ahti:category:island",
+                                "name": "Island",
+                            }
+                        }
+                    }
+                }
+            ]
+        }
+    }
+}

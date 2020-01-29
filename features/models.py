@@ -59,6 +59,14 @@ class Feature(TranslatableModel, TimestampedModel):
             "Most recent time when the feature was mapped from the source data"
         ),
     )
+    category = models.ForeignKey(
+        "categories.Category",
+        on_delete=models.SET_NULL,
+        related_name="features",
+        blank=True,
+        null=True,
+        verbose_name=_("category"),
+    )
     tags = models.ManyToManyField("Tag", related_name="features", through="FeatureTag")
 
     class Meta:

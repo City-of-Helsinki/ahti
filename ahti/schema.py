@@ -1,9 +1,10 @@
 import graphene
 
+import categories.schema
 import features.schema
 
 
-class Query(features.schema.Query, graphene.ObjectType):
+class Query(features.schema.Query, categories.schema.Query, graphene.ObjectType):
     pass
 
 

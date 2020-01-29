@@ -46,6 +46,7 @@ class FeatureSource(ObjectType):
 class FeatureTranslations(DjangoObjectType):
     class Meta:
         model = apps.get_model("features", "FeatureTranslation")
+        exclude = ("id", "master")
 
 
 class Image(DjangoObjectType):
@@ -102,9 +103,10 @@ class Feature(graphql_geojson.GeoJSONType):
     class Meta:
         fields = (
             "id",
-            "geometry",
+            "category",
             "created_at",
             "contact_info",
+            "geometry",
             "images",
             "opening_hours_periods",
             "tags",

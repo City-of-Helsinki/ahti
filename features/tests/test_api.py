@@ -7,6 +7,7 @@ from graphene.test import Client
 from graphql_relay import to_global_id
 
 from ahti.schema import schema
+from categories.tests.factories import CategoryFactory
 from features.enums import Weekday
 from features.schema import Feature
 from features.tests.factories import (
@@ -237,6 +238,34 @@ def test_feature_opening_hours(snapshot, api_client):
                   closes
                   allDay
                 }
+              }
+            }
+          }
+        }
+      }
+    }
+    """
+    )
+    snapshot.assert_match(executed)
+
+
+def test_feature_category(snapshot, api_client):
+    category = CategoryFactory(
+        id="ahti:category:island", name="Island", description="Island description"
+    )
+    FeatureFactory(category=category)
+
+    executed = api_client.execute(
+        """
+    query FeatureCategories {
+      features {
+        edges {
+          node {
+            properties {
+              category {
+                id
+                name
+                description
               }
             }
           }

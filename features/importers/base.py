@@ -1,6 +1,7 @@
 from abc import ABCMeta, abstractmethod
 from typing import Optional
 
+from categories.models import Category
 from features.models import SourceType, Tag
 
 
@@ -30,48 +31,63 @@ class FeatureImporterBase(metaclass=ABCMeta):
         """
 
 
-class TagMapper:
-    """Maps external tags into Tag instances in the system.
+class MapperBase:
+    """Base for implementing a mapper with configuration.
 
-    External tags present in imported sources are either whitelisted,
-    mapped into internal tags or ignored. Whitelisted tags are imported
-    with their information. Mapped tags are created as internal tags.
-    Ignoring means that there are no whitelisting or mapping rules that
-    match a given tag so it is not imported. Whitelisting and mapping
-    rules are case insensitive.
+    This base class handles processing the mapping configuration into a structure which
+    is faster to search from. Whitelisting configuration can be enabled by a subclass
+    with `whitelist` class variable. External strings in whitelisting and mapping rules
+    should be treated as case insensitive.
 
     Example configuration:
     {
         "rules": [
             {
-                # External tags which are mapped into this internal tag
+                # External strings which are mapped into an internal object
                 "mapped_names": ["Swimming", "Beach"],
-                "id": "beach",  # Identifier for the internal tag
-                "name": "Beach",  # Name of the internal tag
+                "id": "beach",  # Identifier internal object
+                "name": "Beach",  # Name of the internal object
             },
             ...
         ],
-        # List of tags which are imported without mapping
+        # If whitelisting is enabled
         "whitelist": ["Island", "Sauna"],
     }
     """
 
-    internal_tag_prefix = "ahti:tag:"
+    whitelist = False
 
     def __init__(self, config: dict):
         self.config = {
             "rules": {},
-            "whitelist": [item.lower() for item in config.get("whitelist", [])],
         }
+
+        if self.whitelist:
+            self.config["whitelist"] = [
+                item.lower() for item in config.get("whitelist", [])
+            ]
 
         for rule in config.get("rules", []):
             for mapped_name in rule["mapped_names"]:
                 self.config[mapped_name.lower()] = rule
 
+
+class TagMapper(MapperBase):
+    """Maps external tags into Tag instances in the system.
+
+    External tags present in imported sources are either whitelisted,
+    mapped into internal tags or ignored. Whitelisted tags are imported
+    with their information. Mapped tags are created as internal tags.
+    Only tags defined in the configuration will be considered.
+    """
+
+    internal_tag_prefix = "ahti:tag:"
+    whitelist = True
+
     def get_tag(self, tag: dict) -> Optional[Tag]:
         """Return a Tag instance for the given input.
 
-        Tag instance is created or returned if the given input
+        Tag instance is created and returned if the given input
         matches a Tag recognised by this mapper.
 
         Expected format for the tag input: {"id": str, "name": str}
@@ -94,3 +110,31 @@ class TagMapper:
             return tag
 
         return None
+
+
+class CategoryMapper(MapperBase):
+    """Maps external categories into Category instances in the system.
+
+    External categories present in imported sources are either: mapped
+    into internal categories or ignored. Mapped categories are created
+    as internal categories. Only categories defined in the configuration
+    will be considered.
+    """
+
+    internal_category_prefix = "ahti:category:"
+
+    def get_category(self, category: dict) -> Optional[Category]:
+        """Return a Category instance for the given input.
+
+        Category instance is created and returned if the given input
+        matches a Category recognised by this mapper.
+
+        Expected format for the category input: {"id": str, "name": str}
+        """
+        mapping = self.config.get(category["name"].lower())
+        if mapping:
+            category, created = Category.objects.language("fi").update_or_create(
+                id=f"{self.internal_category_prefix}{mapping['id']}",
+                defaults={"name": mapping["name"]},
+            )
+            return category
