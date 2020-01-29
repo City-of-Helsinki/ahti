@@ -187,3 +187,30 @@ snapshots["test_feature_category 1"] = {
         }
     }
 }
+
+snapshots["test_feature_parents_and_children 1"] = {
+    "data": {
+        "features": {
+            "edges": [
+                {
+                    "node": {
+                        "properties": {
+                            "ahtiId": "test:test:sid0",
+                            "children": [{"properties": {"ahtiId": "test:test:sid1"}}],
+                            "parents": [],
+                        }
+                    }
+                },
+                {
+                    "node": {
+                        "properties": {
+                            "ahtiId": "test:test:sid1",
+                            "children": [],
+                            "parents": [{"properties": {"ahtiId": "test:test:sid0"}}],
+                        }
+                    }
+                },
+            ]
+        }
+    }
+}

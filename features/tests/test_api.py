@@ -275,3 +275,37 @@ def test_feature_category(snapshot, api_client):
     """
     )
     snapshot.assert_match(executed)
+
+
+def test_feature_parents_and_children(snapshot, api_client):
+    st = SourceTypeFactory(system="test", type="test")
+    f1 = FeatureFactory(source_type=st, source_id="sid0")
+    f2 = FeatureFactory(source_type=st, source_id="sid1")
+    f2.parents.set([f1])
+
+    executed = api_client.execute(
+        """
+    query FeatureParents {
+      features {
+        edges {
+          node {
+            properties {
+              ahtiId
+              parents {
+                properties {
+                  ahtiId
+                }
+              }
+              children {
+                properties {
+                  ahtiId
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+    """
+    )
+    snapshot.assert_match(executed)
