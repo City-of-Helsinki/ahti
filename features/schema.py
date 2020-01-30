@@ -122,6 +122,8 @@ class Feature(graphql_geojson.GeoJSONType):
     description = graphene.String()
     url = graphene.String()
     modified_at = graphene.DateTime(required=True)
+    parents = graphene.List("features.schema.Feature", required=True)
+    children = graphene.List("features.schema.Feature", required=True)
 
     def resolve_source(self: models.Feature, info, **kwargs):
         return {
@@ -132,6 +134,12 @@ class Feature(graphql_geojson.GeoJSONType):
 
     def resolve_modified_at(self: models.Feature, info, **kwargs):
         return self.mapped_at
+
+    def resolve_parents(self: models.Feature, info, **kwargs):
+        return self.parents.all()
+
+    def resolve_children(self: models.Feature, info, **kwargs):
+        return self.children.all()
 
 
 class Query(graphene.ObjectType):
