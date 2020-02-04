@@ -12,3 +12,9 @@ class Weekday(models.IntegerChoices):
     FRIDAY = 5, _("Friday")
     SATURDAY = 6, _("Saturday")
     SUNDAY = 7, _("Sunday")
+
+
+class OverrideFieldType(models.TextChoices):
+    """Enumeration for overridable fields."""
+
+    NAME = "NAME", _("Name")
