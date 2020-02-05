@@ -8,7 +8,7 @@ from graphql_relay import to_global_id
 
 from ahti.schema import schema
 from categories.tests.factories import CategoryFactory
-from features.enums import Weekday
+from features.enums import OverrideFieldType, Weekday
 from features.schema import Feature
 from features.tests.factories import (
     ContactInfoFactory,
@@ -16,6 +16,7 @@ from features.tests.factories import (
     ImageFactory,
     OpeningHoursFactory,
     OpeningHoursPeriodFactory,
+    OverrideFactory,
     SourceTypeFactory,
     TagFactory,
 )
@@ -309,3 +310,31 @@ def test_feature_parents_and_children(snapshot, api_client):
     """
     )
     snapshot.assert_match(executed)
+
+
+def test_feature_name_override(api_client):
+    """API should return the override value instead of the original value."""
+    f = FeatureFactory(name="Original name")
+    override_name = "Override name"
+    OverrideFactory(feature=f, field=OverrideFieldType.NAME, string_value=override_name)
+
+    executed = api_client.execute(
+        """
+    query FeaturesOverrideName {
+      features {
+        edges {
+          node {
+            properties {
+              name
+            }
+          }
+        }
+      }
+    }
+    """
+    )
+
+    assert (
+        executed["data"]["features"]["edges"][0]["node"]["properties"]["name"]
+        == override_name
+    )
