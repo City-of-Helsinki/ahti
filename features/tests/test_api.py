@@ -5,6 +5,7 @@ from django.contrib.gis.geos import Point
 from freezegun import freeze_time
 from graphene.test import Client
 from graphql_relay import to_global_id
+from utils.pytest import pytest_regex
 
 from ahti.schema import schema
 from categories.tests.factories import CategoryFactory
@@ -310,6 +311,41 @@ def test_feature_parents_and_children(snapshot, api_client):
     """
     )
     snapshot.assert_match(executed)
+
+
+def test_feature_override_timestamp_is_returned(api_client):
+    """API returns the most recent modification timestamp for a feature.
+
+    The source for the value is either the latest override modification
+    timestamp or feature's mapping timestamp.
+    """
+    with freeze_time("2019-12-16 12:00:01"):
+        f = FeatureFactory()
+
+    with freeze_time("2020-02-05 12:00:01"):
+        OverrideFactory(
+            feature=f, field=OverrideFieldType.NAME, string_value="Override"
+        )
+
+    executed = api_client.execute(
+        """
+    query FeaturesOverrideModified {
+      features {
+        edges {
+          node {
+            properties {
+              modifiedAt
+            }
+          }
+        }
+      }
+    }
+    """
+    )
+
+    assert executed["data"]["features"]["edges"][0]["node"]["properties"][
+        "modifiedAt"
+    ] == pytest_regex(r"2020\-02\-05")
 
 
 def test_feature_name_override(api_client):

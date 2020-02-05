@@ -139,7 +139,12 @@ class Feature(graphql_geojson.GeoJSONType):
         return self.name
 
     def resolve_modified_at(self: models.Feature, info, **kwargs):
-        return self.mapped_at
+        latest_override = self.overrides.order_by("-modified_at").first()
+        return (
+            max(self.mapped_at, latest_override.modified_at)
+            if latest_override
+            else self.mapped_at
+        )
 
     def resolve_parents(self: models.Feature, info, **kwargs):
         return self.parents.all()
