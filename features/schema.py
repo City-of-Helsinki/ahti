@@ -5,7 +5,7 @@ from graphene import ObjectType, relay
 from graphene_django import DjangoConnectionField, DjangoObjectType
 
 from features import models
-from features.enums import Weekday
+from features.enums import OverrideFieldType, Weekday
 
 WeekdayEnum = graphene.Enum.from_enum(
     Weekday, description=lambda e: e.label if e else ""
@@ -132,8 +132,19 @@ class Feature(graphql_geojson.GeoJSONType):
             "id": self.source_id,
         }
 
+    def resolve_name(self: models.Feature, info, **kwargs):
+        name_override = self.overrides.filter(field=OverrideFieldType.NAME).first()
+        if name_override:
+            return name_override.value
+        return self.name
+
     def resolve_modified_at(self: models.Feature, info, **kwargs):
-        return self.mapped_at
+        latest_override = self.overrides.order_by("-modified_at").first()
+        return (
+            max(self.mapped_at, latest_override.modified_at)
+            if latest_override
+            else self.mapped_at
+        )
 
     def resolve_parents(self: models.Feature, info, **kwargs):
         return self.parents.all()

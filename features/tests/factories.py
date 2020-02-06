@@ -3,6 +3,7 @@ from django.contrib.gis.geos import Point
 from django.utils import timezone
 from factory.random import randgen
 
+from features.enums import OverrideFieldType
 from features.models import (
     ContactInfo,
     Feature,
@@ -10,6 +11,7 @@ from features.models import (
     License,
     OpeningHours,
     OpeningHoursPeriod,
+    Override,
     SourceType,
     Tag,
 )
@@ -95,3 +97,11 @@ class OpeningHoursFactory(factory.django.DjangoModelFactory):
     day = factory.Faker("pyint", min_value=1, max_value=7)
     opens = factory.Faker("time_object")
     closes = factory.Faker("time_object")
+
+
+class OverrideFactory(factory.django.DjangoModelFactory):
+    class Meta:
+        model = Override
+
+    feature = factory.SubFactory(FeatureFactory)
+    field = factory.Faker("random_element", elements=OverrideFieldType)

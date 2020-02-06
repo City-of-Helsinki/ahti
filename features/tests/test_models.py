@@ -7,6 +7,7 @@ from features.models import (
     License,
     OpeningHours,
     OpeningHoursPeriod,
+    Override,
     SourceType,
     Tag,
 )
@@ -17,19 +18,23 @@ from features.tests.factories import (
     LicenseFactory,
     OpeningHoursFactory,
     OpeningHoursPeriodFactory,
+    OverrideFactory,
     SourceTypeFactory,
     TagFactory,
 )
 
 
-@pytest.mark.django_db
+@pytest.fixture(autouse=True)
+def autouse_db(db):
+    pass
+
+
 def test_source_type():
     SourceTypeFactory()
 
     assert SourceType.objects.count() == 1
 
 
-@pytest.mark.django_db
 def test_feature():
     FeatureFactory()
 
@@ -39,7 +44,6 @@ def test_feature():
     assert f.ahti_id == f"{f.source_type.system}:{f.source_type.type}:{f.source_id}"
 
 
-@pytest.mark.django_db
 def test_image():
     ImageFactory()
 
@@ -48,21 +52,18 @@ def test_image():
     assert License.objects.count() == 1
 
 
-@pytest.mark.django_db
 def test_license():
     LicenseFactory()
 
     assert License.objects.count() == 1
 
 
-@pytest.mark.django_db
 def test_tag():
     TagFactory()
 
     assert Tag.objects.count() == 1
 
 
-@pytest.mark.django_db
 def test_contact_info():
     ContactInfoFactory()
 
@@ -70,7 +71,6 @@ def test_contact_info():
     assert Feature.objects.count() == 1
 
 
-@pytest.mark.django_db
 def test_opening_hours_period():
     OpeningHoursPeriodFactory()
 
@@ -78,10 +78,16 @@ def test_opening_hours_period():
     assert Feature.objects.count() == 1
 
 
-@pytest.mark.django_db
 def test_opening_hours():
     OpeningHoursFactory()
 
     assert OpeningHours.objects.count() == 1
     assert OpeningHoursPeriod.objects.count() == 1
+    assert Feature.objects.count() == 1
+
+
+def test_override():
+    OverrideFactory()
+
+    assert Override.objects.count() == 1
     assert Feature.objects.count() == 1

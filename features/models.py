@@ -4,7 +4,7 @@ from parler.models import TranslatableModel, TranslatedFields
 from utils.models import TimestampedModel
 
 from ahti import settings
-from features.enums import Weekday
+from features.enums import OverrideFieldType, Weekday
 
 
 class SourceType(models.Model):
@@ -241,3 +241,42 @@ class OpeningHours(models.Model):
         verbose_name = _("opening hours")
         verbose_name_plural = _("opening hours")
         ordering = ("id",)
+
+
+class Override(TranslatableModel, TimestampedModel):
+    feature = models.ForeignKey(
+        Feature,
+        on_delete=models.CASCADE,
+        related_name="overrides",
+        verbose_name=_("feature"),
+    )
+    field = models.CharField(
+        max_length=4,
+        choices=OverrideFieldType.choices,
+        verbose_name=_("field"),
+        help_text=_("Field that is overridden"),
+    )
+
+    translations = TranslatedFields(
+        string_value=models.TextField(
+            blank=True,
+            verbose_name=_("text value"),
+            help_text=_("String value for the override"),
+        )
+    )
+
+    @property
+    def value(self):
+        if self.field == OverrideFieldType.NAME:
+            return self.safe_translation_getter("string_value", "")
+        return None
+
+    class Meta:
+        verbose_name = _("override")
+        verbose_name_plural = _("overrides")
+        ordering = ("id",)
+        constraints = [
+            models.UniqueConstraint(
+                fields=["feature", "field"], name="unique_override_feature_field"
+            ),
+        ]
