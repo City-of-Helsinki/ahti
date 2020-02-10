@@ -61,6 +61,14 @@ class MyHelsinkiImporter(FeatureImporterBase):
 
     source_system = "myhelsinki"
     source_type = "place"
+
+    # Query parameters: http://open-api.myhelsinki.fi/doc#/v1places/listAll
+    api_calls = [
+        {"tags_search": ["Island"]},  # matko2:47 Island
+        {"distance_filter": "60.1346, 25.0112, 1.2"},  # Vallisaari
+        {"distance_filter": "60.1443, 24.9848, 1"},  # Suomenlinna
+    ]
+
     tag_config = {
         "rules": [{"mapped_names": ["Island"], "id": "island", "name": "saaristo"}],
         "whitelist": [],
@@ -70,25 +78,29 @@ class MyHelsinkiImporter(FeatureImporterBase):
     }
 
     def __init__(self):
+        super().__init__()
         self.tag_mapper = TagMapper(self.tag_config)
         self.category_mapper = CategoryMapper(self.category_config)
 
     def import_features(self):
-        st = self.get_source_type()
-
+        source_type = self.get_source_type()
         mhc = MyHelsinkiPlacesClient()
-        places = mhc.fetch_places().json()
 
+        for call_parameters in self.api_calls:
+            places = mhc.fetch_places(parameters=call_parameters).json()
+            self._process_features(places, source_type)
+
+    def _process_features(self, places: dict, source_type: SourceType):
         for place in feature_expression.search(places):
-            feature = self.import_feature(place, st)
-            self.import_feature_images(feature, place["images"])
-            self.import_feature_tags(feature, place["tags"])
-            self.import_feature_category(feature, place["tags"])
-            self.import_feature_contact_info(feature, place["address"])
-            self.import_opening_hours(feature, place["opening_hours"])
+            feature = self._import_feature(place, source_type)
+            self._import_feature_images(feature, place["images"])
+            self._import_feature_tags(feature, place["tags"])
+            self._import_feature_category(feature, place["tags"])
+            self._import_feature_contact_info(feature, place["address"])
+            self._import_opening_hours(feature, place["opening_hours"])
 
     @staticmethod
-    def import_feature(place: dict, st: SourceType) -> Feature:
+    def _import_feature(place: dict, st: SourceType) -> Feature:
         values = {
             "name": place["name"],
             "description": place["description"],
@@ -104,7 +116,7 @@ class MyHelsinkiImporter(FeatureImporterBase):
         return feature
 
     @staticmethod
-    def import_feature_images(feature: Feature, images: Iterable[dict]):
+    def _import_feature_images(feature: Feature, images: Iterable[dict]):
         """Imports images for a feature and sets the image license.
 
         Stale images no longer available in the source are removed.
@@ -131,14 +143,14 @@ class MyHelsinkiImporter(FeatureImporterBase):
                 defaults={"copyright_owner": copyright_owner, "license": license},
             )
 
-    def import_feature_tags(self, feature: Feature, tags: Iterable[dict]):
+    def _import_feature_tags(self, feature: Feature, tags: Iterable[dict]):
         """Imports and sets tags for the given feature."""
         if not tags:
             tags = []
         feature_tags = [tag for tag in map(self.tag_mapper.get_tag, tags) if tag]
         feature.tags.set(feature_tags)
 
-    def import_feature_category(self, feature: Feature, tags: Iterable[dict]):
+    def _import_feature_category(self, feature: Feature, tags: Iterable[dict]):
         """Imports and set category for the given Feature.
 
         Categories are mapped based on features tags. Pre-existing
@@ -154,7 +166,7 @@ class MyHelsinkiImporter(FeatureImporterBase):
                 feature.category = category
                 Feature.objects.filter(pk=feature.pk).update(category=category)
 
-    def import_feature_contact_info(self, feature: Feature, address: dict):
+    def _import_feature_contact_info(self, feature: Feature, address: dict):
         """Imports contact info for the given feature."""
         if not (
             address["street_address"]
@@ -174,7 +186,7 @@ class MyHelsinkiImporter(FeatureImporterBase):
                 },
             )
 
-    def import_opening_hours(self, feature: Feature, opening_hours: dict):
+    def _import_opening_hours(self, feature: Feature, opening_hours: dict):
         """Imports opening hours for the given feature."""
 
         def has_data(hours):
@@ -216,7 +228,6 @@ class MyHelsinkiImporter(FeatureImporterBase):
 
 
 class MyHelsinkiPlacesClient:
-    tags = ("Island",)  # matko2:47 Island
     base_url = "http://open-api.myhelsinki.fi"
     places_url = "/v1/places/"
     place_url = "/v1/place/{id}"
@@ -224,11 +235,13 @@ class MyHelsinkiPlacesClient:
     translation_langs = ("en", "sv")
     timeout = 10
 
-    def fetch_places(self) -> requests.Response:
+    def fetch_places(self, parameters: dict = None) -> requests.Response:
         params = {
             "language_filter": self.main_lang,
-            "tags_search": self.tags,
         }
+        if parameters:
+            params.update(parameters)
+
         headers = {"accept": "application/json"}
         response = requests.get(
             self.base_url + self.places_url,

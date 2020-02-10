@@ -13,7 +13,9 @@ def autouse_db(db):
 
 @pytest.fixture
 def importer():
-    return MyHelsinkiImporter()
+    mhi = MyHelsinkiImporter()
+    mhi.api_calls = [{}]  # Response is mocked, parameters are redundant
+    return mhi
 
 
 @pytest.fixture
