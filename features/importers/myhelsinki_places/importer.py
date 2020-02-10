@@ -192,7 +192,9 @@ class MyHelsinkiImporter(FeatureImporterBase):
         def has_data(hours):
             return bool(hours["opens"] or hours["closes"] or hours["all_day"])
 
-        filtered_hours = filter(has_data, opening_hours["hours"])
+        filtered_hours = (
+            filter(has_data, opening_hours["hours"]) if opening_hours["hours"] else []
+        )
         hours = list(filtered_hours)
 
         if opening_hours["comment"] or hours:
