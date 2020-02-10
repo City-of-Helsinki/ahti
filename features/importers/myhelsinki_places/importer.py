@@ -76,6 +76,8 @@ class MyHelsinkiImporter(FeatureImporterBase):
     category_config = {
         "rules": [{"mapped_names": ["Island"], "id": "island", "name": "Saaret"}],
     }
+    # Only images with these licenses are imported.
+    allowed_image_licenses = ["All rights reserved.", "MyHelsinki license type A"]
 
     def __init__(self):
         super().__init__()
@@ -115,23 +117,22 @@ class MyHelsinkiImporter(FeatureImporterBase):
         )
         return feature
 
-    @staticmethod
-    def _import_feature_images(feature: Feature, images: Iterable[dict]):
+    def _import_feature_images(self, feature: Feature, images: Iterable[dict]):
         """Imports images for a feature and sets the image license.
 
         Stale images no longer available in the source are removed.
         """
+        processed_images = []
         if not images:
             images = []
-
-        # Remove images no longer available in the source
-        urls = [image["url"] for image in images]
-        feature.images.exclude(url__in=urls).delete()
 
         for image in images:
             url = image["url"]
             copyright_owner = image["copyright_owner"]
             license_name = image["license"]
+
+            if license_name not in self.allowed_image_licenses:
+                continue
 
             license = License.objects.translated("fi", name=license_name).first()
             if not license:
@@ -142,6 +143,10 @@ class MyHelsinkiImporter(FeatureImporterBase):
                 url=url,
                 defaults={"copyright_owner": copyright_owner, "license": license},
             )
+            processed_images.append(url)
+
+        # Remove images that are unusable or no longer available in the source
+        feature.images.exclude(url__in=processed_images).delete()
 
     def _import_feature_tags(self, feature: Feature, tags: Iterable[dict]):
         """Imports and sets tags for the given feature."""
