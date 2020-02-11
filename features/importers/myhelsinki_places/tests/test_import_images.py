@@ -54,3 +54,54 @@ def test_image_licenses_is_set_for_an_image(requests_mock, importer, places_resp
         ).count()
         == 3
     )
+
+
+def test_only_import_images_with_allowed_licenses(
+    requests_mock, importer, places_response
+):
+    requests_mock.get(PLACES_URL, json=places_response)
+    importer.allowed_image_licenses = ["MyHelsinki license type A"]
+
+    importer.import_features()
+
+    assert (
+        Image.objects.filter(
+            license__translations__name="All rights reserved.",
+        ).count()
+        == 0
+    )
+
+
+def test_delete_image_with_wrong_new_license(requests_mock, importer, places_response):
+    requests_mock.get(PLACES_URL, json=places_response)
+
+    importer.import_features()
+
+    importer.allowed_image_licenses = ["MyHelsinki license type A"]
+    importer.import_features()
+
+    assert (
+        Image.objects.filter(
+            feature__source_id="2792",
+            license__translations__name="All rights reserved.",
+        ).count()
+        == 0
+    )
+
+
+def test_image_is_deleted(requests_mock, importer, places_response):
+    """When a specific image is not available any more it should be deleted.
+
+    Most likely it means that the image not available on the previous url.
+    """
+    requests_mock.get(PLACES_URL, json=places_response)
+
+    importer.import_features()
+
+    # Remove all images from the response
+    for place in places_response["data"]:
+        place["description"]["images"] = []
+
+    importer.import_features()
+
+    assert Image.objects.count() == 0
