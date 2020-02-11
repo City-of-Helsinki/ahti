@@ -15,7 +15,7 @@ django-graphql-geojson==0.1.4
 django-graphql-jwt==0.3.0
 django-helusers==0.5.2
 django-parler==2.0.1
-django==3.0.2
+django==3.0.3
 djangorestframework==3.11.0  # via drf-oidc-auth
 drf-oidc-auth==0.9        # via django-helusers
 ecdsa==0.15               # via python-jose
