@@ -21,6 +21,11 @@ class SourceType(models.Model):
         verbose_name = _("source type")
         verbose_name_plural = _("source types")
         ordering = ("id",)
+        constraints = [
+            models.UniqueConstraint(
+                fields=["system", "type"], name="unique_source_type"
+            ),
+        ]
 
 
 class Feature(TranslatableModel, TimestampedModel):
