@@ -1,0 +1,15 @@
+{
+  "api_calls":  [
+    {"tags_search": ["Island"]},
+    {"distance_filter": "60.1346, 25.0112, 1.2"},
+    {"distance_filter": "60.1443, 24.9848, 1"}
+  ],
+  "tag_config": {
+    "rules": [{"mapped_names": ["Island"], "id": "island", "name": "saaristo"}],
+    "whitelist": []
+  },
+  "category_config": {
+    "rules": [{"mapped_names": ["Island"], "id": "island", "name": "Saaret"}]
+  },
+  "allowed_image_licenses": ["All rights reserved.", "MyHelsinki license type A"]
+}

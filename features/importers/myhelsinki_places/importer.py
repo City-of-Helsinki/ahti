@@ -9,6 +9,7 @@ from django.utils.dateparse import parse_datetime, parse_time
 
 from features.enums import Weekday
 from features.importers.base import CategoryMapper, FeatureImporterBase, TagMapper
+from features.importers.myhelsinki_places import app_settings
 from features.models import (
     ContactInfo,
     Feature,
@@ -62,33 +63,16 @@ class MyHelsinkiImporter(FeatureImporterBase):
     source_system = "myhelsinki"
     source_type = "place"
 
-    # Query parameters: http://open-api.myhelsinki.fi/doc#/v1places/listAll
-    api_calls = [
-        {"tags_search": ["Island"]},  # matko2:47 Island
-        {"distance_filter": "60.1346, 25.0112, 1.2"},  # Vallisaari
-        {"distance_filter": "60.1443, 24.9848, 1"},  # Suomenlinna
-    ]
-
-    tag_config = {
-        "rules": [{"mapped_names": ["Island"], "id": "island", "name": "saaristo"}],
-        "whitelist": [],
-    }
-    category_config = {
-        "rules": [{"mapped_names": ["Island"], "id": "island", "name": "Saaret"}],
-    }
-    # Only images with these licenses are imported.
-    allowed_image_licenses = ["All rights reserved.", "MyHelsinki license type A"]
-
     def __init__(self):
         super().__init__()
-        self.tag_mapper = TagMapper(self.tag_config)
-        self.category_mapper = CategoryMapper(self.category_config)
+        self.tag_mapper = TagMapper(app_settings.TAG_CONFIG)
+        self.category_mapper = CategoryMapper(app_settings.CATEGORY_CONFIG)
 
     def import_features(self):
         source_type = self.get_source_type()
         mhc = MyHelsinkiPlacesClient()
 
-        for call_parameters in self.api_calls:
+        for call_parameters in app_settings.API_CALLS:
             places = mhc.fetch_places(parameters=call_parameters).json()
             self._process_features(places, source_type)
 
@@ -131,7 +115,7 @@ class MyHelsinkiImporter(FeatureImporterBase):
             copyright_owner = image["copyright_owner"]
             license_name = image["license"]
 
-            if license_name not in self.allowed_image_licenses:
+            if license_name not in app_settings.ALLOWED_IMAGE_LICENSES:
                 continue
 
             license = License.objects.translated("fi", name=license_name).first()
