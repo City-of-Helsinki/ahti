@@ -1,9 +1,18 @@
+import pytest
 from utils.pytest import pytest_regex
 
 from features.importers.myhelsinki_places.importer import MyHelsinkiPlacesClient
 from features.models import Image, License
 
 PLACES_URL = MyHelsinkiPlacesClient.base_url + MyHelsinkiPlacesClient.places_url
+
+
+@pytest.fixture(autouse=True)
+def setup_images(settings):
+    settings.MYHELSINKI_PLACES_ALLOWED_IMAGE_LICENSES = [
+        "All rights reserved.",
+        "MyHelsinki license type A",
+    ]
 
 
 def test_images_are_imported_for_features(requests_mock, importer, places_response):
@@ -57,10 +66,10 @@ def test_image_licenses_is_set_for_an_image(requests_mock, importer, places_resp
 
 
 def test_only_import_images_with_allowed_licenses(
-    requests_mock, importer, places_response
+    requests_mock, importer, places_response, settings
 ):
+    settings.MYHELSINKI_PLACES_ALLOWED_IMAGE_LICENSES = ["MyHelsinki license type A"]
     requests_mock.get(PLACES_URL, json=places_response)
-    importer.allowed_image_licenses = ["MyHelsinki license type A"]
 
     importer.import_features()
 
@@ -72,12 +81,15 @@ def test_only_import_images_with_allowed_licenses(
     )
 
 
-def test_delete_image_with_wrong_new_license(requests_mock, importer, places_response):
+def test_delete_image_with_wrong_new_license(
+    requests_mock, importer, places_response, settings
+):
     requests_mock.get(PLACES_URL, json=places_response)
 
     importer.import_features()
 
-    importer.allowed_image_licenses = ["MyHelsinki license type A"]
+    # Reduce the set of allowed image licenses
+    settings.MYHELSINKI_PLACES_ALLOWED_IMAGE_LICENSES = ["MyHelsinki license type A"]
     importer.import_features()
 
     assert (

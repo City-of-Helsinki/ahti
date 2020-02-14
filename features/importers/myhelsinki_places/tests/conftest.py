@@ -11,11 +11,16 @@ def autouse_db(db):
     pass
 
 
+@pytest.fixture(autouse=True)
+def setup_test_environment(settings):
+    settings.MYHELSINKI_PLACES_API_CALLS = [
+        {}
+    ]  # Response is mocked, parameters are redundant
+
+
 @pytest.fixture
 def importer():
-    mhi = MyHelsinkiImporter()
-    mhi.api_calls = [{}]  # Response is mocked, parameters are redundant
-    return mhi
+    return MyHelsinkiImporter()
 
 
 @pytest.fixture
