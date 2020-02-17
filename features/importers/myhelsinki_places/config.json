@@ -1,6 +1,6 @@
 {
   "api_calls":  [
-    {"tags_search": ["Island"]}
+    {}
   ],
   "tag_config": {
     "rules": [{"mapped_names": ["Island"], "id": "island", "name": "saaristo"}],
