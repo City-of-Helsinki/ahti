@@ -1,8 +1,11 @@
+import logging
 import sys
 
 from django.core.management.base import BaseCommand
 
 from features.importers.registry import importers
+
+logging.getLogger(__name__)
 
 
 class Command(BaseCommand):
@@ -28,6 +31,11 @@ class Command(BaseCommand):
 
         for identifier, importer_class in enabled_importers:
             self.stdout.write(self.style.SUCCESS(f"Importing {identifier}"))
-            importer_class().import_features()
+            try:
+                importer_class().import_features()
+            except Exception:
+                message = f"Importer {importer_class} failed to import data"
+                logging.exception(message)
+                self.stderr.write(self.style.ERROR(message))
 
         self.stdout.write(self.style.SUCCESS("Feature importers completed"))
