@@ -157,4 +157,22 @@ class Query(graphene.ObjectType):
     features = DjangoConnectionField(Feature)
 
     def resolve_features(self, info, **kwargs):
-        return models.Feature.objects.all()
+        return (
+            models.Feature.objects.all()
+            .select_related("source_type", "category",)
+            .prefetch_related(
+                "category__translations",
+                "contact_info",
+                "children",
+                "images",
+                "images__license",
+                "images__license__translations",
+                "opening_hours_periods",
+                "opening_hours_periods__opening_hours",
+                "opening_hours_periods__translations",
+                "parents",
+                "tags",
+                "tags__translations",
+                "translations",
+            )
+        )
