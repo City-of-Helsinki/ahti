@@ -161,6 +161,9 @@ GRAPHENE = {
     "SCHEMA": "ahti.schema.schema",
     "MIDDLEWARE": ["graphql_jwt.middleware.JSONWebTokenMiddleware"],
 }
+if DEBUG:
+    GRAPHENE["MIDDLEWARE"].append("graphene_django.debug.DjangoDebugMiddleware")
+
 
 GRAPHQL_JWT = {"JWT_AUTH_HEADER_PREFIX": "Bearer"}
 
