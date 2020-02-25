@@ -1,8 +1,11 @@
+import django_filters
 import graphene
 import graphql_geojson
 from django.apps import apps
 from graphene import ObjectType, relay
-from graphene_django import DjangoConnectionField, DjangoObjectType
+from graphene_django import DjangoObjectType
+from graphene_django.filter import DjangoFilterConnectionField
+from graphql_geojson.filters import DistanceFilter
 
 from features import models
 from features.enums import OverrideFieldType, Weekday
@@ -99,6 +102,14 @@ class OpeningHours(DjangoObjectType):
     day = WeekdayEnum(required=True)
 
 
+class FeatureFilter(django_filters.FilterSet):
+    class Meta:
+        model = models.Feature
+        fields = ["distance_lte"]
+
+    distance_lte = DistanceFilter(field_name="geometry", lookup_expr="distance_lte")
+
+
 class Feature(graphql_geojson.GeoJSONType):
     class Meta:
         fields = (
@@ -112,6 +123,7 @@ class Feature(graphql_geojson.GeoJSONType):
             "tags",
             "translations",
         )
+        filterset_class = FeatureFilter
         model = models.Feature
         geojson_field = "geometry"
         interfaces = (relay.Node,)
@@ -154,7 +166,7 @@ class Feature(graphql_geojson.GeoJSONType):
 
 
 class Query(graphene.ObjectType):
-    features = DjangoConnectionField(Feature)
+    features = DjangoFilterConnectionField(Feature)
 
     def resolve_features(self, info, **kwargs):
         return (

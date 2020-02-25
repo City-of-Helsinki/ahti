@@ -374,3 +374,42 @@ def test_feature_name_override(api_client):
         executed["data"]["features"]["edges"][0]["node"]["properties"]["name"]
         == override_name
     )
+
+
+def test_feature_filtering_by_distance(api_client):
+    """Filter features that are withing a given distance of a geometry."""
+    st = SourceTypeFactory(system="test", type="test")
+    f = FeatureFactory(
+        source_type=st, source_id="sid0", geometry=Point(24.940967, 60.168683),
+    )
+    f_within_kilometer = FeatureFactory(
+        source_type=st, source_id="sid1", geometry=Point(24.93866, 60.16767),
+    )
+    f_further_away = FeatureFactory(
+        source_type=st, source_id="sid2", geometry=Point(24.948333, 60.150833),
+    )
+    executed = api_client.execute(
+        """
+    query FeaturesByDistance {
+      features(
+        distanceLte: {
+          geometry:"{'type': 'Point', 'coordinates': [24.940967, 60.168683]}",
+          value:1,
+          unit:km
+        }
+      ) {
+        edges {
+          node {
+            id
+          }
+        }
+      }
+    }
+    """
+    )
+
+    ids = [edge["node"]["id"] for edge in executed["data"]["features"]["edges"]]
+
+    assert to_global_id(Feature._meta.name, f.id) in ids
+    assert to_global_id(Feature._meta.name, f_within_kilometer.id) in ids
+    assert to_global_id(Feature._meta.name, f_further_away.id) not in ids
