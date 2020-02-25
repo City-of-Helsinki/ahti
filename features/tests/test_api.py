@@ -413,3 +413,35 @@ def test_feature_filtering_by_distance(api_client):
     assert to_global_id(Feature._meta.name, f.id) in ids
     assert to_global_id(Feature._meta.name, f_within_kilometer.id) in ids
     assert to_global_id(Feature._meta.name, f_further_away.id) not in ids
+
+
+def test_feature_filtering_updated_since(api_client):
+    with freeze_time("2020-02-05 12:00:01"):
+        f_old = FeatureFactory(source_id="sid_old")
+        f_recent_override = FeatureFactory(source_id="sid_override")
+    with freeze_time("2020-02-10 12:00:01"):
+        OverrideFactory(
+            feature=f_recent_override,
+            field=OverrideFieldType.NAME,
+            string_value="Override",
+        )
+        f_recent = FeatureFactory(source_id="sid_recent")
+    executed = api_client.execute(
+        """
+    query FeaturesByTimestamp {
+      features(updatedSince: "2020-02-08T12:00:00.0+00:00") {
+        edges {
+          node {
+            id
+          }
+        }
+      }
+    }
+    """
+    )
+
+    ids = [edge["node"]["id"] for edge in executed["data"]["features"]["edges"]]
+
+    assert to_global_id(Feature._meta.name, f_recent.id) in ids
+    assert to_global_id(Feature._meta.name, f_recent_override.id) in ids
+    assert to_global_id(Feature._meta.name, f_old.id) not in ids

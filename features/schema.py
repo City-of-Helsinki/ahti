@@ -2,6 +2,7 @@ import django_filters
 import graphene
 import graphql_geojson
 from django.apps import apps
+from django.db.models import Q
 from graphene import ObjectType, relay
 from graphene_django import DjangoObjectType
 from graphene_django.filter import DjangoFilterConnectionField
@@ -105,9 +106,15 @@ class OpeningHours(DjangoObjectType):
 class FeatureFilter(django_filters.FilterSet):
     class Meta:
         model = models.Feature
-        fields = ["distance_lte"]
+        fields = ["distance_lte", "updated_since"]
 
     distance_lte = DistanceFilter(field_name="geometry", lookup_expr="distance_lte")
+    updated_since = django_filters.IsoDateTimeFilter(method="filter_updated_since")
+
+    def filter_updated_since(self, queryset, name, value):
+        return queryset.filter(
+            Q(overrides__modified_at__gt=value) | Q(mapped_at__gt=value)
+        )
 
 
 class Feature(graphql_geojson.GeoJSONType):
