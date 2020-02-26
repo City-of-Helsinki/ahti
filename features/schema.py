@@ -7,6 +7,7 @@ from graphene import ObjectType, relay
 from graphene_django import DjangoObjectType
 from graphene_django.filter import DjangoFilterConnectionField
 from graphql_geojson.filters import DistanceFilter
+from utils.graphene import StringListFilter
 
 from features import models
 from features.enums import OverrideFieldType, Weekday
@@ -106,15 +107,25 @@ class OpeningHours(DjangoObjectType):
 class FeatureFilter(django_filters.FilterSet):
     class Meta:
         model = models.Feature
-        fields = ["distance_lte", "updated_since"]
+        fields = ["distance_lte", "updated_since", "tagged_with_any", "tagged_with_all"]
 
     distance_lte = DistanceFilter(field_name="geometry", lookup_expr="distance_lte")
     updated_since = django_filters.IsoDateTimeFilter(method="filter_updated_since")
+    tagged_with_any = StringListFilter(method="filter_tagged_with_any")
+    tagged_with_all = StringListFilter(method="filter_tagged_with_all")
 
     def filter_updated_since(self, queryset, name, value):
         return queryset.filter(
             Q(overrides__modified_at__gt=value) | Q(mapped_at__gt=value)
         )
+
+    def filter_tagged_with_any(self, queryset, name, value):
+        return queryset.filter(tags__in=value).distinct()
+
+    def filter_tagged_with_all(self, queryset, name, value):
+        for v in value:
+            queryset = queryset.filter(tags=v)
+        return queryset
 
 
 class Feature(graphql_geojson.GeoJSONType):

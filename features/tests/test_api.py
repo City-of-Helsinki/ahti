@@ -23,6 +23,10 @@ from features.tests.factories import (
 )
 
 
+def get_response_ids(response):
+    return [edge["node"]["id"] for edge in response["data"]["features"]["edges"]]
+
+
 @pytest.fixture(autouse=True)
 def autouse_db(db):
     pass
@@ -110,8 +114,10 @@ def test_features_query_with_ids(api_client):
     }
     """
     )
+    ids = get_response_ids(executed)
 
-    assert executed["data"]["features"]["edges"][0]["node"]["id"] == f_node_id
+    assert len(ids) == 1
+    assert f_node_id in ids
 
 
 def test_features_image_query(snapshot, api_client):
@@ -407,8 +413,7 @@ def test_feature_filtering_by_distance(api_client):
     }
     """
     )
-
-    ids = [edge["node"]["id"] for edge in executed["data"]["features"]["edges"]]
+    ids = get_response_ids(executed)
 
     assert to_global_id(Feature._meta.name, f.id) in ids
     assert to_global_id(Feature._meta.name, f_within_kilometer.id) in ids
@@ -416,6 +421,7 @@ def test_feature_filtering_by_distance(api_client):
 
 
 def test_feature_filtering_updated_since(api_client):
+    """Only retrieve Features that have changed since specified timestamp."""
     with freeze_time("2020-02-05 12:00:01"):
         f_old = FeatureFactory(source_id="sid_old")
         f_recent_override = FeatureFactory(source_id="sid_override")
@@ -439,9 +445,82 @@ def test_feature_filtering_updated_since(api_client):
     }
     """
     )
-
-    ids = [edge["node"]["id"] for edge in executed["data"]["features"]["edges"]]
+    ids = get_response_ids(executed)
 
     assert to_global_id(Feature._meta.name, f_recent.id) in ids
     assert to_global_id(Feature._meta.name, f_recent_override.id) in ids
     assert to_global_id(Feature._meta.name, f_old.id) not in ids
+
+
+def test_feature_filtering_tagged_with_any(api_client):
+    """Only fetch features tagged with any of the specified tags (ids)."""
+    t1 = TagFactory(id="first")
+    t2 = TagFactory(id="second")
+    t_wrong = TagFactory()
+
+    feature_one_tag = FeatureFactory()
+    feature_two_tags = FeatureFactory()
+    feature_wrong_tags = FeatureFactory()
+    feature_no_tags = FeatureFactory()
+
+    feature_one_tag.tags.set([t1])
+    feature_two_tags.tags.set([t1, t2])
+    feature_wrong_tags.tags.set([t_wrong])
+
+    executed = api_client.execute(
+        """
+    query FeaturesByTagAny {
+      features(taggedWithAny: ["first", "second"]) {
+        edges {
+          node {
+            id
+          }
+        }
+      }
+    }
+    """
+    )
+    ids = get_response_ids(executed)
+
+    assert len(ids) == 2
+    assert to_global_id(Feature._meta.name, feature_one_tag.id) in ids
+    assert to_global_id(Feature._meta.name, feature_two_tags.id) in ids
+    assert to_global_id(Feature._meta.name, feature_wrong_tags.id) not in ids
+    assert to_global_id(Feature._meta.name, feature_no_tags.id) not in ids
+
+
+def test_feature_filtering_tagged_with_all(api_client):
+    """Only fetch Features tagged with all of the specified tags (ids)."""
+    t1 = TagFactory(id="first")
+    t2 = TagFactory(id="second")
+    t_wrong = TagFactory()
+
+    feature_one_tag = FeatureFactory()
+    feature_two_tags = FeatureFactory()
+    feature_wrong_tags = FeatureFactory()
+    feature_no_tags = FeatureFactory()
+
+    feature_one_tag.tags.set([t1])
+    feature_two_tags.tags.set([t1, t2])
+    feature_wrong_tags.tags.set([t_wrong])
+
+    executed = api_client.execute(
+        """
+    query FeaturesByTagAll {
+      features(taggedWithAll: ["first", "second"]) {
+        edges {
+          node {
+            id
+          }
+        }
+      }
+    }
+    """
+    )
+    ids = get_response_ids(executed)
+
+    assert len(ids) == 1
+    assert to_global_id(Feature._meta.name, feature_one_tag.id) not in ids
+    assert to_global_id(Feature._meta.name, feature_two_tags.id) in ids
+    assert to_global_id(Feature._meta.name, feature_wrong_tags.id) not in ids
+    assert to_global_id(Feature._meta.name, feature_no_tags.id) not in ids
