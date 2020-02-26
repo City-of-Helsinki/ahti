@@ -13,32 +13,32 @@ django-environ==0.4.5
 django-filter==2.2.0
 django-graphql-geojson==0.1.4
 django-graphql-jwt==0.3.0
-django-helusers==0.5.2
+django-helusers==0.5.6
 django-parler==2.0.1
 django==3.0.3
 djangorestframework==3.11.0  # via drf-oidc-auth
 drf-oidc-auth==0.9        # via django-helusers
 ecdsa==0.15               # via python-jose
 future==0.18.2            # via pyjwkest
-graphene-django==2.8.0
+graphene-django==2.8.2
 graphene==2.1.8           # via graphene-django
-graphql-core==2.2.1       # via django-graphql-jwt, graphene, graphene-django, graphql-relay
+graphql-core==2.3.1       # via django-graphql-jwt, graphene, graphene-django, graphql-relay
 graphql-relay==2.0.1      # via graphene
-idna==2.8                 # via requests
-jmespath==0.9.4
+idna==2.9                 # via requests
+jmespath==0.9.5
 promise==2.3              # via graphene-django, graphql-core, graphql-relay
 psycopg2==2.8.4
 pyasn1==0.4.8             # via python-jose, rsa
-pycryptodomex==3.9.4      # via pyjwkest
+pycryptodomex==3.9.7      # via pyjwkest
 pyjwkest==1.4.2           # via drf-oidc-auth
 pyjwt==1.7.1              # via django-graphql-jwt
 python-jose==3.1.0        # via django-helusers
 pytz==2019.3              # via django
-requests==2.22.0
+requests==2.23.0
 rsa==4.0                  # via python-jose
 rx==1.6.1                 # via graphql-core
-sentry-sdk==0.14.0
+sentry-sdk==0.14.1
 singledispatch==3.4.0.3   # via graphene-django
 six==1.14.0               # via django-parler, ecdsa, graphene, graphene-django, graphql-core, graphql-relay, promise, pyjwkest, python-jose, singledispatch
 sqlparse==0.3.0           # via django
-urllib3==1.25.7           # via requests, sentry-sdk
+urllib3==1.25.8           # via requests, sentry-sdk
