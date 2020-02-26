@@ -7,12 +7,7 @@ from graphql_relay import to_global_id
 from ahti.schema import schema
 from features.enums import OverrideFieldType
 from features.schema import Feature
-from features.tests.factories import (
-    FeatureFactory,
-    OverrideFactory,
-    SourceTypeFactory,
-    TagFactory,
-)
+from features.tests.factories import FeatureFactory, OverrideFactory, TagFactory
 
 
 def get_response_ids(response):
@@ -29,18 +24,18 @@ def api_client():
     return Client(schema=schema)
 
 
-def test_feature_filtering_by_distance(api_client):
-    """Filter features that are withing a given distance of a geometry."""
-    st = SourceTypeFactory(system="test", type="test")
-    f = FeatureFactory(
-        source_type=st, source_id="sid0", geometry=Point(24.940967, 60.168683),
-    )
-    f_within_kilometer = FeatureFactory(
-        source_type=st, source_id="sid1", geometry=Point(24.93866, 60.16767),
-    )
-    f_further_away = FeatureFactory(
-        source_type=st, source_id="sid2", geometry=Point(24.948333, 60.150833),
-    )
+@pytest.mark.parametrize(
+    "geometry,found",
+    [
+        (Point(24.940967, 60.168683), True),  # Exactly on the spot
+        (Point(24.93866, 60.16767), True),  # Within a kilometer
+        (Point(24.948333, 60.150833), False),  # Further away
+    ],
+)
+def test_feature_filtering_by_distance(api_client, geometry, found):
+    """Filter features that are within a given distance of a geometry."""
+    feature = FeatureFactory(geometry=geometry)
+
     executed = api_client.execute(
         """
     query FeaturesByDistance {
@@ -62,9 +57,11 @@ def test_feature_filtering_by_distance(api_client):
     )
     ids = get_response_ids(executed)
 
-    assert to_global_id(Feature._meta.name, f.id) in ids
-    assert to_global_id(Feature._meta.name, f_within_kilometer.id) in ids
-    assert to_global_id(Feature._meta.name, f_further_away.id) not in ids
+    if found:
+        assert len(ids) == 1
+        assert to_global_id(Feature._meta.name, feature.id) in ids
+    else:
+        assert len(ids) == 0
 
 
 def test_feature_filtering_updated_since(api_client):
@@ -99,20 +96,16 @@ def test_feature_filtering_updated_since(api_client):
     assert to_global_id(Feature._meta.name, f_old.id) not in ids
 
 
-def test_feature_filtering_tagged_with_any(api_client):
+@pytest.mark.parametrize(
+    "tag_ids,found",
+    [(["first"], True), (["first", "second"], True), (["wrong"], False), ([], False)],
+)
+def test_feature_filtering_tagged_with_any(api_client, tag_ids, found):
     """Only fetch features tagged with any of the specified tags (ids)."""
-    t1 = TagFactory(id="first")
-    t2 = TagFactory(id="second")
-    t_wrong = TagFactory()
-
-    feature_one_tag = FeatureFactory()
-    feature_two_tags = FeatureFactory()
-    feature_wrong_tags = FeatureFactory()
-    feature_no_tags = FeatureFactory()
-
-    feature_one_tag.tags.set([t1])
-    feature_two_tags.tags.set([t1, t2])
-    feature_wrong_tags.tags.set([t_wrong])
+    feature = FeatureFactory()
+    for tag_id in tag_ids:
+        tag = TagFactory(id=tag_id)
+        feature.tags.add(tag)
 
     executed = api_client.execute(
         """
@@ -129,27 +122,23 @@ def test_feature_filtering_tagged_with_any(api_client):
     )
     ids = get_response_ids(executed)
 
-    assert len(ids) == 2
-    assert to_global_id(Feature._meta.name, feature_one_tag.id) in ids
-    assert to_global_id(Feature._meta.name, feature_two_tags.id) in ids
-    assert to_global_id(Feature._meta.name, feature_wrong_tags.id) not in ids
-    assert to_global_id(Feature._meta.name, feature_no_tags.id) not in ids
+    if found:
+        assert len(ids) == 1
+        assert to_global_id(Feature._meta.name, feature.id) in ids
+    else:
+        assert len(ids) == 0
 
 
-def test_feature_filtering_tagged_with_all(api_client):
+@pytest.mark.parametrize(
+    "tag_ids,found",
+    [(["first"], False), (["first", "second"], True), (["wrong"], False), ([], False)],
+)
+def test_feature_filtering_tagged_with_all(api_client, tag_ids, found):
     """Only fetch Features tagged with all of the specified tags (ids)."""
-    t1 = TagFactory(id="first")
-    t2 = TagFactory(id="second")
-    t_wrong = TagFactory()
-
-    feature_one_tag = FeatureFactory()
-    feature_two_tags = FeatureFactory()
-    feature_wrong_tags = FeatureFactory()
-    feature_no_tags = FeatureFactory()
-
-    feature_one_tag.tags.set([t1])
-    feature_two_tags.tags.set([t1, t2])
-    feature_wrong_tags.tags.set([t_wrong])
+    feature = FeatureFactory()
+    for tag_id in tag_ids:
+        tag = TagFactory(id=tag_id)
+        feature.tags.add(tag)
 
     executed = api_client.execute(
         """
@@ -166,8 +155,8 @@ def test_feature_filtering_tagged_with_all(api_client):
     )
     ids = get_response_ids(executed)
 
-    assert len(ids) == 1
-    assert to_global_id(Feature._meta.name, feature_one_tag.id) not in ids
-    assert to_global_id(Feature._meta.name, feature_two_tags.id) in ids
-    assert to_global_id(Feature._meta.name, feature_wrong_tags.id) not in ids
-    assert to_global_id(Feature._meta.name, feature_no_tags.id) not in ids
+    if found:
+        assert len(ids) == 1
+        assert to_global_id(Feature._meta.name, feature.id) in ids
+    else:
+        assert len(ids) == 0
