@@ -3,6 +3,7 @@ import graphene
 import graphql_geojson
 from django.apps import apps
 from django.db.models import Q
+from django.utils.translation import gettext_lazy as _
 from graphene import ObjectType, relay
 from graphene_django import DjangoObjectType
 from graphene_django.filter import DjangoFilterConnectionField
@@ -105,14 +106,34 @@ class OpeningHours(DjangoObjectType):
 
 
 class FeatureFilter(django_filters.FilterSet):
+    """Contains the filters to use when retrieving Features."""
+
     class Meta:
         model = models.Feature
-        fields = ["distance_lte", "updated_since", "tagged_with_any", "tagged_with_all"]
+        fields = [
+            "distance_lte",
+            "updated_since",
+            "tagged_with_any",
+            "tagged_with_all",
+        ]
 
-    distance_lte = DistanceFilter(field_name="geometry", lookup_expr="distance_lte")
-    updated_since = django_filters.IsoDateTimeFilter(method="filter_updated_since")
-    tagged_with_any = StringListFilter(method="filter_tagged_with_any")
-    tagged_with_all = StringListFilter(method="filter_tagged_with_all")
+    distance_lte = DistanceFilter(
+        field_name="geometry",
+        lookup_expr="distance_lte",
+        label=_("Fetch features within a given distance from the given geometry"),
+    )
+    updated_since = django_filters.IsoDateTimeFilter(
+        method="filter_updated_since",
+        label=_("Fetch features that have changed since specified timestamp"),
+    )
+    tagged_with_any = StringListFilter(
+        method="filter_tagged_with_any",
+        label=_("Fetch features tagged with any of the specified tags (ids)"),
+    )
+    tagged_with_all = StringListFilter(
+        method="filter_tagged_with_all",
+        label=_("Fetch features tagged with all of the specified tags (ids)"),
+    )
 
     def filter_updated_since(self, queryset, name, value):
         return queryset.filter(
