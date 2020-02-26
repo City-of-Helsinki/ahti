@@ -5,6 +5,7 @@ from graphene.test import Client
 from graphql_relay import to_global_id
 
 from ahti.schema import schema
+from categories.tests.factories import CategoryFactory
 from features.enums import OverrideFieldType
 from features.schema import Feature
 from features.tests.factories import FeatureFactory, OverrideFactory, TagFactory
@@ -144,6 +145,37 @@ def test_feature_filtering_tagged_with_all(api_client, tag_ids, found):
         """
     query FeaturesByTagAll {
       features(taggedWithAll: ["first", "second"]) {
+        edges {
+          node {
+            id
+          }
+        }
+      }
+    }
+    """
+    )
+    ids = get_response_ids(executed)
+
+    if found:
+        assert len(ids) == 1
+        assert to_global_id(Feature._meta.name, feature.id) in ids
+    else:
+        assert len(ids) == 0
+
+
+@pytest.mark.parametrize(
+    "category_id,found",
+    [("first", True), ("second", True), ("wrong", False), (None, False)],
+)
+def test_feature_filtering_category(api_client, category_id, found):
+    """Only fetch Features from included categories."""
+    category = CategoryFactory(id=category_id) if category_id else None
+    feature = FeatureFactory(category=category)
+
+    executed = api_client.execute(
+        """
+    query FeaturesByCategory {
+      features(category: ["first", "second"]) {
         edges {
           node {
             id

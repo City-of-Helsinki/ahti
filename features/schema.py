@@ -115,6 +115,7 @@ class FeatureFilter(django_filters.FilterSet):
             "updated_since",
             "tagged_with_any",
             "tagged_with_all",
+            "category",
         ]
 
     distance_lte = DistanceFilter(
@@ -134,6 +135,9 @@ class FeatureFilter(django_filters.FilterSet):
         method="filter_tagged_with_all",
         label=_("Fetch features tagged with all of the specified tags (ids)"),
     )
+    category = StringListFilter(
+        method="filter_category", label=_("Fetch features from included categories")
+    )
 
     def filter_updated_since(self, queryset, name, value):
         return queryset.filter(
@@ -147,6 +151,9 @@ class FeatureFilter(django_filters.FilterSet):
         for v in value:
             queryset = queryset.filter(tags=v)
         return queryset
+
+    def filter_category(self, queryset, name, value):
+        return queryset.filter(category__in=value)
 
 
 class Feature(graphql_geojson.GeoJSONType):
