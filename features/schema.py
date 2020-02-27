@@ -210,27 +210,24 @@ class Feature(graphql_geojson.GeoJSONType):
     def resolve_children(self: models.Feature, info, **kwargs):
         return self.children.all()
 
+    @classmethod
+    def get_queryset(cls, queryset, info):
+        return queryset.select_related("source_type", "category",).prefetch_related(
+            "category__translations",
+            "contact_info",
+            "children",
+            "images",
+            "images__license",
+            "images__license__translations",
+            "opening_hours_periods",
+            "opening_hours_periods__opening_hours",
+            "opening_hours_periods__translations",
+            "parents",
+            "tags",
+            "tags__translations",
+            "translations",
+        )
+
 
 class Query(graphene.ObjectType):
     features = DjangoFilterConnectionField(Feature)
-
-    def resolve_features(self, info, **kwargs):
-        return (
-            models.Feature.objects.all()
-            .select_related("source_type", "category",)
-            .prefetch_related(
-                "category__translations",
-                "contact_info",
-                "children",
-                "images",
-                "images__license",
-                "images__license__translations",
-                "opening_hours_periods",
-                "opening_hours_periods__opening_hours",
-                "opening_hours_periods__translations",
-                "parents",
-                "tags",
-                "tags__translations",
-                "translations",
-            )
-        )
