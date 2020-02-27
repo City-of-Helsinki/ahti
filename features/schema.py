@@ -1,8 +1,14 @@
+import django_filters
 import graphene
 import graphql_geojson
 from django.apps import apps
+from django.db.models import Q
+from django.utils.translation import gettext_lazy as _
 from graphene import ObjectType, relay
-from graphene_django import DjangoConnectionField, DjangoObjectType
+from graphene_django import DjangoObjectType
+from graphene_django.filter import DjangoFilterConnectionField
+from graphql_geojson.filters import DistanceFilter
+from utils.graphene import StringListFilter
 
 from features import models
 from features.enums import OverrideFieldType, Weekday
@@ -99,6 +105,57 @@ class OpeningHours(DjangoObjectType):
     day = WeekdayEnum(required=True)
 
 
+class FeatureFilter(django_filters.FilterSet):
+    """Contains the filters to use when retrieving Features."""
+
+    class Meta:
+        model = models.Feature
+        fields = [
+            "distance_lte",
+            "updated_since",
+            "tagged_with_any",
+            "tagged_with_all",
+            "category",
+        ]
+
+    distance_lte = DistanceFilter(
+        field_name="geometry",
+        lookup_expr="distance_lte",
+        label=_("Fetch features within a given distance from the given geometry"),
+    )
+    updated_since = django_filters.IsoDateTimeFilter(
+        method="filter_updated_since",
+        label=_("Fetch features that have changed since specified timestamp"),
+    )
+    tagged_with_any = StringListFilter(
+        method="filter_tagged_with_any",
+        label=_("Fetch features tagged with any of the specified tags (ids)"),
+    )
+    tagged_with_all = StringListFilter(
+        method="filter_tagged_with_all",
+        label=_("Fetch features tagged with all of the specified tags (ids)"),
+    )
+    category = StringListFilter(
+        method="filter_category", label=_("Fetch features from included categories")
+    )
+
+    def filter_updated_since(self, queryset, name, value):
+        return queryset.filter(
+            Q(overrides__modified_at__gt=value) | Q(mapped_at__gt=value)
+        )
+
+    def filter_tagged_with_any(self, queryset, name, value):
+        return queryset.filter(tags__in=value).distinct()
+
+    def filter_tagged_with_all(self, queryset, name, value):
+        for v in value:
+            queryset = queryset.filter(tags=v)
+        return queryset
+
+    def filter_category(self, queryset, name, value):
+        return queryset.filter(category__in=value)
+
+
 class Feature(graphql_geojson.GeoJSONType):
     class Meta:
         fields = (
@@ -112,6 +169,7 @@ class Feature(graphql_geojson.GeoJSONType):
             "tags",
             "translations",
         )
+        filterset_class = FeatureFilter
         model = models.Feature
         geojson_field = "geometry"
         interfaces = (relay.Node,)
@@ -154,7 +212,7 @@ class Feature(graphql_geojson.GeoJSONType):
 
 
 class Query(graphene.ObjectType):
-    features = DjangoConnectionField(Feature)
+    features = DjangoFilterConnectionField(Feature)
 
     def resolve_features(self, info, **kwargs):
         return (

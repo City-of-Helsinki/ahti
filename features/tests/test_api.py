@@ -23,6 +23,10 @@ from features.tests.factories import (
 )
 
 
+def get_response_ids(response):
+    return [edge["node"]["id"] for edge in response["data"]["features"]["edges"]]
+
+
 @pytest.fixture(autouse=True)
 def autouse_db(db):
     pass
@@ -110,8 +114,10 @@ def test_features_query_with_ids(api_client):
     }
     """
     )
+    ids = get_response_ids(executed)
 
-    assert executed["data"]["features"]["edges"][0]["node"]["id"] == f_node_id
+    assert len(ids) == 1
+    assert f_node_id in ids
 
 
 def test_features_image_query(snapshot, api_client):
