@@ -141,7 +141,7 @@ class FeatureFilter(django_filters.FilterSet):
 
     def filter_updated_since(self, queryset, name, value):
         return queryset.filter(
-            Q(overrides__modified_at__gt=value) | Q(mapped_at__gt=value)
+            Q(overrides__modified_at__gt=value) | Q(source_modified_at__gt=value)
         )
 
     def filter_tagged_with_any(self, queryset, name, value):
@@ -199,9 +199,9 @@ class Feature(graphql_geojson.GeoJSONType):
     def resolve_modified_at(self: models.Feature, info, **kwargs):
         latest_override = self.overrides.order_by("-modified_at").first()
         return (
-            max(self.mapped_at, latest_override.modified_at)
+            max(self.source_modified_at, latest_override.modified_at)
             if latest_override
-            else self.mapped_at
+            else self.source_modified_at
         )
 
     def resolve_parents(self: models.Feature, info, **kwargs):
