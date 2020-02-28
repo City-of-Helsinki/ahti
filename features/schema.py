@@ -4,9 +4,10 @@ import graphql_geojson
 from django.apps import apps
 from django.db.models import Q
 from django.utils.translation import gettext_lazy as _
-from graphene import ObjectType, relay
+from graphene import ID, ObjectType, relay, String
 from graphene_django import DjangoObjectType
 from graphene_django.filter import DjangoFilterConnectionField
+from graphql import GraphQLError
 from graphql_geojson.filters import DistanceFilter
 from utils.graphene import StringListFilter
 
@@ -210,27 +211,41 @@ class Feature(graphql_geojson.GeoJSONType):
     def resolve_children(self: models.Feature, info, **kwargs):
         return self.children.all()
 
+    @classmethod
+    def get_queryset(cls, queryset, info):
+        return queryset.select_related("source_type", "category",).prefetch_related(
+            "category__translations",
+            "contact_info",
+            "children",
+            "images",
+            "images__license",
+            "images__license__translations",
+            "opening_hours_periods",
+            "opening_hours_periods__opening_hours",
+            "opening_hours_periods__translations",
+            "parents",
+            "tags",
+            "tags__translations",
+            "translations",
+        )
+
 
 class Query(graphene.ObjectType):
     features = DjangoFilterConnectionField(Feature)
+    feature = graphene.Field(
+        Feature,
+        id=ID(description=_("The ID of the object")),
+        ahti_id=String(description=_("Ahti ID of the object")),
+    )
 
-    def resolve_features(self, info, **kwargs):
-        return (
-            models.Feature.objects.all()
-            .select_related("source_type", "category",)
-            .prefetch_related(
-                "category__translations",
-                "contact_info",
-                "children",
-                "images",
-                "images__license",
-                "images__license__translations",
-                "opening_hours_periods",
-                "opening_hours_periods__opening_hours",
-                "opening_hours_periods__translations",
-                "parents",
-                "tags",
-                "tags__translations",
-                "translations",
-            )
-        )
+    def resolve_feature(self, info, id=None, ahti_id=None, **kwargs):
+        if id:
+            return relay.Node.get_node_from_global_id(info, id, only_type=Feature)
+        if ahti_id:
+            try:
+                return Feature.get_queryset(models.Feature.objects, info).ahti_id(
+                    ahti_id=ahti_id
+                )
+            except models.Feature.DoesNotExist:
+                return None
+        raise GraphQLError("You must provide either `id` or `ahtiId`.")

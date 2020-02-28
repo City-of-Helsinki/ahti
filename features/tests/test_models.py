@@ -40,8 +40,22 @@ def test_feature():
 
     assert SourceType.objects.count() == 1
     assert Feature.objects.count() == 1
-    f = Feature.objects.first()
+
+
+def test_feature_ahti_id_field():
+    f = FeatureFactory()
     assert f.ahti_id == f"{f.source_type.system}:{f.source_type.type}:{f.source_id}"
+
+
+def test_feature_ahti_id_filter():
+    f = FeatureFactory()
+    f_fetched = Feature.objects.ahti_id(f.ahti_id)
+    assert f.pk == f_fetched.pk
+
+
+def test_feature_ahti_id_does_not_exist():
+    with pytest.raises(Feature.DoesNotExist):
+        Feature.objects.ahti_id("Nope")
 
 
 def test_image():

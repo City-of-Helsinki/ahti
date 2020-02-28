@@ -214,3 +214,22 @@ snapshots["test_feature_parents_and_children 1"] = {
         }
     }
 }
+
+snapshots["test_feature_with_id 1"] = {
+    "data": {"feature": {"properties": {"ahtiId": "test:test:sid0"}}}
+}
+
+snapshots["test_feature_with_ahti_id 1"] = {
+    "data": {"feature": {"properties": {"ahtiId": "test:test:sid0"}}}
+}
+
+snapshots["test_feature_query_error 1"] = {
+    "data": {"feature": None},
+    "errors": [
+        {
+            "locations": [{"column": 7, "line": 3}],
+            "message": "You must provide either `id` or `ahtiId`.",
+            "path": ["feature"],
+        }
+    ],
+}

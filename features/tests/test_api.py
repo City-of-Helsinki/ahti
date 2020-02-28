@@ -380,3 +380,54 @@ def test_feature_name_override(api_client):
         executed["data"]["features"]["edges"][0]["node"]["properties"]["name"]
         == override_name
     )
+
+
+def test_feature_with_id(snapshot, api_client):
+    st = SourceTypeFactory(system="test", type="test")
+    feature = FeatureFactory(source_type=st, source_id="sid0")
+    executed = api_client.execute(
+        """
+    query FeatureWithId {
+      feature(id: "%s") {
+        properties {
+          ahtiId
+        }
+      }
+    }
+    """
+        % to_global_id(Feature._meta.name, feature.pk)
+    )
+    snapshot.assert_match(executed)
+
+
+def test_feature_with_ahti_id(snapshot, api_client):
+    st = SourceTypeFactory(system="test", type="test")
+    feature = FeatureFactory(source_type=st, source_id="sid0")
+    executed = api_client.execute(
+        """
+    query FeatureWithAhtiId {
+      feature(ahtiId: "%s") {
+        properties {
+          ahtiId
+        }
+      }
+    }
+    """
+        % feature.ahti_id
+    )
+    snapshot.assert_match(executed)
+
+
+def test_feature_query_error(snapshot, api_client):
+    executed = api_client.execute(
+        """
+    query FeatureWithAhtiId {
+      feature {
+        properties {
+          ahtiId
+        }
+      }
+    }
+    """
+    )
+    snapshot.assert_match(executed)

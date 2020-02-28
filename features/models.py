@@ -1,5 +1,6 @@
 from django.contrib.gis.db import models
 from django.utils.translation import gettext_lazy as _
+from parler.managers import TranslatableQuerySet
 from parler.models import TranslatableModel, TranslatedFields
 from utils.models import TimestampedModel
 
@@ -26,6 +27,22 @@ class SourceType(models.Model):
                 fields=["system", "type"], name="unique_source_type"
             ),
         ]
+
+
+class FeatureQuerySet(TranslatableQuerySet):
+    def ahti_id(self, ahti_id: str):
+        """Return a single Feature matching the given ahti_id."""
+        parts = ahti_id.split(":", 2)
+        if len(parts) != 3:
+            raise self.model.DoesNotExist(
+                f"{self.model._meta.object_name} matching query does not exist."
+            )
+
+        return self.get(
+            source_type__system=parts[0],
+            source_type__type=parts[1],
+            source_id=parts[2],
+        )
 
 
 class Feature(TranslatableModel, TimestampedModel):
@@ -80,6 +97,8 @@ class Feature(TranslatableModel, TimestampedModel):
         verbose_name=_("parents"),
         help_text=_("Parents of this feature (e.g. stops along a route etc.)"),
     )
+
+    objects = FeatureQuerySet.as_manager()
 
     class Meta:
         verbose_name = _("feature")
