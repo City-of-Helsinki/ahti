@@ -143,10 +143,12 @@ class FeatureFilter(django_filters.FilterSet):
     def filter_updated_since(self, queryset, name, value):
         return queryset.filter(
             Q(overrides__modified_at__gt=value) | Q(source_modified_at__gt=value)
-        )
+        ).distinct()  # Distinct because filtering on ForeignKey relation.
 
     def filter_tagged_with_any(self, queryset, name, value):
-        return queryset.filter(tags__in=value).distinct()
+        return queryset.filter(
+            tags__in=value
+        ).distinct()  # Distinct because filtering on ForeignKey relation.
 
     def filter_tagged_with_all(self, queryset, name, value):
         for v in value:

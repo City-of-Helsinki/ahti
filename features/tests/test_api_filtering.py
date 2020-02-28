@@ -92,6 +92,7 @@ def test_feature_filtering_updated_since(api_client):
     )
     ids = get_response_ids(executed)
 
+    assert len(ids) == 2
     assert to_global_id(Feature._meta.name, f_recent.id) in ids
     assert to_global_id(Feature._meta.name, f_recent_override.id) in ids
     assert to_global_id(Feature._meta.name, f_old.id) not in ids
