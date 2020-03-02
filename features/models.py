@@ -5,7 +5,7 @@ from parler.models import TranslatableModel, TranslatedFields
 from utils.models import TimestampedModel
 
 from ahti import settings
-from features.enums import OverrideFieldType, Weekday
+from features.enums import OverrideFieldType, Visibility, Weekday
 
 
 class SourceType(models.Model):
@@ -96,6 +96,9 @@ class Feature(TranslatableModel, TimestampedModel):
         related_name="children",
         verbose_name=_("parents"),
         help_text=_("Parents of this feature (e.g. stops along a route etc.)"),
+    )
+    visibility = models.SmallIntegerField(
+        choices=Visibility.choices, default=Visibility.VISIBLE
     )
 
     objects = FeatureQuerySet.as_manager()
