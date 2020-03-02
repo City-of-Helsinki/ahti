@@ -97,6 +97,7 @@ class Feature(TranslatableModel, TimestampedModel):
         "self",
         symmetrical=False,
         related_name="children",
+        blank=True,
         verbose_name=_("parents"),
         help_text=_("Parents of this feature (e.g. stops along a route etc.)"),
     )
