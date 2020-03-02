@@ -28,6 +28,9 @@ class SourceType(models.Model):
             ),
         ]
 
+    def __str__(self):
+        return f"{self.system}:{self.type}"
+
 
 class FeatureQuerySet(TranslatableQuerySet):
     def ahti_id(self, ahti_id: str):
