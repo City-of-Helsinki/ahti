@@ -9,3 +9,4 @@ class FeatureAdmin(TranslatableAdmin, admin.OSMGeoAdmin):
     list_display = ("name", "source_id")
     search_fields = ("translations__name", "source_id")
     ordering = ("translations__name",)
+    autocomplete_fields = ("category", "parents")
