@@ -28,6 +28,9 @@ class SourceType(models.Model):
             ),
         ]
 
+    def __str__(self):
+        return f"{self.system}:{self.type}"
+
 
 class FeatureQuerySet(TranslatableQuerySet):
     def ahti_id(self, ahti_id: str):
@@ -94,6 +97,7 @@ class Feature(TranslatableModel, TimestampedModel):
         "self",
         symmetrical=False,
         related_name="children",
+        blank=True,
         verbose_name=_("parents"),
         help_text=_("Parents of this feature (e.g. stops along a route etc.)"),
     )
