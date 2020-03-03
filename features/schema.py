@@ -12,7 +12,7 @@ from graphql_geojson.filters import DistanceFilter
 from utils.graphene import StringListFilter
 
 from features import models
-from features.enums import OverrideFieldType, Weekday
+from features.enums import OverrideFieldType, Visibility, Weekday
 
 WeekdayEnum = graphene.Enum.from_enum(
     Weekday, description=lambda e: e.label if e else ""
@@ -215,20 +215,24 @@ class Feature(graphql_geojson.GeoJSONType):
 
     @classmethod
     def get_queryset(cls, queryset, info):
-        return queryset.select_related("source_type", "category",).prefetch_related(
-            "category__translations",
-            "contact_info",
-            "children",
-            "images",
-            "images__license",
-            "images__license__translations",
-            "opening_hours_periods",
-            "opening_hours_periods__opening_hours",
-            "opening_hours_periods__translations",
-            "parents",
-            "tags",
-            "tags__translations",
-            "translations",
+        return (
+            queryset.filter(visibility=Visibility.VISIBLE)
+            .select_related("source_type", "category",)
+            .prefetch_related(
+                "category__translations",
+                "contact_info",
+                "children",
+                "images",
+                "images__license",
+                "images__license__translations",
+                "opening_hours_periods",
+                "opening_hours_periods__opening_hours",
+                "opening_hours_periods__translations",
+                "parents",
+                "tags",
+                "tags__translations",
+                "translations",
+            )
         )
 
 

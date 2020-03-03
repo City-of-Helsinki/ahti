@@ -18,3 +18,10 @@ class OverrideFieldType(models.TextChoices):
     """Enumeration for overridable fields."""
 
     NAME = "NAME", _("Name")
+
+
+class Visibility(models.IntegerChoices):
+    """Used to show/hide individual features from the API output"""
+
+    VISIBLE = 1, _("Visible")
+    HIDDEN = 0, _("Hidden")

@@ -9,7 +9,8 @@ from utils.pytest import pytest_regex
 
 from ahti.schema import schema
 from categories.tests.factories import CategoryFactory
-from features.enums import OverrideFieldType, Weekday
+from features.enums import OverrideFieldType, Visibility, Weekday
+from features.models import Feature as FeatureModel
 from features.schema import Feature
 from features.tests.factories import (
     ContactInfoFactory,
@@ -95,6 +96,30 @@ def test_features_query(snapshot, api_client):
     )
 
     snapshot.assert_match(executed)
+
+
+def test_features_visibility(snapshot, api_client):
+    FeatureFactory()
+    FeatureFactory()
+
+    request = """
+    query Features {
+      features {
+        edges {
+          node {
+            type
+          }
+        }
+      }
+    }
+    """
+    executed = api_client.execute(request)
+    totalFeatures = len(executed["data"]["features"]["edges"])
+    f = FeatureModel.objects.last()
+    f.visibility = Visibility.HIDDEN
+    f.save()
+    executed = api_client.execute(request)
+    assert len(executed["data"]["features"]["edges"]) == totalFeatures - 1
 
 
 def test_features_query_with_ids(api_client):
