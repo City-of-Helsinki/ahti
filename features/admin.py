@@ -1,7 +1,11 @@
 from django.contrib.gis import admin
 from parler.admin import TranslatableAdmin
 
-from features.models import Feature, Image, License
+from features.models import ContactInfo, Feature, Image, License
+
+
+class ContactInfoInline(admin.StackedInline):
+    model = ContactInfo
 
 
 class ImageInline(admin.TabularInline):
@@ -29,7 +33,7 @@ class FeatureAdmin(TranslatableAdmin, admin.OSMGeoAdmin):
     ordering = ("translations__name",)
     autocomplete_fields = ("category", "parents")
 
-    inlines = (ImageInline,)
+    inlines = (ContactInfoInline, ImageInline)
 
     def get_queryset(self, request):
         # Ordering by translated name might cause duplicates in the queryset
