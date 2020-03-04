@@ -1,7 +1,7 @@
 from django.contrib.gis import admin
 from parler.admin import TranslatableAdmin
 
-from features.models import Feature, Image
+from features.models import Feature, Image, License
 
 
 class ImageInline(admin.TabularInline):
@@ -34,3 +34,13 @@ class FeatureAdmin(TranslatableAdmin, admin.OSMGeoAdmin):
     def get_queryset(self, request):
         # Ordering by translated name might cause duplicates in the queryset
         return super().get_queryset(request).distinct()
+
+
+@admin.register(License)
+class LicenseAdmin(TranslatableAdmin):
+    list_display = (
+        "name",
+        "language_column",
+    )
+    search_fields = ("translations__name",)
+    list_filter = ("translations__language_code",)
