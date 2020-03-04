@@ -1,16 +1,35 @@
 from django.contrib.gis import admin
-from parler.admin import TranslatableAdmin
+from parler.admin import TranslatableAdmin, TranslatableTabularInline
 
-from features.models import ContactInfo, Feature, Image, License
+from features.models import (
+    ContactInfo,
+    Feature,
+    Image,
+    License,
+    OpeningHours,
+    OpeningHoursPeriod,
+)
+
+
+class OpeningHourInline(admin.TabularInline):
+    model = OpeningHours
+    min_num = 7
+    extra = 0
 
 
 class ContactInfoInline(admin.StackedInline):
     model = ContactInfo
 
 
+class OpeningHoursPeriodInline(TranslatableTabularInline):
+    model = OpeningHoursPeriod
+    show_change_link = True
+    extra = 0
+
+
 class ImageInline(admin.TabularInline):
     model = Image
-    extra = 1
+    extra = 0
 
 
 @admin.register(Feature)
@@ -29,15 +48,38 @@ class FeatureAdmin(TranslatableAdmin, admin.OSMGeoAdmin):
         "visibility",
         "translations__language_code",
     )
-    search_fields = ("translations__name", "source_id")
+    search_fields = ("translations__name",)
     ordering = ("translations__name",)
     autocomplete_fields = ("category", "parents")
-
-    inlines = (ContactInfoInline, ImageInline)
+    inlines = (ContactInfoInline, ImageInline, OpeningHoursPeriodInline)
 
     def get_queryset(self, request):
         # Ordering by translated name might cause duplicates in the queryset
         return super().get_queryset(request).distinct()
+
+
+@admin.register(OpeningHoursPeriod)
+class OpeningHoursPeriodAdmin(TranslatableAdmin):
+    list_display = (
+        "feature_name",
+        "valid_from",
+        "valid_to",
+        "language_column",
+    )
+    search_fields = ("feature__translations__name",)
+    autocomplete_fields = ("feature",)
+    inlines = (OpeningHourInline,)
+
+    def feature_name(self, obj):
+        return obj.feature.name
+
+    def get_queryset(self, request):
+        return (
+            super()
+            .get_queryset(request)
+            .select_related("feature")
+            .prefetch_related("feature__translations")
+        )
 
 
 @admin.register(License)
