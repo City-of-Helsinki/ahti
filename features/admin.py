@@ -4,12 +4,20 @@ from parler.admin import TranslatableAdmin, TranslatableTabularInline
 from features.models import (
     ContactInfo,
     Feature,
+    FeatureTag,
     Image,
     License,
     OpeningHours,
     OpeningHoursPeriod,
     Override,
+    Tag,
 )
+
+
+class FeatureTagInline(admin.TabularInline):
+    model = FeatureTag
+    autocomplete_fields = ("tag",)
+    extra = 0
 
 
 class OverrideInline(TranslatableTabularInline):
@@ -57,7 +65,13 @@ class FeatureAdmin(TranslatableAdmin, admin.OSMGeoAdmin):
     search_fields = ("translations__name",)
     ordering = ("translations__name",)
     autocomplete_fields = ("category", "parents")
-    inlines = (ContactInfoInline, ImageInline, OpeningHoursPeriodInline, OverrideInline)
+    inlines = (
+        FeatureTagInline,
+        ContactInfoInline,
+        ImageInline,
+        OpeningHoursPeriodInline,
+        OverrideInline,
+    )
 
     def get_queryset(self, request):
         # Ordering by translated name might cause duplicates in the queryset
@@ -95,4 +109,15 @@ class LicenseAdmin(TranslatableAdmin):
         "language_column",
     )
     search_fields = ("translations__name",)
+    list_filter = ("translations__language_code",)
+
+
+@admin.register(Tag)
+class TagAdmin(TranslatableAdmin):
+    list_display = (
+        "id",
+        "name",
+        "language_column",
+    )
+    search_fields = ("id", "translations__name")
     list_filter = ("translations__language_code",)
