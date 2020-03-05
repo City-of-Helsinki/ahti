@@ -8,7 +8,13 @@ from features.models import (
     License,
     OpeningHours,
     OpeningHoursPeriod,
+    Override,
 )
+
+
+class OverrideInline(TranslatableTabularInline):
+    model = Override
+    extra = 1
 
 
 class OpeningHourInline(admin.TabularInline):
@@ -51,7 +57,7 @@ class FeatureAdmin(TranslatableAdmin, admin.OSMGeoAdmin):
     search_fields = ("translations__name",)
     ordering = ("translations__name",)
     autocomplete_fields = ("category", "parents")
-    inlines = (ContactInfoInline, ImageInline, OpeningHoursPeriodInline)
+    inlines = (ContactInfoInline, ImageInline, OpeningHoursPeriodInline, OverrideInline)
 
     def get_queryset(self, request):
         # Ordering by translated name might cause duplicates in the queryset
