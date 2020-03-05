@@ -48,6 +48,11 @@ class OverrideInline(TranslatableTabularInline):
 
 @admin.register(Feature)
 class FeatureAdmin(TranslatableAdmin, admin.OSMGeoAdmin):
+    # Helsinki
+    default_lon = 2777215
+    default_lat = 8434296
+    default_zoom = 11
+
     list_display = (
         "name",
         "category",
