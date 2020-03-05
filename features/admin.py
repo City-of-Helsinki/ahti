@@ -20,9 +20,13 @@ class FeatureTagInline(admin.TabularInline):
     extra = 0
 
 
-class OverrideInline(TranslatableTabularInline):
-    model = Override
-    extra = 1
+class ContactInfoInline(admin.StackedInline):
+    model = ContactInfo
+
+
+class ImageInline(admin.TabularInline):
+    model = Image
+    extra = 0
 
 
 class OpeningHourInline(admin.TabularInline):
@@ -31,19 +35,15 @@ class OpeningHourInline(admin.TabularInline):
     extra = 0
 
 
-class ContactInfoInline(admin.StackedInline):
-    model = ContactInfo
-
-
 class OpeningHoursPeriodInline(TranslatableTabularInline):
     model = OpeningHoursPeriod
     show_change_link = True
     extra = 0
 
 
-class ImageInline(admin.TabularInline):
-    model = Image
-    extra = 0
+class OverrideInline(TranslatableTabularInline):
+    model = Override
+    extra = 1
 
 
 @admin.register(Feature)
@@ -78,6 +78,16 @@ class FeatureAdmin(TranslatableAdmin, admin.OSMGeoAdmin):
         return super().get_queryset(request).distinct()
 
 
+@admin.register(License)
+class LicenseAdmin(TranslatableAdmin):
+    list_display = (
+        "name",
+        "language_column",
+    )
+    search_fields = ("translations__name",)
+    list_filter = ("translations__language_code",)
+
+
 @admin.register(OpeningHoursPeriod)
 class OpeningHoursPeriodAdmin(TranslatableAdmin):
     list_display = (
@@ -100,16 +110,6 @@ class OpeningHoursPeriodAdmin(TranslatableAdmin):
             .select_related("feature")
             .prefetch_related("feature__translations")
         )
-
-
-@admin.register(License)
-class LicenseAdmin(TranslatableAdmin):
-    list_display = (
-        "name",
-        "language_column",
-    )
-    search_fields = ("translations__name",)
-    list_filter = ("translations__language_code",)
 
 
 @admin.register(Tag)
