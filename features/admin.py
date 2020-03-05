@@ -11,3 +11,7 @@ class FeatureAdmin(TranslatableAdmin, admin.OSMGeoAdmin):
     search_fields = ("translations__name", "source_id")
     ordering = ("translations__name",)
     autocomplete_fields = ("category", "parents")
+
+    def get_queryset(self, request):
+        # Ordering by translated name might cause duplicates in the queryset
+        return super().get_queryset(request).distinct()
