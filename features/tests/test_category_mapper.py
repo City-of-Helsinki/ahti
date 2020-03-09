@@ -17,7 +17,13 @@ from features.importers.base import CategoryMapper
 def test_category_mapping_rules(mapped_names, expected):
     data = {"id": "matko2:47", "name": "Island"}
     config = {
-        "rules": [{"mapped_names": mapped_names, "id": "island", "name": "Saaret"}],
+        "rules": [
+            {
+                "mapped_names": mapped_names,
+                "id": "ahti:category:island",
+                "name": "Saaret",
+            }
+        ],
     }
     mapper = CategoryMapper(config)
 

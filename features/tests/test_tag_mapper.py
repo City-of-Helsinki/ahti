@@ -47,7 +47,9 @@ def test_tag_mapping_whitelist(whitelist, expected):
 def test_tag_mapping_rules(mapped_names, expected):
     data = {"id": "matko2:47", "name": "Island"}
     config = {
-        "rules": [{"mapped_names": mapped_names, "id": "island", "name": "saaristo"}],
+        "rules": [
+            {"mapped_names": mapped_names, "id": "ahti:tag:island", "name": "saaristo"}
+        ],
     }
     mapper = TagMapper(config)
 

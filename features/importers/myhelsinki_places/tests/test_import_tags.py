@@ -24,7 +24,9 @@ def test_tags_are_imported_based_on_mapping_rules(
     """Importing tags from external source into internal tags."""
     requests_mock.get(PLACES_URL, json=places_response)
     tag_config = {
-        "rules": [{"mapped_names": ["Island"], "id": "island", "name": "saaristo"}],
+        "rules": [
+            {"mapped_names": ["Island"], "id": "ahti:tag:island", "name": "saaristo"}
+        ],
     }
     importer.tag_mapper = TagMapper(tag_config)
 

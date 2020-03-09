@@ -81,7 +81,6 @@ class TagMapper(MapperBase):
     Only tags defined in the configuration will be considered.
     """
 
-    internal_tag_prefix = "ahti:tag:"
     whitelist = True
 
     def get_tag(self, tag: dict) -> Optional[Tag]:
@@ -104,8 +103,7 @@ class TagMapper(MapperBase):
         mapping = self.config.get(tag["name"].lower())
         if mapping:
             tag, created = Tag.objects.language("fi").update_or_create(
-                id=f"{self.internal_tag_prefix}{mapping['id']}",
-                defaults={"name": mapping["name"]},
+                id=mapping["id"], defaults={"name": mapping["name"]},
             )
             return tag
 
@@ -121,8 +119,6 @@ class CategoryMapper(MapperBase):
     will be considered.
     """
 
-    internal_category_prefix = "ahti:category:"
-
     def get_category(self, category: dict) -> Optional[Category]:
         """Return a Category instance for the given input.
 
@@ -134,7 +130,6 @@ class CategoryMapper(MapperBase):
         mapping = self.config.get(category["name"].lower())
         if mapping:
             category, created = Category.objects.language("fi").update_or_create(
-                id=f"{self.internal_category_prefix}{mapping['id']}",
-                defaults={"name": mapping["name"]},
+                id=mapping["id"], defaults={"name": mapping["name"]},
             )
             return category
