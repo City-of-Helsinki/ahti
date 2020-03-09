@@ -2,7 +2,6 @@ import pytest
 
 from categories.models import Category
 from categories.tests.factories import CategoryFactory
-from features.importers.base import CategoryMapper
 from features.importers.myhelsinki_places.importer import (
     MyHelsinkiImporter,
     MyHelsinkiPlacesClient,
@@ -22,10 +21,6 @@ def setup_categories(settings):
 
 def test_import_feature_category(requests_mock, importer, places_response):
     requests_mock.get(PLACES_URL, json=places_response)
-    category_config = {
-        "rules": [{"mapped_names": ["Island"], "id": "island", "name": "Saaret"}],
-    }
-    importer.category_mapper = CategoryMapper(category_config)
 
     importer.import_features()
 
