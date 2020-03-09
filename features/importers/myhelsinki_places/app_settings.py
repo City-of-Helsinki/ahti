@@ -43,7 +43,13 @@ class AppSettings:
 
         Example:
         tag_config = {
-            "rules": [{"mapped_names": ["Island"], "id": "island", "name": "saaristo"}],
+            "rules": [
+                {
+                    "mapped_names": ["Island"],
+                    "id": "ahti:tag:island",
+                    "name": "saaristo"
+                },
+            ],
             "whitelist": [],
         }
         """
@@ -58,7 +64,11 @@ class AppSettings:
         Example:
         category_config = {
             "rules": [
-                {"mapped_names": ["Island"], "id": "island", "name": "Saaret"}
+                {
+                    "mapped_names": ["Island"],
+                    "id": "ahti:category:island",
+                    "name": "Saaret",
+                },
             ],
         }
         """
