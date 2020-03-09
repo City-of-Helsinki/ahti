@@ -14,7 +14,7 @@ PLACES_URL = MyHelsinkiPlacesClient.base_url + MyHelsinkiPlacesClient.places_url
 
 
 @pytest.fixture(autouse=True)
-def setup_images(settings):
+def setup_categories(settings):
     settings.MYHELSINKI_PLACES_CATEGORY_CONFIG = {
         "rules": [{"mapped_names": ["Island"], "id": "island", "name": "Saaret"}],
     }
