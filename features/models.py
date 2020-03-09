@@ -220,6 +220,16 @@ class ContactInfo(models.Model):
         verbose_name_plural = _("contact info")
         ordering = ("id",)
 
+    def __str__(self):
+        parts = [
+            self.street_address,
+            self.postal_code,
+            self.municipality,
+            self.phone_number,
+            self.email,
+        ]
+        return f"{self.feature} - {', '.join(filter(None, parts))}"
+
 
 class OpeningHoursPeriod(TranslatableModel):
     feature = models.ForeignKey(
