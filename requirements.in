@@ -1,0 +1,13 @@
+Django
+django-cors-headers
+django-environ
+django-filter
+django-graphql-geojson
+django-graphql-jwt
+django-helusers
+django-parler
+graphene-django
+jmespath
+psycopg2
+requests
+sentry-sdk

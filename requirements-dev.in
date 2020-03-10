@@ -1,0 +1,12 @@
+black
+factory-boy
+flake8
+freezegun
+ipython
+isort
+pytest
+pytest-cov
+pytest-django
+pytest-mock
+requests-mock
+snapshottest

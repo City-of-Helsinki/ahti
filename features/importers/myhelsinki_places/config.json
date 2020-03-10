@@ -1,0 +1,13 @@
+{
+  "api_calls":  [
+    {}
+  ],
+  "tag_config": {
+    "rules": [{"mapped_names": ["Island"], "id": "ahti:tag:island", "name": "saaristo"}],
+    "whitelist": []
+  },
+  "category_config": {
+    "rules": [{"mapped_names": ["Island"], "id": "ahti:category:island", "name": "Saaret"}]
+  },
+  "allowed_image_licenses": ["All rights reserved.", "MyHelsinki license type A"]
+}
