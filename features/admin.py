@@ -10,6 +10,7 @@ from features.models import (
     OpeningHours,
     OpeningHoursPeriod,
     Override,
+    SourceType,
     Tag,
 )
 
@@ -91,6 +92,11 @@ class LicenseAdmin(TranslatableAdmin):
     )
     search_fields = ("translations__name",)
     list_filter = ("translations__language_code",)
+
+
+@admin.register(SourceType)
+class SourceTypeAdmin(admin.ModelAdmin):
+    search_fields = ("system", "type")
 
 
 @admin.register(OpeningHoursPeriod)
