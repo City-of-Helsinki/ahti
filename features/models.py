@@ -208,8 +208,10 @@ class Tag(TranslatableModel):
 
 
 class FeatureTag(TimestampedModel):
-    feature = models.ForeignKey(Feature, on_delete=models.CASCADE)
-    tag = models.ForeignKey(Tag, on_delete=models.CASCADE)
+    feature = models.ForeignKey(
+        Feature, on_delete=models.CASCADE, related_name="feature_tags"
+    )
+    tag = models.ForeignKey(Tag, on_delete=models.CASCADE, related_name="feature_tags")
     source = models.CharField(
         max_length=7,
         choices=FeatureTagSource.choices,
