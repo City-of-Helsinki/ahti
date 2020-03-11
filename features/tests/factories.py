@@ -9,6 +9,7 @@ from features.models import (
     Feature,
     Image,
     License,
+    Link,
     OpeningHours,
     OpeningHoursPeriod,
     Override,
@@ -48,6 +49,15 @@ class LicenseFactory(factory.django.DjangoModelFactory):
         model = License
 
     name = factory.Sequence(lambda n: "License %d" % n)
+
+
+class LinkFactory(factory.django.DjangoModelFactory):
+    class Meta:
+        model = Link
+
+    feature = factory.SubFactory(FeatureFactory)
+    type = factory.Faker("slug")
+    url = factory.Faker("url")
 
 
 class ImageFactory(factory.django.DjangoModelFactory):
