@@ -1,3 +1,4 @@
+from features.enums import FeatureTagSource
 from features.importers.base import TagMapper
 from features.importers.myhelsinki_places.importer import MyHelsinkiPlacesClient
 from features.models import Feature, Tag
@@ -48,3 +49,4 @@ def test_tags_are_linked_to_features(requests_mock, importer, places_response):
 
     assert feature.tags.count() == 1
     assert tag in feature.tags.all()
+    assert feature.feature_tags.first().source == FeatureTagSource.MAPPING
