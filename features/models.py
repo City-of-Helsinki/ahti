@@ -5,7 +5,7 @@ from parler.models import TranslatableModel, TranslatedFields
 from utils.models import TimestampedModel
 
 from ahti import settings
-from features.enums import OverrideFieldType, Visibility, Weekday
+from features.enums import FeatureTagSource, OverrideFieldType, Visibility, Weekday
 
 
 class SourceType(models.Model):
@@ -210,6 +210,13 @@ class Tag(TranslatableModel):
 class FeatureTag(TimestampedModel):
     feature = models.ForeignKey(Feature, on_delete=models.CASCADE)
     tag = models.ForeignKey(Tag, on_delete=models.CASCADE)
+    source = models.CharField(
+        max_length=7,
+        choices=FeatureTagSource.choices,
+        default=FeatureTagSource.MAPPING,
+        verbose_name=_("source"),
+        help_text=_("How tag was set for the feature"),
+    )
 
     class Meta:
         verbose_name = _("feature tag")
