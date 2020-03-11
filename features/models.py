@@ -228,6 +228,9 @@ class FeatureTag(TimestampedModel):
             ),
         ]
 
+    def __str__(self):
+        return f"{self.tag}"
+
 
 class ContactInfo(models.Model):
     feature = models.OneToOneField(
