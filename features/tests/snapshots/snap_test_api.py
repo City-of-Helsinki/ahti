@@ -233,3 +233,22 @@ snapshots["test_feature_query_error 1"] = {
         }
     ],
 }
+
+snapshots["test_features_link_query 1"] = {
+    "data": {
+        "features": {
+            "edges": [
+                {
+                    "node": {
+                        "properties": {
+                            "links": [
+                                {"type": "external_url", "url": "https://example.com"}
+                            ],
+                            "name": "Feature with external URL",
+                        }
+                    }
+                }
+            ]
+        }
+    }
+}

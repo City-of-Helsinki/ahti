@@ -40,6 +40,20 @@ class ContactInfo(DjangoObjectType):
         }
 
 
+class ExternalLink(DjangoObjectType):
+    """Link to an external system
+
+    Link can be e.g. to an online store, a berth rental or to ferry information.
+    """
+
+    class Meta:
+        model = models.Link
+        fields = (
+            "type",
+            "url",
+        )
+
+
 class FeatureSource(ObjectType):
     """Source information for a feature."""
 
@@ -168,6 +182,7 @@ class Feature(graphql_geojson.GeoJSONType):
             "contact_info",
             "geometry",
             "images",
+            "links",
             "opening_hours_periods",
             "tags",
             "translations",
@@ -225,6 +240,7 @@ class Feature(graphql_geojson.GeoJSONType):
                 "images",
                 "images__license",
                 "images__license__translations",
+                "links",
                 "opening_hours_periods",
                 "opening_hours_periods__opening_hours",
                 "opening_hours_periods__translations",
