@@ -166,6 +166,32 @@ class License(TranslatableModel):
         return self.safe_translation_getter("name", super().__str__())
 
 
+class Link(models.Model):
+    feature = models.ForeignKey(
+        Feature,
+        on_delete=models.CASCADE,
+        related_name="links",
+        verbose_name=_("feature"),
+    )
+    type = models.CharField(
+        verbose_name=_("type"), max_length=200, help_text=_("Type of the link")
+    )
+    url = models.URLField(verbose_name=_("url"), max_length=2000)
+
+    def __str__(self):
+        return f"{self.type}: {self.url}"
+
+    class Meta:
+        verbose_name = _("link")
+        verbose_name_plural = _("links")
+        ordering = ("id",)
+        constraints = [
+            models.UniqueConstraint(
+                fields=["feature", "type"], name="unique_link_feature_type"
+            ),
+        ]
+
+
 class Tag(TranslatableModel):
     id = models.CharField(max_length=200, primary_key=True)
     translations = TranslatedFields(

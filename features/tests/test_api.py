@@ -16,6 +16,7 @@ from features.tests.factories import (
     ContactInfoFactory,
     FeatureFactory,
     ImageFactory,
+    LinkFactory,
     OpeningHoursFactory,
     OpeningHoursPeriodFactory,
     OverrideFactory,
@@ -165,6 +166,32 @@ def test_features_image_query(snapshot, api_client):
                 license {
                   name
                 }
+              }
+            }
+          }
+        }
+      }
+    }
+    """
+    )
+    snapshot.assert_match(executed)
+
+
+def test_features_link_query(snapshot, api_client):
+    feature = FeatureFactory(name="Feature with external URL",)
+    LinkFactory(feature=feature, type="external_url", url="https://example.com")
+
+    executed = api_client.execute(
+        """
+    query FeatureLinks {
+      features {
+        edges {
+          node {
+            properties {
+              name
+              links {
+                type
+                url
               }
             }
           }

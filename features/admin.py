@@ -7,6 +7,7 @@ from features.models import (
     FeatureTag,
     Image,
     License,
+    Link,
     OpeningHours,
     OpeningHoursPeriod,
     Override,
@@ -15,18 +16,23 @@ from features.models import (
 )
 
 
+class ContactInfoInline(admin.StackedInline):
+    model = ContactInfo
+
+
 class FeatureTagInline(admin.TabularInline):
     model = FeatureTag
     autocomplete_fields = ("tag",)
     extra = 0
 
 
-class ContactInfoInline(admin.StackedInline):
-    model = ContactInfo
-
-
 class ImageInline(admin.TabularInline):
     model = Image
+    extra = 0
+
+
+class LinkInline(admin.TabularInline):
+    model = Link
     extra = 0
 
 
@@ -76,6 +82,7 @@ class FeatureAdmin(TranslatableAdmin, admin.OSMGeoAdmin):
         ContactInfoInline,
         ImageInline,
         OpeningHoursPeriodInline,
+        LinkInline,
         OverrideInline,
     )
 

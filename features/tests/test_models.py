@@ -5,6 +5,7 @@ from features.models import (
     Feature,
     Image,
     License,
+    Link,
     OpeningHours,
     OpeningHoursPeriod,
     Override,
@@ -16,6 +17,7 @@ from features.tests.factories import (
     FeatureFactory,
     ImageFactory,
     LicenseFactory,
+    LinkFactory,
     OpeningHoursFactory,
     OpeningHoursPeriodFactory,
     OverrideFactory,
@@ -70,6 +72,13 @@ def test_license():
     LicenseFactory()
 
     assert License.objects.count() == 1
+
+
+def test_link():
+    LinkFactory()
+
+    assert Link.objects.count() == 1
+    assert Feature.objects.count() == 1
 
 
 def test_tag():
