@@ -298,6 +298,11 @@ class OpeningHoursPeriod(TranslatableModel):
         verbose_name_plural = _("opening hours periods")
         ordering = ("id",)
 
+    def __str__(self):
+        return ", ".join(
+            [str(oh) for oh in self.opening_hours.all().order_by("day", "opens")]
+        )
+
 
 class OpeningHours(models.Model):
     period = models.ForeignKey(
