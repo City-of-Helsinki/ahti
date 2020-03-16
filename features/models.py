@@ -1,4 +1,5 @@
 from django.contrib.gis.db import models
+from django.utils.translation import gettext
 from django.utils.translation import gettext_lazy as _
 from parler.managers import TranslatableQuerySet
 from parler.models import TranslatableModel, TranslatedFields
@@ -320,6 +321,15 @@ class OpeningHours(models.Model):
         verbose_name = _("opening hours")
         verbose_name_plural = _("opening hours")
         ordering = ("id",)
+
+    def __str__(self):
+        if self.all_day:
+            hours_string = gettext("all day")
+        else:
+            opens_string = self.opens.strftime("%H.%M") if self.opens else ""
+            closes_string = self.closes.strftime("%H.%M") if self.closes else ""
+            hours_string = f"{opens_string}–{closes_string}"
+        return f"{gettext(Weekday(self.day).label)}: {hours_string}"
 
 
 class Override(TranslatableModel, TimestampedModel):
