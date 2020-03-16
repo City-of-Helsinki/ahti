@@ -7,7 +7,7 @@ from django.contrib.gis.geos import Point
 from django.utils import timezone
 from django.utils.dateparse import parse_datetime, parse_time
 
-from features.enums import Weekday
+from features.enums import FeatureTagSource, Weekday
 from features.importers.base import CategoryMapper, FeatureImporterBase, TagMapper
 from features.importers.myhelsinki_places import app_settings
 from features.models import (
@@ -133,10 +133,21 @@ class MyHelsinkiImporter(FeatureImporterBase):
         feature.images.exclude(url__in=processed_images).delete()
 
     def _import_feature_tags(self, feature: Feature, tags: Iterable[dict]):
-        """Imports and sets tags for the given feature."""
+        """Imports and sets tags for the given feature.
+
+        Manually set tags for a feature are kept.
+        """
         if not tags:
             tags = []
+
+        manually_set_tags = [
+            ft.tag
+            for ft in feature.feature_tags.filter(
+                source=FeatureTagSource.MANUAL
+            ).select_related("tag")
+        ]
         feature_tags = [tag for tag in map(self.tag_mapper.get_tag, tags) if tag]
+        feature_tags.extend(manually_set_tags)
         feature.tags.set(feature_tags)
 
     def _import_feature_category(self, feature: Feature, tags: Iterable[dict]):
