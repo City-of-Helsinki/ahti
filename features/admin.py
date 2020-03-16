@@ -38,8 +38,10 @@ class LinkInline(admin.TabularInline):
 
 class OpeningHourInline(admin.TabularInline):
     model = OpeningHours
-    min_num = 7
-    extra = 0
+    extra = 7
+
+    def get_extra(self, request, obj=None, **kwargs):
+        return self.extra - obj.opening_hours.count() if obj else self.extra
 
 
 class OpeningHoursPeriodInline(TranslatableTabularInline):
