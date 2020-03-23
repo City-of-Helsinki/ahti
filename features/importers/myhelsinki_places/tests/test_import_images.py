@@ -3,6 +3,7 @@ from utils.pytest import pytest_regex
 
 from features.importers.myhelsinki_places.importer import MyHelsinkiPlacesClient
 from features.models import Image, License
+from features.tests.factories import ImageFactory
 
 PLACES_URL = MyHelsinkiPlacesClient.base_url + MyHelsinkiPlacesClient.places_url
 
@@ -28,6 +29,7 @@ def test_images_are_imported_for_features(requests_mock, importer, places_respon
 
 
 def test_updating_images(requests_mock, importer, places_response):
+    """Test that image is not re-imported, but rather just updated."""
     requests_mock.get(PLACES_URL, json=places_response)
 
     importer.import_features()
@@ -84,12 +86,15 @@ def test_only_import_images_with_allowed_licenses(
 def test_delete_image_with_wrong_new_license(
     requests_mock, importer, places_response, settings
 ):
-    requests_mock.get(PLACES_URL, json=places_response)
-
-    importer.import_features()
-
     # Reduce the set of allowed image licenses
     settings.MYHELSINKI_PLACES_ALLOWED_IMAGE_LICENSES = ["MyHelsinki license type A"]
+    ImageFactory(
+        feature__source_type=importer.get_source_type(),
+        feature__source_id="2792",
+        license__name="All rights reserved.",
+    )
+    requests_mock.get(PLACES_URL, json=places_response)
+
     importer.import_features()
 
     assert (
@@ -106,9 +111,12 @@ def test_image_is_deleted(requests_mock, importer, places_response):
 
     Most likely it means that the image not available on the previous url.
     """
+    ImageFactory(
+        feature__source_type=importer.get_source_type(),
+        feature__source_id="2792",
+        license__name="All rights reserved.",
+    )
     requests_mock.get(PLACES_URL, json=places_response)
-
-    importer.import_features()
 
     # Remove all images from the response
     for place in places_response["data"]:
