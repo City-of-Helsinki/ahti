@@ -1,0 +1,54 @@
+{
+  "data": {
+    "harbors": {
+      "edges": [
+        {
+          "node": {
+            "id": "SGFyYm9yTm9kZTpiNzE0ODE1NC1kYmE5LTRlM2ItOWQ2ZS1jNTYzNmEyNWFhMzk=",
+            "geometry": {
+              "type": "Point",
+              "coordinates": [
+                24.884083,
+                60.193653
+              ]
+            },
+            "properties": {
+              "name": "Ramsaynrannan venesatama (Ramsaynranta 4)",
+              "imageLink": "",
+              "imageFile": "https://venepaikka-api.test.hel.ninja/media/harbors/b7148154-dba9-4e3b-9d6e-c5636a25aa39/41074.jpg",
+              "streetAddress": "Ramsaynranta 4",
+              "zipCode": "00330",
+              "municipality": "Helsinki",
+              "phone": "+358501234567",
+              "email": "venepaikkavaraukset@hel.fi",
+              "servicemapId": "41074"
+            }
+          }
+        },
+        {
+          "node": {
+            "id": "SGFyYm9yTm9kZTplYmMyMjJlMi1lN2E0LTQ2MzktYWYzNS1kZTYwMDc1ZGQzMzY=",
+            "geometry": {
+              "type": "Point",
+              "coordinates": [
+                24.965092,
+                60.173992
+              ]
+            },
+            "properties": {
+              "name": "Tervasaari (Tervasaarenkannas 1) / Venesatama",
+              "imageLink": "",
+              "imageFile": "https://venepaikka-api.test.hel.ninja/media/harbors/ebc222e2-e7a4-4639-af35-de60075dd336/42136.jpg",
+              "streetAddress": "Tervasaarenkannas 1",
+              "zipCode": "00170",
+              "municipality": "Helsinki",
+              "phone": "",
+              "email": "",
+              "servicemapId": "42136"
+            }
+          }
+        }
+      ]
+    }
+  }
+}

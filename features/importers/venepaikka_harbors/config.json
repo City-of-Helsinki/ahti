@@ -1,0 +1,5 @@
+{
+  "tag_config": {"id": "ahti:tag:harbor", "name": "satama"},
+  "category_config": {"id": "ahti:category:harbor", "name": "Satamat"},
+  "image_license": "All rights reserved."
+}
