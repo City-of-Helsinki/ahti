@@ -26,7 +26,7 @@ def test_source_type_gets_created(requests_mock, importer):
     importer.import_features()
 
     assert SourceType.objects.count() == 1
-    SourceType.objects.get(system="myhelsinki", type="place")
+    assert SourceType.objects.filter(system="myhelsinki", type="place").exists()
 
 
 @freeze_time("2019-12-16 12:00:01")
