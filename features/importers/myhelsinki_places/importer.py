@@ -59,7 +59,6 @@ data[*].{
 
 
 class MyHelsinkiImporter(FeatureImporterBase):
-
     source_system = "myhelsinki"
     source_type = "place"
 
@@ -93,7 +92,7 @@ class MyHelsinkiImporter(FeatureImporterBase):
             "url": place["url"],
             "mapped_at": timezone.now(),
             "source_modified_at": parse_datetime(place["modified_at"]),
-            "geometry": Point(place["lon"], place["lat"], srid=settings.DEFAULT_SRID,),
+            "geometry": Point(place["lon"], place["lat"], srid=settings.DEFAULT_SRID),
             "source_type": st,
         }
         feature, created = Feature.objects.language("fi").update_or_create(
@@ -151,7 +150,7 @@ class MyHelsinkiImporter(FeatureImporterBase):
         feature.tags.set(feature_tags)
 
     def _import_feature_category(self, feature: Feature, tags: Iterable[dict]):
-        """Imports and set category for the given Feature.
+        """Import and set category for the given Feature.
 
         Categories are mapped based on features tags. Pre-existing
         categories on features are not updated.

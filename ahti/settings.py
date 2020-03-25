@@ -103,6 +103,7 @@ INSTALLED_APPS = [
     "utils",
     "features",
     # "features.importers.dummy",
+    "features.importers.venepaikka_harbors",
     "features.importers.myhelsinki_places",
     "categories",
 ]

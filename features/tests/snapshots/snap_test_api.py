@@ -77,7 +77,7 @@ snapshots["test_features_image_query 1"] = {
                             "images": [
                                 {
                                     "copyrightOwner": "Photo Grapher",
-                                    "license": {"name": "License 0"},
+                                    "license": {"name": "Photo license"},
                                     "url": "https://ahti1.localhost/image.png",
                                 }
                             ]

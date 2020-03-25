@@ -152,6 +152,7 @@ def test_features_image_query(snapshot, api_client):
         feature=feature,
         copyright_owner="Photo Grapher",
         url="https://ahti1.localhost/image.png",
+        license__name="Photo license",
     )
     executed = api_client.execute(
         """
