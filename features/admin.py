@@ -1,4 +1,5 @@
 from django.contrib.gis import admin
+from django.db.models.functions import Concat
 from parler.admin import TranslatableAdmin, TranslatableTabularInline
 
 from features.models import (
@@ -63,10 +64,9 @@ class FeatureAdmin(TranslatableAdmin, admin.OSMGeoAdmin):
     default_zoom = 11
 
     list_display = (
+        "ahti_id",
         "name",
         "category",
-        "source_type",
-        "source_id",
         "visibility",
         "language_column",
     )
@@ -76,8 +76,13 @@ class FeatureAdmin(TranslatableAdmin, admin.OSMGeoAdmin):
         "visibility",
         "translations__language_code",
     )
-    search_fields = ("translations__name",)
-    ordering = ("translations__name",)
+    search_fields = (
+        "source_type__system",
+        "source_type__type",
+        "source_id",
+        "translations__name",
+    )
+    ordering = ("source_type__system", "source_type__type", "source_id")
     autocomplete_fields = ("category", "parents")
     inlines = (
         FeatureTagInline,
@@ -88,9 +93,12 @@ class FeatureAdmin(TranslatableAdmin, admin.OSMGeoAdmin):
         OverrideInline,
     )
 
-    def get_queryset(self, request):
-        # Ordering by translated name might cause duplicates in the queryset
-        return super().get_queryset(request).distinct()
+    def ahti_id(self, obj: Feature):
+        return obj.ahti_id
+
+    ahti_id.admin_order_field = Concat(
+        "source_type__system", "source_type__type", "source_id"
+    )
 
 
 @admin.register(License)
