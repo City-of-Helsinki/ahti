@@ -47,6 +47,7 @@ def test_features_query(snapshot, api_client):
         source_id="sid0",
         name="Place X",
         description="Place X description",
+        one_liner="Place X one-liner",
         geometry=Point(24.940967, 60.168683),
         url="https://ahti1.localhost",
     )
@@ -54,6 +55,7 @@ def test_features_query(snapshot, api_client):
         source_type=st,
         source_id="sid1",
         name="Place Y",
+        one_liner="Place Y one-liner",
         description="Place Y description",
         geometry=Point(24.952222, 60.169494),
         url="https://ahti2.localhost",
@@ -73,6 +75,7 @@ def test_features_query(snapshot, api_client):
             properties {
               name
               description
+              oneLiner
               url
               ahtiId
               createdAt
@@ -81,6 +84,7 @@ def test_features_query(snapshot, api_client):
                 languageCode
                 name
                 description
+                oneLiner
                 url
               }
               source {
