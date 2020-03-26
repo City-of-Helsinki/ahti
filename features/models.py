@@ -67,6 +67,12 @@ class Feature(TranslatableModel, TimestampedModel):
         url=models.URLField(
             verbose_name=_("url"), blank=True, help_text=_("URL of the feature")
         ),
+        one_liner=models.CharField(
+            verbose_name=_("one-liner"),
+            max_length=64,
+            blank=True,
+            help_text=_("A short description limited to 64 chars"),
+        ),
         description=models.TextField(verbose_name=_("description"), blank=True),
     )
     geometry = models.GeometryField(
