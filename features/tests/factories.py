@@ -3,10 +3,11 @@ from django.contrib.gis.geos import Point
 from django.utils import timezone
 from factory.random import randgen
 
-from features.enums import OverrideFieldType
+from features.enums import FeatureDetailsType, OverrideFieldType
 from features.models import (
     ContactInfo,
     Feature,
+    FeatureDetails,
     FeatureTeaser,
     Image,
     License,
@@ -53,6 +54,14 @@ class FeatureTeaserFactory(factory.django.DjangoModelFactory):
     feature = factory.SubFactory(FeatureFactory)
     header = "Starting from:"
     main = "7 euro a day."
+
+
+class FeatureDetailsFactory(factory.django.DjangoModelFactory):
+    class Meta:
+        model = FeatureDetails
+
+    feature = factory.SubFactory(FeatureFactory)
+    type = factory.Faker("random_element", elements=list(FeatureDetailsType))
 
 
 class LicenseFactory(factory.django.DjangoModelFactory):

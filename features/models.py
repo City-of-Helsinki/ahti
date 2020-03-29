@@ -1,4 +1,6 @@
 from django.contrib.gis.db import models
+from django.contrib.postgres.fields import JSONField
+from django.core.serializers.json import DjangoJSONEncoder
 from django.utils.translation import gettext
 from django.utils.translation import gettext_lazy as _
 from parler.managers import TranslatableQuerySet
@@ -6,7 +8,13 @@ from parler.models import TranslatableModel, TranslatedFields
 from utils.models import TimestampedModel
 
 from ahti import settings
-from features.enums import FeatureTagSource, OverrideFieldType, Visibility, Weekday
+from features.enums import (
+    FeatureDetailsType,
+    FeatureTagSource,
+    OverrideFieldType,
+    Visibility,
+    Weekday,
+)
 
 
 class SourceType(models.Model):
@@ -130,6 +138,41 @@ class Feature(TranslatableModel, TimestampedModel):
     @property
     def ahti_id(self):
         return f"{self.source_type.system}:{self.source_type.type}:{self.source_id}"
+
+
+class FeatureDetails(models.Model):
+    feature = models.ForeignKey(
+        Feature,
+        on_delete=models.CASCADE,
+        related_name="details",
+        verbose_name=_("details"),
+    )
+    type = models.CharField(
+        max_length=6,
+        choices=FeatureDetailsType.choices,
+        verbose_name=_("type"),
+        help_text=_("What type of details are described in this object"),
+    )
+    data = JSONField(
+        verbose_name=_("data"),
+        default=dict,
+        blank=True,
+        null=True,
+        encoder=DjangoJSONEncoder,
+    )
+
+    class Meta:
+        verbose_name = _("feature details")
+        verbose_name_plural = _("feature details")
+        ordering = ("id",)
+        constraints = [
+            models.UniqueConstraint(
+                fields=["feature", "type"], name="unique_feature_detail_type"
+            ),
+        ]
+
+    def __str__(self):
+        return f"{gettext(FeatureDetailsType(self.type).label)}"
 
 
 class Image(models.Model):

@@ -2,10 +2,8 @@ from django.db import models
 from django.utils.translation import gettext_lazy as _
 
 
-class OverrideFieldType(models.TextChoices):
-    """Enumeration for overridable fields."""
-
-    NAME = "NAME", _("Name")
+class FeatureDetailsType(models.TextChoices):
+    HARBOR = "HARBOR", _("Harbor")
 
 
 class FeatureTagSource(models.TextChoices):
@@ -13,6 +11,12 @@ class FeatureTagSource(models.TextChoices):
 
     MAPPING = "MAPPING", _("Mapping")
     MANUAL = "MANUAL", _("Manual")
+
+
+class OverrideFieldType(models.TextChoices):
+    """Enumeration for overridable fields."""
+
+    NAME = "NAME", _("Name")
 
 
 class Visibility(models.IntegerChoices):

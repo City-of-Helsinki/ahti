@@ -3,6 +3,7 @@ import pytest
 from features.models import (
     ContactInfo,
     Feature,
+    FeatureDetails,
     Image,
     License,
     Link,
@@ -14,6 +15,7 @@ from features.models import (
 )
 from features.tests.factories import (
     ContactInfoFactory,
+    FeatureDetailsFactory,
     FeatureFactory,
     ImageFactory,
     LicenseFactory,
@@ -59,6 +61,13 @@ def test_feature_ahti_id_filter():
 def test_feature_ahti_id_does_not_exist():
     with pytest.raises(Feature.DoesNotExist):
         Feature.objects.ahti_id("Nope")
+
+
+def test_feature_details():
+    FeatureDetailsFactory()
+
+    assert Feature.objects.count() == 1
+    assert FeatureDetails.objects.count() == 1
 
 
 def test_image():
