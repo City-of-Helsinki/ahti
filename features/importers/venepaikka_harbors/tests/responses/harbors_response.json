@@ -21,7 +21,63 @@
               "municipality": "Helsinki",
               "phone": "+358501234567",
               "email": "venepaikkavaraukset@hel.fi",
-              "servicemapId": "41074"
+              "servicemapId": "41074",
+              "piers": {
+                "edges": [
+                  {
+                    "node": {
+                      "properties": {
+                        "berths": {
+                          "edges": [
+                            {
+                              "node": {
+                                "berthType": {
+                                  "mooringType": "SINGLE_SLIP_PLACE",
+                                  "depth": null
+                                }
+                              }
+                            },
+                            {
+                              "node": {
+                                "berthType": {
+                                  "mooringType": "SINGLE_SLIP_PLACE",
+                                  "depth": 2
+                                }
+                              }
+                            }
+                          ]
+                        }
+                      }
+                    }
+                  },
+                  {
+                    "node": {
+                      "properties": {
+                        "berths": {
+                          "edges": [
+                            {
+                              "node": {
+                                "berthType": {
+                                  "mooringType": "STERN_BUOY_PLACE",
+                                  "depth": null
+                                }
+                              }
+                            },
+                            {
+                              "node": {
+                                "berthType": {
+                                  "mooringType": "SINGLE_SLIP_PLACE",
+                                  "depth": null
+                                }
+                              }
+                            }
+                          ]
+                        }
+                      }
+                    }
+                  }
+                ]
+              }
             }
           }
         },
@@ -44,7 +100,53 @@
               "municipality": "Helsinki",
               "phone": "",
               "email": "",
-              "servicemapId": "42136"
+              "servicemapId": "42136",
+              "piers": {
+                "edges": [
+                  {
+                    "node": {
+                      "properties": {
+                        "berths": {
+                          "edges": [
+                            {
+                              "node": {
+                                "berthType": {
+                                  "mooringType": "STERN_BUOY_PLACE",
+                                  "depth": null
+                                }
+                              }
+                            },
+                            {
+                              "node": {
+                                "berthType": {
+                                  "mooringType": "SIDE_SLIP_PLACE",
+                                  "depth": null
+                                }
+                              }
+                            },
+                            {
+                              "node": {
+                                "berthType": {
+                                  "mooringType": "QUAYSIDE_MOORING",
+                                  "depth": null
+                                }
+                              }
+                            },
+                            {
+                              "node": {
+                                "berthType": {
+                                  "mooringType": "SINGLE_SLIP_PLACE",
+                                  "depth": null
+                                }
+                              }
+                            }
+                          ]
+                        }
+                      }
+                    }
+                  }
+                ]
+              }
             }
           }
         }

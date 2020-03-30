@@ -13,6 +13,21 @@ class FeatureTagSource(models.TextChoices):
     MANUAL = "MANUAL", _("Manual")
 
 
+class HarborMooringType(models.TextChoices):
+    """Mooring types which are available in a harbour."""
+
+    # In Finnish: "Aisapaikka"
+    SLIP = "SLIP", _("Slip")
+    # In Finnish: "Peräpoiju"
+    STERN_BUOY = "STERN_BUOY", _("Stern buoy")
+    # In Finnish: "Peräpaalu"
+    STERN_POLE = "STERN_POLE", _("Stern pole")
+    # In Finnish: "Kylki"
+    QUAYSIDE = "QUAYSIDE", _("Quayside")
+    # In Finnish: "Poiju (merellä)"
+    SEA_BUOY = "SEA_BUOY", _("Sea buoy")
+
+
 class OverrideFieldType(models.TextChoices):
     """Enumeration for overridable fields."""
 

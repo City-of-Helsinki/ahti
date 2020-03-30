@@ -1,4 +1,4 @@
-from typing import Iterable
+from typing import Iterable, Mapping
 
 import jmespath
 import requests
@@ -7,7 +7,7 @@ from django.contrib.gis.geos import Point
 from django.utils import timezone
 
 from categories.models import Category
-from features.enums import FeatureTagSource
+from features.enums import FeatureDetailsType, FeatureTagSource, HarborMooringType
 from features.importers.base import FeatureImporterBase
 from features.importers.venepaikka_harbors import app_settings
 from features.models import ContactInfo, Feature, Image, License, SourceType, Tag
@@ -32,6 +32,24 @@ query Harbors {
           phone
           email
           servicemapId
+          piers {
+            edges {
+              node {
+                properties {
+                  berths {
+                    edges {
+                      node {
+                        berthType {
+                          mooringType
+                          depth
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
         }
       }
     }
@@ -53,10 +71,14 @@ data.harbors.edges[*].node.{
         phone_number: properties.phone
         email: properties.email
     },
-    images: [properties.imageFile, properties.imageLink]
-    servicemap_id: properties.servicemapId
+    images: [properties.imageFile, properties.imageLink],
+    servicemap_id: properties.servicemapId,
+    harbor_details: {
+        berth_moorings: properties.piers.edges[*].node.properties.berths.edges[*].node.berthType.mooringType[],
+        berth_depths: properties.piers.edges[*].node.properties.berths.edges[*].node.berthType.depth[]
+    }
 }
-"""
+"""  # noqa: E501
 )
 
 
@@ -97,6 +119,7 @@ class VenepaikkaImporter(FeatureImporterBase):
             self._import_feature_contact_info(feature, harbor["address"])
             self._import_service_map_url(feature, harbor["servicemap_id"])
             self._import_feature_images(feature, harbor["images"], image_license)
+            self._import_harbor_details(feature, harbor["harbor_details"])
 
     @staticmethod
     def _import_feature(harbor: dict, st: SourceType) -> Feature:
@@ -197,6 +220,38 @@ class VenepaikkaImporter(FeatureImporterBase):
                 type=self.servicemap_link_type,
                 defaults={"url": f"{self.servicemap_url}{servicemap_id}"},
             )
+
+    @staticmethod
+    def _import_harbor_details(feature: Feature, harbor_details: Mapping):
+        """Import mooring types and berth depths available on the given harbour."""
+        data = {}
+
+        if harbor_details["berth_moorings"]:
+            mapped_berth_moorings = []
+            # Process and map external moorings into ahti internal ones
+            # Unmapped moorings are ignored
+            berth_moorings = set(harbor_details["berth_moorings"])
+            for berth_mooring in berth_moorings:
+                mapped_string = app_settings.MOORING_MAPPING.get(berth_mooring)
+
+                if mapped_string:
+                    # Raises if mapped to non-existent internal mooring
+                    hmt = HarborMooringType(mapped_string)
+                    mapped_berth_moorings.append(hmt)
+
+            if mapped_berth_moorings:
+                data["berth_moorings"] = mapped_berth_moorings
+
+        if harbor_details["berth_depths"]:
+            data["berth_min_depth"] = min(harbor_details["berth_depths"])
+            data["berth_max_depth"] = max(harbor_details["berth_depths"])
+
+        if data:
+            feature.details.update_or_create(
+                type=FeatureDetailsType.HARBOR, defaults={"data": data}
+            )
+        else:
+            feature.details.filter(type=FeatureDetailsType.HARBOR).delete()
 
 
 class VenepaikkaHarborsClient:

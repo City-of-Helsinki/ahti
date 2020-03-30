@@ -1,5 +1,13 @@
 {
   "tag_config": {"id": "ahti:tag:harbor", "name": "satama"},
   "category_config": {"id": "ahti:category:harbor", "name": "Satamat"},
-  "image_license": "All rights reserved."
+  "image_license": "All rights reserved.",
+  "mooring_mapping": {
+    "SINGLE_SLIP_PLACE": "SLIP",
+    "SIDE_SLIP_PLACE": "SLIP",
+    "STERN_BUOY_PLACE": "STERN_BUOY",
+    "STERN_POLE_MOORING": "STERN_POLE",
+    "QUAYSIDE_MOORING": "QUAYSIDE",
+    "SEA_BUOY_MOORING": "SEA_BUOY"
+  }
 }
