@@ -5,6 +5,7 @@ from features.models import (
     ContactInfo,
     Feature,
     FeatureTag,
+    FeatureTeaser,
     Image,
     License,
     Link,
@@ -24,6 +25,10 @@ class FeatureTagInline(admin.TabularInline):
     model = FeatureTag
     autocomplete_fields = ("tag",)
     extra = 0
+
+
+class FeatureTeaserInLine(TranslatableTabularInline):
+    model = FeatureTeaser
 
 
 class ImageInline(admin.TabularInline):
@@ -81,6 +86,7 @@ class FeatureAdmin(TranslatableAdmin, admin.OSMGeoAdmin):
     autocomplete_fields = ("category", "parents")
     inlines = (
         FeatureTagInline,
+        FeatureTeaserInLine,
         ContactInfoInline,
         ImageInline,
         OpeningHoursPeriodInline,

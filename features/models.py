@@ -374,3 +374,26 @@ class Override(TranslatableModel, TimestampedModel):
                 fields=["feature", "field"], name="unique_override_feature_field"
             ),
         ]
+
+
+class FeatureTeaser(TranslatableModel):
+    feature = models.OneToOneField(
+        Feature,
+        on_delete=models.CASCADE,
+        related_name="teaser",
+        verbose_name=_("teaser"),
+    )
+    translations = TranslatedFields(
+        header = models.CharField(
+            max_length=64, verbose_name=_("header"), help_text=_("Starting part of a teaser, e.g. 'Starting' from 'Starting from 7€/day.'")),
+        main = models.CharField(
+            max_length=128, verbose_name=_("main content"), help_text=_("The meat of the deal, '7€/day' part"))
+    )
+
+    def str(__self__):
+        return f"{self.header} + ' ' + {self.main}"
+
+    class Meta:
+        verbose_name = _("teaser")
+        verbose_name_plural = _("teasers")
+        ordering = ("id",)

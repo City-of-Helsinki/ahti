@@ -7,6 +7,7 @@ from features.enums import OverrideFieldType
 from features.models import (
     ContactInfo,
     Feature,
+    FeatureTeaser,
     Image,
     License,
     Link,
@@ -42,6 +43,15 @@ class FeatureFactory(factory.django.DjangoModelFactory):
             24.915 + randgen.uniform(0, 0.040), 60.154 + randgen.uniform(0, 0.022)
         )
     )
+
+
+class FeatureTeaserFactory(factory.django.DjangoModelFactory):
+    class Meta:
+        model = FeatureTeaser
+
+    feature = factory.SubFactory(FeatureFactory)
+    header = factory.Faker("Starting from")
+    main = factory.Faker("7€/day")
 
 
 class LicenseFactory(factory.django.DjangoModelFactory):

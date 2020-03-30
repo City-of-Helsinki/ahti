@@ -266,6 +266,30 @@ def test_feature_contact_info(snapshot, api_client):
     snapshot.assert_match(executed)
 
 
+def test_feature_teaser(snapshot, api_client):
+    ft = FeatureTeaserFactory()
+
+    executed = api_client.execute(
+        """
+    query FeatureOpeningHours {
+      features {
+        edges {
+          node {
+            properties {
+              teaser {
+                header
+                main
+              }
+            }
+          }
+        }
+      }
+    }
+    """
+    )
+
+    snapshot.assert_match(executed)
+
 def test_feature_opening_hours(snapshot, api_client):
     ohp = OpeningHoursPeriodFactory(
         valid_from=datetime.date(2020, 5, 1),
