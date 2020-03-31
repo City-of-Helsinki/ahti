@@ -51,8 +51,8 @@ class FeatureTeaserFactory(factory.django.DjangoModelFactory):
         model = FeatureTeaser
 
     feature = factory.SubFactory(FeatureFactory)
-    header = factory.Faker("Starting from")
-    main = factory.Faker("7€/day")
+    header = "Starting from:"
+    main = "7 euro a day."
 
 
 class LicenseFactory(factory.django.DjangoModelFactory):

@@ -15,6 +15,7 @@ from features.schema import Feature
 from features.tests.factories import (
     ContactInfoFactory,
     FeatureFactory,
+    FeatureTeaserFactory,
     ImageFactory,
     LinkFactory,
     OpeningHoursFactory,
@@ -271,11 +272,11 @@ def test_feature_contact_info(snapshot, api_client):
 
 
 def test_feature_teaser(snapshot, api_client):
-    ft = FeatureTeaserFactory()
+    FeatureTeaserFactory()
 
     executed = api_client.execute(
         """
-    query FeatureOpeningHours {
+    query FeatureTeaser {
       features {
         edges {
           node {
@@ -293,6 +294,7 @@ def test_feature_teaser(snapshot, api_client):
     )
 
     snapshot.assert_match(executed)
+
 
 def test_feature_opening_hours(snapshot, api_client):
     ohp = OpeningHoursPeriodFactory(

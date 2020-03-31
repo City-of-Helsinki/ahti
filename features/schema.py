@@ -67,7 +67,7 @@ class FeatureSource(ObjectType):
 class Teaser(DjangoObjectType):
     class Meta:
         model = models.FeatureTeaser
-    
+
     header = graphene.String()
     main = graphene.String()
 
