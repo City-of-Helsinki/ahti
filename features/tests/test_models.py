@@ -17,6 +17,7 @@ from features.tests.factories import (
     ContactInfoFactory,
     FeatureDetailsFactory,
     FeatureFactory,
+    HarbourFeatureDetailsFactory,
     ImageFactory,
     LicenseFactory,
     LinkFactory,
@@ -68,6 +69,15 @@ def test_feature_details():
 
     assert Feature.objects.count() == 1
     assert FeatureDetails.objects.count() == 1
+
+
+def test_harbor_feature_details():
+    HarbourFeatureDetailsFactory()
+
+    fd = FeatureDetails.objects.first()
+    assert "berth_min_depth" in fd.data
+    assert "berth_max_depth" in fd.data
+    assert "berth_moorings" in fd.data
 
 
 def test_image():
