@@ -15,6 +15,7 @@ from features.schema import Feature
 from features.tests.factories import (
     ContactInfoFactory,
     FeatureFactory,
+    FeatureTeaserFactory,
     ImageFactory,
     LinkFactory,
     OpeningHoursFactory,
@@ -267,6 +268,31 @@ def test_feature_contact_info(snapshot, api_client):
     }
     """
     )
+    snapshot.assert_match(executed)
+
+
+def test_feature_teaser(snapshot, api_client):
+    FeatureTeaserFactory()
+
+    executed = api_client.execute(
+        """
+    query FeatureTeaser {
+      features {
+        edges {
+          node {
+            properties {
+              teaser {
+                header
+                main
+              }
+            }
+          }
+        }
+      }
+    }
+    """
+    )
+
     snapshot.assert_match(executed)
 
 

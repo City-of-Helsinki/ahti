@@ -256,3 +256,22 @@ snapshots["test_features_link_query 1"] = {
         }
     }
 }
+
+snapshots["test_feature_teaser 1"] = {
+    "data": {
+        "features": {
+            "edges": [
+                {
+                    "node": {
+                        "properties": {
+                            "teaser": {
+                                "header": "Starting from:",
+                                "main": "7 euro a day.",
+                            }
+                        }
+                    }
+                }
+            ]
+        }
+    }
+}

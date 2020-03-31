@@ -64,6 +64,14 @@ class FeatureSource(ObjectType):
     )
 
 
+class Teaser(DjangoObjectType):
+    class Meta:
+        model = models.FeatureTeaser
+
+    header = graphene.String()
+    main = graphene.String()
+
+
 class FeatureTranslations(DjangoObjectType):
     class Meta:
         model = apps.get_model("features", "FeatureTranslation")
@@ -180,6 +188,7 @@ class Feature(graphql_geojson.GeoJSONType):
             "category",
             "created_at",
             "contact_info",
+            "teaser",
             "geometry",
             "images",
             "links",
@@ -233,7 +242,7 @@ class Feature(graphql_geojson.GeoJSONType):
     def get_queryset(cls, queryset, info):
         return (
             queryset.filter(visibility=Visibility.VISIBLE)
-            .select_related("source_type", "category",)
+            .select_related("source_type", "category", "teaser")
             .prefetch_related(
                 "category__translations",
                 "contact_info",
@@ -248,6 +257,7 @@ class Feature(graphql_geojson.GeoJSONType):
                 "parents",
                 "tags",
                 "tags__translations",
+                "teaser__translations",
                 "translations",
             )
         )
