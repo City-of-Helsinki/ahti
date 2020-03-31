@@ -46,6 +46,7 @@ def test_feature():
 
 def test_feature_ahti_id_field():
     f = FeatureFactory()
+
     assert f.ahti_id == f"{f.source_type.system}:{f.source_type.type}:{f.source_id}"
 
 
