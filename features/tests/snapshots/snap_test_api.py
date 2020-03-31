@@ -6,6 +6,25 @@ from snapshottest import Snapshot
 
 snapshots = Snapshot()
 
+snapshots["test_feature_teaser 1"] = {
+    "data": {
+        "features": {
+            "edges": [
+                {
+                    "node": {
+                        "properties": {
+                            "teaser": {
+                                "header": "Starting from:",
+                                "main": "7 euro a day.",
+                            }
+                        }
+                    }
+                }
+            ]
+        }
+    }
+}
+
 snapshots["test_features_query 1"] = {
     "data": {
         "features": {
@@ -85,6 +104,25 @@ snapshots["test_features_image_query 1"] = {
                                     "url": "https://ahti1.localhost/image.png",
                                 }
                             ]
+                        }
+                    }
+                }
+            ]
+        }
+    }
+}
+
+snapshots["test_features_link_query 1"] = {
+    "data": {
+        "features": {
+            "edges": [
+                {
+                    "node": {
+                        "properties": {
+                            "links": [
+                                {"type": "external_url", "url": "https://example.com"}
+                            ],
+                            "name": "Feature with external URL",
                         }
                     }
                 }
