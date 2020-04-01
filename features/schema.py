@@ -12,7 +12,11 @@ from graphql_geojson.filters import DistanceFilter
 from utils.graphene import StringListFilter
 
 from features import models
-from features.enums import OverrideFieldType, Visibility, Weekday
+from features.enums import HarborMooringType, OverrideFieldType, Visibility, Weekday
+
+HarborMooringTypeEnum = graphene.Enum.from_enum(
+    HarborMooringType, description=lambda e: e.label if e else ""
+)
 
 WeekdayEnum = graphene.Enum.from_enum(
     Weekday, description=lambda e: e.label if e else ""
@@ -128,6 +132,61 @@ class OpeningHours(DjangoObjectType):
     day = WeekdayEnum(required=True)
 
 
+class Depth(ObjectType):
+    """The depth of something, in meters.
+
+    Can be a single value (min and max are equal) or a range.
+    (Consider: harbor/lake/pool/mineshaft)."
+    """
+
+    min = graphene.Float(
+        required=True,
+        description=_(
+            "An approximation of the minimum depth (or lower end of the range)"
+        ),
+    )
+    max = graphene.Float(
+        required=True,
+        description=_(
+            "An approximation of the maximum depth (or deeper end of the range)"
+        ),
+    )
+
+
+class HarborDetails(ObjectType):
+    """Information specific to harbors (and piers)."""
+
+    moorings = graphene.List(
+        graphene.NonNull(HarborMooringTypeEnum),
+        description=_("Mooring types available in the harbor"),
+    )
+    depth = graphene.Field(
+        Depth, description=_("Approximate depth of the harbor, in meters")
+    )
+
+    def resolve_moorings(self: models.FeatureDetails, info, **kwargs):
+        return self.data["berth_moorings"]
+
+    def resolve_depth(self: models.FeatureDetails, info, **kwargs):
+        """Minimum depth is mandatory, maximum is included for a range."""
+        min = self.data.get("berth_min_depth")
+        max = self.data.get("berth_max_depth")
+
+        if min is None:
+            return None
+
+        return {
+            "min": min,
+            "max": max,
+        }
+
+
+class FeatureDetails(ObjectType):
+    """Detailed information a Feature might have."""
+
+    harbor = graphene.Field(HarborDetails, description=_("Details of a harbor"))
+
+
 class FeatureFilter(django_filters.FilterSet):
     """Contains the filters to use when retrieving Features."""
 
@@ -189,6 +248,7 @@ class Feature(graphql_geojson.GeoJSONType):
             "created_at",
             "contact_info",
             "teaser",
+            "details",
             "geometry",
             "images",
             "links",
@@ -206,6 +266,7 @@ class Feature(graphql_geojson.GeoJSONType):
     name = graphene.String(required=True)
     one_liner = graphene.String(required=True)
     description = graphene.String()
+    details = graphene.Field(FeatureDetails)
     url = graphene.String()
     modified_at = graphene.DateTime(required=True)
     parents = graphene.List("features.schema.Feature", required=True)
@@ -232,6 +293,13 @@ class Feature(graphql_geojson.GeoJSONType):
             else self.source_modified_at
         )
 
+    def resolve_details(self: models.Feature, info, **kwargs):
+        details = {}
+        for detail in self.details.all():
+            # Default dict resolver will resolve this for FeatureDetails
+            details[detail.type.lower()] = detail
+        return details if details else None
+
     def resolve_parents(self: models.Feature, info, **kwargs):
         return self.parents.all()
 
@@ -247,6 +315,7 @@ class Feature(graphql_geojson.GeoJSONType):
                 "category__translations",
                 "contact_info",
                 "children",
+                "details",
                 "images",
                 "images__license",
                 "images__license__translations",

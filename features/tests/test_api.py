@@ -9,13 +9,14 @@ from utils.pytest import pytest_regex
 
 from ahti.schema import schema
 from categories.tests.factories import CategoryFactory
-from features.enums import OverrideFieldType, Visibility, Weekday
+from features.enums import HarborMooringType, OverrideFieldType, Visibility, Weekday
 from features.models import Feature as FeatureModel
 from features.schema import Feature
 from features.tests.factories import (
     ContactInfoFactory,
     FeatureFactory,
     FeatureTeaserFactory,
+    HarbourFeatureDetailsFactory,
     ImageFactory,
     LinkFactory,
     OpeningHoursFactory,
@@ -463,6 +464,38 @@ def test_feature_name_override(api_client):
         executed["data"]["features"]["edges"][0]["node"]["properties"]["name"]
         == override_name
     )
+
+
+def test_feature_harbour_details(snapshot, api_client):
+    HarbourFeatureDetailsFactory(
+        data__berth_min_depth=2.5,
+        data__berth_max_depth=2.5,
+        data__berth_moorings=[HarborMooringType.SLIP, HarborMooringType.QUAYSIDE],
+    )
+    executed = api_client.execute(
+        """
+    query FeaturesHarborDetails {
+      features {
+        edges {
+          node {
+            properties {
+              details {
+                harbor {
+                  moorings
+                  depth {
+                    min
+                    max
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+    """
+    )
+    snapshot.assert_match(executed)
 
 
 def test_feature_with_id(snapshot, api_client):
