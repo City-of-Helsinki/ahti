@@ -264,13 +264,16 @@ class Feature(graphql_geojson.GeoJSONType):
 
 
 class Query(graphene.ObjectType):
-    features = DjangoFilterConnectionField(Feature)
+    features = DjangoFilterConnectionField(
+        Feature, description=_("Retrieve all features matching the given filters")
+    )
     feature = graphene.Field(
         Feature,
         id=ID(description=_("The ID of the object")),
         ahti_id=String(description=_("Ahti ID of the object")),
+        description=_("Retrieve a single feature"),
     )
-    tags = graphene.List(Tag)
+    tags = graphene.List(Tag, description=_("Retrieve all tags"))
 
     def resolve_feature(self, info, id=None, ahti_id=None, **kwargs):
         if id:
