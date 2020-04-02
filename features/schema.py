@@ -99,7 +99,7 @@ class License(DjangoObjectType):
 class Tag(DjangoObjectType):
     class Meta:
         model = models.Tag
-        fields = ("id",)
+        fields = ("id", "features")
 
     name = graphene.String(required=True)
 
