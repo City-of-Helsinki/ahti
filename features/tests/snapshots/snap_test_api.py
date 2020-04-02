@@ -275,3 +275,23 @@ snapshots["test_feature_teaser 1"] = {
         }
     }
 }
+
+snapshots["test_tags_query 1"] = {
+    "data": {
+        "tags": [{"id": "tag:1", "name": "Tag 1"}, {"id": "tag:2", "name": "Tag 2"}]
+    }
+}
+
+snapshots["test_query_features_through_tags_query 1"] = {
+    "data": {
+        "tags": [
+            {
+                "features": {
+                    "edges": [{"node": {"properties": {"ahtiId": "test:test:sid0"}}}]
+                },
+                "id": "tag:1",
+                "name": "Tag 1",
+            }
+        ]
+    }
+}

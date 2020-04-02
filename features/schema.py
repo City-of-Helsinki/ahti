@@ -270,6 +270,7 @@ class Query(graphene.ObjectType):
         id=ID(description=_("The ID of the object")),
         ahti_id=String(description=_("Ahti ID of the object")),
     )
+    tags = graphene.List(Tag)
 
     def resolve_feature(self, info, id=None, ahti_id=None, **kwargs):
         if id:
@@ -282,3 +283,6 @@ class Query(graphene.ObjectType):
             except models.Feature.DoesNotExist:
                 return None
         raise GraphQLError("You must provide either `id` or `ahtiId`.")
+
+    def resolve_tags(self, info, **kwargs):
+        return models.Tag.objects.all()
