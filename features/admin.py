@@ -106,6 +106,9 @@ class FeatureAdmin(TranslatableAdmin, admin.OSMGeoAdmin):
         "source_type__system", "source_type__type", "source_id"
     )
 
+    def get_queryset(self, request):
+        return super().get_queryset(request).prefetch_related("category__translations")
+
 
 @admin.register(License)
 class LicenseAdmin(TranslatableAdmin):
