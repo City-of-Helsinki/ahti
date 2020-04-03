@@ -514,3 +514,47 @@ def test_feature_query_error(snapshot, api_client):
     """
     )
     snapshot.assert_match(executed)
+
+
+def test_tags_query(snapshot, api_client):
+    TagFactory(id="tag:1", name="Tag 1")
+    TagFactory(id="tag:2", name="Tag 2")
+
+    executed = api_client.execute(
+        """
+    query Tags {
+      tags {
+        id
+        name
+      }
+    }
+    """
+    )
+    snapshot.assert_match(executed)
+
+
+def test_query_features_through_tags_query(snapshot, api_client):
+    st = SourceTypeFactory(system="test", type="test")
+    feature = FeatureFactory(source_type=st, source_id="sid0")
+    feature.tags.add(TagFactory(id="tag:1", name="Tag 1"))
+
+    executed = api_client.execute(
+        """
+    query TagsAndFeatures {
+      tags {
+        id
+        name
+        features {
+          edges {
+            node {
+              properties {
+                ahtiId
+              }
+            }
+          }
+        }
+      }
+    }
+    """
+    )
+    snapshot.assert_match(executed)
