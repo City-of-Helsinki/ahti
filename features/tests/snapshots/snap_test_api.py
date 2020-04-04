@@ -6,6 +6,17 @@ from snapshottest import Snapshot
 
 snapshots = Snapshot()
 
+snapshots["test_price_list 1"] = {
+    "data": {
+        "features": {
+            "edges": [
+                {"node": {"properties": {"details": None}}},
+                {"node": {"properties": {"details": None}}},
+            ]
+        }
+    }
+}
+
 snapshots["test_features_query 1"] = {
     "data": {
         "features": {

@@ -68,6 +68,15 @@ class FeatureSource(ObjectType):
     )
 
 
+class PriceTag(DjangoObjectType):
+    class Meta:
+        model = models.PriceTag
+
+    item = graphene.String(required=True)
+    price = graphene.Decimal(required=True)
+    unit = graphene.String()
+
+
 class Teaser(DjangoObjectType):
     class Meta:
         model = models.FeatureTeaser
@@ -185,6 +194,7 @@ class FeatureDetails(ObjectType):
     """Detailed information a Feature might have."""
 
     harbor = graphene.Field(HarborDetails, description=_("Details of a harbor"))
+    price_list = graphene.List("features.schema.PriceTag", required=True)
 
 
 class FeatureFilter(django_filters.FilterSet):
@@ -249,6 +259,7 @@ class Feature(graphql_geojson.GeoJSONType):
             "contact_info",
             "teaser",
             "details",
+            "price_tag",
             "geometry",
             "images",
             "links",
@@ -271,6 +282,9 @@ class Feature(graphql_geojson.GeoJSONType):
     modified_at = graphene.DateTime(required=True)
     parents = graphene.List("features.schema.Feature", required=True)
     children = graphene.List("features.schema.Feature", required=True)
+
+    def resolve_priceList(self: models.Feature, info, **kwargs):
+        return self.price_tags.all()
 
     def resolve_source(self: models.Feature, info, **kwargs):
         return {
@@ -316,6 +330,8 @@ class Feature(graphql_geojson.GeoJSONType):
                 "contact_info",
                 "children",
                 "details",
+                "price_tags",
+                "price_tags__translations",
                 "images",
                 "images__license",
                 "images__license__translations",
