@@ -121,7 +121,7 @@ class MyHelsinkiImporter(FeatureImporterBase):
             if not license:
                 license = License.objects.language("fi").create(name=license_name)
 
-            Image.objects.get_or_create(
+            Image.objects.update_or_create(
                 feature=feature,
                 url=url,
                 defaults={"copyright_owner": copyright_owner, "license": license},
@@ -203,13 +203,13 @@ class MyHelsinkiImporter(FeatureImporterBase):
                 # start from a clean state.
                 ohps.delete()
 
-            ohp, created = OpeningHoursPeriod.objects.get_or_create(
+            ohp, created = OpeningHoursPeriod.objects.update_or_create(
                 feature=feature, defaults={"comment": opening_hours["comment"]}
             )
 
             for h in hours:
                 day = Weekday(h["day"])
-                OpeningHours.objects.get_or_create(
+                OpeningHours.objects.update_or_create(
                     period=ohp,
                     day=day,
                     defaults={
