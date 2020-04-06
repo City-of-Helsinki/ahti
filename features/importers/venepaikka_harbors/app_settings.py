@@ -57,6 +57,16 @@ class AppSettings:
         """
         return self._setting("IMAGE_LICENSE", self.config["image_license"])
 
+    @property
+    def MOORING_MAPPING(self) -> Mapping:
+        """Mapping of external mooring types into internal ones.
+
+        mooring_mapping = {
+            "SINGLE_SLIP_PLACE": "SLIP",
+        }
+        """
+        return self._setting("MOORING_MAPPING", self.config["mooring_mapping"])
+
 
 path = PurePath(__file__).parent.joinpath("config.json")
 with open(path.as_posix(), "r") as f:

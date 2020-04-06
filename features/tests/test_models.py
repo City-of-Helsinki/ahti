@@ -3,6 +3,7 @@ import pytest
 from features.models import (
     ContactInfo,
     Feature,
+    FeatureDetails,
     Image,
     License,
     Link,
@@ -14,7 +15,9 @@ from features.models import (
 )
 from features.tests.factories import (
     ContactInfoFactory,
+    FeatureDetailsFactory,
     FeatureFactory,
+    HarbourFeatureDetailsFactory,
     ImageFactory,
     LicenseFactory,
     LinkFactory,
@@ -59,6 +62,22 @@ def test_feature_ahti_id_filter():
 def test_feature_ahti_id_does_not_exist():
     with pytest.raises(Feature.DoesNotExist):
         Feature.objects.ahti_id("Nope")
+
+
+def test_feature_details():
+    FeatureDetailsFactory()
+
+    assert Feature.objects.count() == 1
+    assert FeatureDetails.objects.count() == 1
+
+
+def test_harbor_feature_details():
+    HarbourFeatureDetailsFactory()
+
+    fd = FeatureDetails.objects.first()
+    assert "berth_min_depth" in fd.data
+    assert "berth_max_depth" in fd.data
+    assert "berth_moorings" in fd.data
 
 
 def test_image():

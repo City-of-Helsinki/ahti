@@ -93,6 +93,25 @@ snapshots["test_features_image_query 1"] = {
     }
 }
 
+snapshots["test_features_link_query 1"] = {
+    "data": {
+        "features": {
+            "edges": [
+                {
+                    "node": {
+                        "properties": {
+                            "links": [
+                                {"type": "external_url", "url": "https://example.com"}
+                            ],
+                            "name": "Feature with external URL",
+                        }
+                    }
+                }
+            ]
+        }
+    }
+}
+
 snapshots["test_features_tags_query 1"] = {
     "data": {
         "features": {
@@ -127,6 +146,25 @@ snapshots["test_feature_contact_info 1"] = {
                                 },
                                 "email": "ahti@localhost",
                                 "phoneNumber": "+358401234567",
+                            }
+                        }
+                    }
+                }
+            ]
+        }
+    }
+}
+
+snapshots["test_feature_teaser 1"] = {
+    "data": {
+        "features": {
+            "edges": [
+                {
+                    "node": {
+                        "properties": {
+                            "teaser": {
+                                "header": "Starting from:",
+                                "main": "7 euro a day.",
                             }
                         }
                     }
@@ -219,6 +257,27 @@ snapshots["test_feature_parents_and_children 1"] = {
     }
 }
 
+snapshots["test_feature_harbour_details 1"] = {
+    "data": {
+        "features": {
+            "edges": [
+                {
+                    "node": {
+                        "properties": {
+                            "details": {
+                                "harbor": {
+                                    "depth": {"max": 2.5, "min": 2.5},
+                                    "moorings": ["SLIP", "QUAYSIDE"],
+                                }
+                            }
+                        }
+                    }
+                }
+            ]
+        }
+    }
+}
+
 snapshots["test_feature_with_id 1"] = {
     "data": {"feature": {"properties": {"ahtiId": "test:test:sid0"}}}
 }
@@ -236,44 +295,6 @@ snapshots["test_feature_query_error 1"] = {
             "path": ["feature"],
         }
     ],
-}
-
-snapshots["test_features_link_query 1"] = {
-    "data": {
-        "features": {
-            "edges": [
-                {
-                    "node": {
-                        "properties": {
-                            "links": [
-                                {"type": "external_url", "url": "https://example.com"}
-                            ],
-                            "name": "Feature with external URL",
-                        }
-                    }
-                }
-            ]
-        }
-    }
-}
-
-snapshots["test_feature_teaser 1"] = {
-    "data": {
-        "features": {
-            "edges": [
-                {
-                    "node": {
-                        "properties": {
-                            "teaser": {
-                                "header": "Starting from:",
-                                "main": "7 euro a day.",
-                            }
-                        }
-                    }
-                }
-            ]
-        }
-    }
 }
 
 snapshots["test_tags_query 1"] = {

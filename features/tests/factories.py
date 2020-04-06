@@ -3,10 +3,11 @@ from django.contrib.gis.geos import Point
 from django.utils import timezone
 from factory.random import randgen
 
-from features.enums import OverrideFieldType
+from features.enums import FeatureDetailsType, HarborMooringType, OverrideFieldType
 from features.models import (
     ContactInfo,
     Feature,
+    FeatureDetails,
     FeatureTeaser,
     Image,
     License,
@@ -53,6 +54,29 @@ class FeatureTeaserFactory(factory.django.DjangoModelFactory):
     feature = factory.SubFactory(FeatureFactory)
     header = "Starting from:"
     main = "7 euro a day."
+
+
+class FeatureDetailsFactory(factory.django.DjangoModelFactory):
+    class Meta:
+        model = FeatureDetails
+
+    feature = factory.SubFactory(FeatureFactory)
+    type = factory.Faker("random_element", elements=list(FeatureDetailsType))
+
+
+class HarbourDetailsDataFactory(factory.DictFactory):
+    """Factory for building a harbour details"""
+
+    berth_min_depth = factory.Faker("pyfloat", min_value=3, max_value=5)
+    berth_max_depth = factory.Faker("pyfloat", min_value=5, max_value=20)
+    berth_moorings = factory.Faker(
+        "random_elements", elements=list(HarborMooringType), unique=True
+    )
+
+
+class HarbourFeatureDetailsFactory(FeatureDetailsFactory):
+    type = FeatureDetailsType.HARBOR
+    data = factory.SubFactory(HarbourDetailsDataFactory)
 
 
 class LicenseFactory(factory.django.DjangoModelFactory):
