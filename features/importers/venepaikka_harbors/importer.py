@@ -175,7 +175,7 @@ class VenepaikkaImporter(FeatureImporterBase):
             if not url:
                 continue
 
-            Image.objects.get_or_create(
+            Image.objects.update_or_create(
                 feature=feature,
                 url=url,
                 defaults={
@@ -216,7 +216,7 @@ class VenepaikkaImporter(FeatureImporterBase):
         if not servicemap_id:
             feature.links.filter(type=self.servicemap_link_type).delete()
         else:
-            feature.links.get_or_create(
+            feature.links.update_or_create(
                 type=self.servicemap_link_type,
                 defaults={"url": f"{self.servicemap_url}{servicemap_id}"},
             )
