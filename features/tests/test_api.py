@@ -1,4 +1,5 @@
 import datetime
+from decimal import Decimal
 
 import pytest
 from django.contrib.gis.geos import Point
@@ -22,6 +23,7 @@ from features.tests.factories import (
     OpeningHoursFactory,
     OpeningHoursPeriodFactory,
     OverrideFactory,
+    PriceTagFactory,
     SourceTypeFactory,
     TagFactory,
 )
@@ -329,6 +331,34 @@ def test_feature_opening_hours(snapshot, api_client):
                   opens
                   closes
                   allDay
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+    """
+    )
+    snapshot.assert_match(executed)
+
+
+def test_price_list(snapshot, api_client):
+    PriceTagFactory(price=Decimal("100.01"), unit="a month")
+    PriceTagFactory(price=Decimal("200.01"), unit="a year")
+
+    executed = api_client.execute(
+        """
+    query FeaturePriceList {
+      features {
+        edges {
+          node {
+            properties {
+              details {
+                priceList {
+                  item
+                  price
+                  unit
                 }
               }
             }

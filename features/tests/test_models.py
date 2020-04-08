@@ -10,6 +10,7 @@ from features.models import (
     OpeningHours,
     OpeningHoursPeriod,
     Override,
+    PriceTag,
     SourceType,
     Tag,
 )
@@ -24,6 +25,7 @@ from features.tests.factories import (
     OpeningHoursFactory,
     OpeningHoursPeriodFactory,
     OverrideFactory,
+    PriceTagFactory,
     SourceTypeFactory,
     TagFactory,
 )
@@ -133,4 +135,11 @@ def test_override():
     OverrideFactory()
 
     assert Override.objects.count() == 1
+    assert Feature.objects.count() == 1
+
+
+def test_pricetag():
+    PriceTagFactory()
+
+    assert PriceTag.objects.count() == 1
     assert Feature.objects.count() == 1

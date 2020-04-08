@@ -15,6 +15,7 @@ from features.models import (
     OpeningHours,
     OpeningHoursPeriod,
     Override,
+    PriceTag,
     SourceType,
     Tag,
 )
@@ -150,3 +151,17 @@ class OverrideFactory(factory.django.DjangoModelFactory):
 
     feature = factory.SubFactory(FeatureFactory)
     field = factory.Faker("random_element", elements=OverrideFieldType)
+
+
+class PriceTagFactory(factory.django.DjangoModelFactory):
+    class Meta:
+        model = PriceTag
+
+    feature = factory.SubFactory(FeatureFactory)
+    item = factory.Sequence(lambda n: "Item name: %d" % n)
+    price = factory.Faker(
+        "pydecimal", left_digits=3, right_digits=2, positive=True, min_value=0
+    )
+    unit = factory.Faker(
+        "random_choices", elements=("kilo", "cup", "per week", "per month"), length=1
+    )

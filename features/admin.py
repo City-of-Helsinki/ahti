@@ -13,6 +13,7 @@ from features.models import (
     OpeningHours,
     OpeningHoursPeriod,
     Override,
+    PriceTag,
     SourceType,
     Tag,
 )
@@ -61,6 +62,11 @@ class OverrideInline(TranslatableTabularInline):
     extra = 1
 
 
+class PriceTagInLine(TranslatableTabularInline):
+    model = PriceTag
+    extra = 0
+
+
 @admin.register(Feature)
 class FeatureAdmin(TranslatableAdmin, admin.OSMGeoAdmin):
     # Helsinki
@@ -96,6 +102,7 @@ class FeatureAdmin(TranslatableAdmin, admin.OSMGeoAdmin):
         ImageInline,
         OpeningHoursPeriodInline,
         LinkInline,
+        PriceTagInLine,
         OverrideInline,
     )
 

@@ -1,6 +1,9 @@
+from decimal import Decimal
+
 from django.contrib.gis.db import models
 from django.contrib.postgres.fields import JSONField
 from django.core.serializers.json import DjangoJSONEncoder
+from django.core.validators import MinValueValidator
 from django.utils.translation import gettext
 from django.utils.translation import gettext_lazy as _
 from parler.managers import TranslatableQuerySet
@@ -255,6 +258,26 @@ class Tag(TranslatableModel):
 
     def __str__(self):
         return self.id
+
+
+class PriceTag(TranslatableModel):
+    feature = models.ForeignKey(
+        Feature, on_delete=models.CASCADE, related_name="price_tags"
+    )
+    translations = TranslatedFields(
+        item=models.CharField(
+            max_length=25, verbose_name=_("name"), help_text=_("Name of the item.")
+        ),
+        unit=models.CharField(
+            max_length=15,
+            verbose_name=_("unit"),
+            blank=True,
+            help_text=_("Per kilo, cup, day, or anything else."),
+        ),
+    )
+    price = models.DecimalField(
+        max_digits=7, decimal_places=2, validators=[MinValueValidator(Decimal("0.0"))]
+    )
 
 
 class FeatureTag(TimestampedModel):
