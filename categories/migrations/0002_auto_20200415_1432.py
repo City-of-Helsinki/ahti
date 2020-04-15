@@ -7,27 +7,53 @@ import django.db.models.deletion
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('features', '0021_pricetag_pricetagtranslation'),
-        ('categories', '0001_initial'),
+        ("features", "0021_pricetag_pricetagtranslation"),
+        ("categories", "0001_initial"),
     ]
 
     operations = [
         migrations.AlterModelOptions(
-            name='category',
-            options={'ordering': ('-principle', 'translations__name'), 'verbose_name': 'category', 'verbose_name_plural': 'categories'},
+            name="category",
+            options={
+                "ordering": ("-principle", "translations__name"),
+                "verbose_name": "category",
+                "verbose_name_plural": "categories",
+            },
         ),
         migrations.AddField(
-            model_name='category',
-            name='principle',
+            model_name="category",
+            name="principle",
             field=models.BooleanField(default=False),
         ),
         migrations.CreateModel(
-            name='CategoriesTable',
+            name="CategoriesTable",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('manual', models.BooleanField(blank=True, default=False)),
-                ('category', models.ForeignKey(null=True, on_delete=django.db.models.deletion.SET_NULL, to='categories.Category')),
-                ('feature', models.ForeignKey(null=True, on_delete=django.db.models.deletion.SET_NULL, to='features.Feature')),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("manual", models.BooleanField(blank=True, default=False)),
+                (
+                    "category",
+                    models.ForeignKey(
+                        null=True,
+                        on_delete=django.db.models.deletion.SET_NULL,
+                        to="categories.Category",
+                    ),
+                ),
+                (
+                    "feature",
+                    models.ForeignKey(
+                        null=True,
+                        on_delete=django.db.models.deletion.SET_NULL,
+                        to="features.Feature",
+                    ),
+                ),
             ],
         ),
     ]
