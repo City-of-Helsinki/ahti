@@ -1,5 +1,6 @@
 import logging
 import sys
+from datetime import datetime
 
 from django.core.management.base import BaseCommand
 
@@ -46,7 +47,10 @@ class Command(BaseCommand):
         for identifier, importer_class in enabled_importers:
             self.stdout.write(self.style.SUCCESS(f"Importing {identifier}"))
             try:
+                start_time = datetime.now()
                 importer_class().import_features()
+                end_time = datetime.now()
+                print(f"import took {(end_time-start_time).seconds} seconds")
             except Exception:
                 message = f"Importer {importer_class} failed to import data"
                 logging.exception(message)

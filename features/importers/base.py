@@ -127,7 +127,8 @@ class CategoryMapper(MapperBase):
 
         Expected format for the category input: {"id": str, "name": str}
         """
-        mapping = self.config.get(category["name"].lower())
+
+        mapping = self.config.get(category)
         if mapping:
             category, created = Category.objects.language("fi").update_or_create(
                 id=mapping["id"], defaults={"name": mapping["name"]},

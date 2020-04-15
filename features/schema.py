@@ -247,14 +247,14 @@ class FeatureFilter(django_filters.FilterSet):
         return queryset
 
     def filter_category(self, queryset, name, value):
-        return queryset.filter(category__in=value)
+        return queryset.filter(categories__in=value)
 
 
 class Feature(graphql_geojson.GeoJSONType):
     class Meta:
         fields = (
             "id",
-            "category",
+            "categories",
             "created_at",
             "contact_info",
             "teaser",
@@ -324,9 +324,10 @@ class Feature(graphql_geojson.GeoJSONType):
     def get_queryset(cls, queryset, info):
         return (
             queryset.filter(visibility=Visibility.VISIBLE)
-            .select_related("source_type", "category", "teaser")
+            .select_related("source_type", "teaser")
             .prefetch_related(
-                "category__translations",
+                "categories",
+                "categories__translations",
                 "contact_info",
                 "children",
                 "details",

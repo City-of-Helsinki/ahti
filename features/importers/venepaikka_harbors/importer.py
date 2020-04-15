@@ -140,9 +140,10 @@ class VenepaikkaImporter(FeatureImporterBase):
 
         Pre-existing categories on features are not updated.
         """
-        if category and not feature.category:
-            feature.category = category
-            Feature.objects.filter(pk=feature.pk).update(category=category)
+        if category and not (
+            category.id in feature.categories.all().values_list("id", flat=True)
+        ):
+            feature.categories.add(category)
 
     def _set_feature_tag(self, feature: Feature, tag: Tag):
         """Set tags for the given feature.

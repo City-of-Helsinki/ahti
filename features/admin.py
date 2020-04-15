@@ -77,13 +77,13 @@ class FeatureAdmin(TranslatableAdmin, admin.OSMGeoAdmin):
     list_display = (
         "ahti_id",
         "name",
-        "category",
+        #    "category",
         "visibility",
         "language_column",
     )
     list_filter = (
         "source_type",
-        "category",
+        #    "category",
         "visibility",
         "translations__language_code",
     )
@@ -94,7 +94,8 @@ class FeatureAdmin(TranslatableAdmin, admin.OSMGeoAdmin):
         "translations__name",
     )
     ordering = ("source_type__system", "source_type__type", "source_id")
-    autocomplete_fields = ("category", "parents")
+    # autocomplete_fields = ("category", "parents")
+    autocomplete_fields = ("parents",)
     inlines = (
         FeatureTagInline,
         FeatureTeaserInLine,

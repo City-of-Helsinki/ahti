@@ -10,10 +10,17 @@ class Category(TranslatableModel):
         description=models.TextField(verbose_name=_("description"), blank=True),
     )
 
+    principle =  models.BooleanField(default=False)
+
     class Meta:
         verbose_name = _("category")
         verbose_name_plural = _("categories")
-        ordering = ("id",)
+        ordering = ("-principle", "translations__name", )
 
     def __str__(self):
-        return self.safe_translation_getter("name", super().__str__())
+        return f'{self.safe_translation_getter("name", super().__str__())} is principle: {self.principle}'
+
+class CategoriesTable(models.Model):
+    feature = models.ForeignKey("features.Feature", null=True, on_delete=models.SET_NULL)
+    category = models.ForeignKey(Category, null=True, on_delete=models.SET_NULL)
+    manual = models.BooleanField(default=False, blank=True)

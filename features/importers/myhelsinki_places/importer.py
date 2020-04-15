@@ -7,6 +7,7 @@ from django.contrib.gis.geos import Point
 from django.utils import timezone
 from django.utils.dateparse import parse_datetime, parse_time
 
+from categories.models import CategoriesTable
 from features.enums import FeatureTagSource, Weekday
 from features.importers.base import CategoryMapper, FeatureImporterBase, TagMapper
 from features.importers.myhelsinki_places import app_settings
@@ -152,18 +153,25 @@ class MyHelsinkiImporter(FeatureImporterBase):
     def _import_feature_category(self, feature: Feature, tags: Iterable[dict]):
         """Import and set category for the given Feature.
 
-        Categories are mapped based on features tags. Pre-existing
-        categories on features are not updated.
+        Categories are mapped based on features tags. Previously set categories
+        are kept.
         """
-        if feature.category:
-            return
 
-        for tag in tags:
+        tags = set([tag["name"].lower() for tag in tags])
+        categories = set(self.category_mapper.config.keys())
+        mapped_tags = categories.intersection(tags)
+
+        categories_to_add = []
+        for tag in mapped_tags:
             category = self.category_mapper.get_category(tag)
 
-            if category:
-                feature.category = category
-                Feature.objects.filter(pk=feature.pk).update(category=category)
+            if category.id not in feature.categories.all().values_list("id", flat=True):
+                categories_to_add.append(
+                    CategoriesTable(feature=feature, category=category)
+                )
+
+        if len(categories_to_add):
+            CategoriesTable.objects.bulk_create(categories_to_add)
 
     def _import_feature_contact_info(self, feature: Feature, address: dict):
         """Imports contact info for the given feature."""

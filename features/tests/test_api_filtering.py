@@ -171,7 +171,8 @@ def test_feature_filtering_tagged_with_all(api_client, tag_ids, found):
 def test_feature_filtering_category(api_client, category_id, found):
     """Only fetch Features from included categories."""
     category = CategoryFactory(id=category_id) if category_id else None
-    feature = FeatureFactory(category=category)
+    feature = FeatureFactory()
+    feature.categories.add(category)
 
     executed = api_client.execute(
         """

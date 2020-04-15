@@ -6,12 +6,28 @@ from snapshottest import Snapshot
 
 snapshots = Snapshot()
 
-snapshots["test_price_list 1"] = {
+snapshots["test_feature_category 1"] = {
     "data": {
         "features": {
             "edges": [
-                {"node": {"properties": {"details": None}}},
-                {"node": {"properties": {"details": None}}},
+                {
+                    "node": {
+                        "properties": {
+                            "categories": [
+                                {
+                                    "description": "Cafe description",
+                                    "id": "ahti:category:cafe",
+                                    "name": "Cafe",
+                                },
+                                {
+                                    "description": "Island description",
+                                    "id": "ahti:category:island",
+                                    "name": "Island",
+                                },
+                            ]
+                        }
+                    }
+                }
             ]
         }
     }
@@ -221,21 +237,12 @@ snapshots["test_feature_opening_hours 1"] = {
     }
 }
 
-snapshots["test_feature_category 1"] = {
+snapshots["test_price_list 1"] = {
     "data": {
         "features": {
             "edges": [
-                {
-                    "node": {
-                        "properties": {
-                            "category": {
-                                "description": "Island description",
-                                "id": "ahti:category:island",
-                                "name": "Island",
-                            }
-                        }
-                    }
-                }
+                {"node": {"properties": {"details": None}}},
+                {"node": {"properties": {"details": None}}},
             ]
         }
     }
