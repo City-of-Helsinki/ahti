@@ -2,6 +2,7 @@ from django.contrib.gis import admin
 from django.db.models.functions import Concat
 from parler.admin import TranslatableAdmin, TranslatableTabularInline
 
+from features.enums import Visibility
 from features.models import (
     ContactInfo,
     Feature,
@@ -73,6 +74,7 @@ class FeatureAdmin(TranslatableAdmin, admin.OSMGeoAdmin):
     default_lon = 2777215
     default_lat = 8434296
     default_zoom = 11
+    actions = ["hide_features"]
 
     list_display = (
         "ahti_id",
@@ -112,6 +114,14 @@ class FeatureAdmin(TranslatableAdmin, admin.OSMGeoAdmin):
     ahti_id.admin_order_field = Concat(
         "source_type__system", "source_type__type", "source_id"
     )
+
+    def hide_features(self, request, queryset):
+        features_hidden = queryset.update(visibility=Visibility.HIDDEN)
+        if features_hidden == 1:
+            message = "1 feature was hidden"
+        else:
+            message = f"{features_hidden} features were hidden"
+        self.message_user(request, message)
 
     def get_queryset(self, request):
         return super().get_queryset(request).prefetch_related("category__translations")
