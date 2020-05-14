@@ -2,7 +2,16 @@
 
 :ocean: AHTI API :anchor:
 
-## Development with Docker
+[![status](https://travis-ci.com/City-of-Helsinki/ahti.svg)](https://github.com/City-of-Helsinki/ahti)
+[![pipeline status](https://gitlab.com/City-of-Helsinki/KuVa/github-mirrors/ahti/badges/develop/pipeline.svg)](https://gitlab.com/City-of-Helsinki/KuVa/github-mirrors/ahti/-/commits/develop)
+[![codecov](https://codecov.io/gh/City-of-Helsinki/ahti/branch/develop/graph/badge.svg)](https://codecov.io/gh/City-of-Helsinki/ahti)
+
+
+## Development with [Docker](https://docs.docker.com/)
+
+Prerequisites:
+* Docker engine: 18.06.0+
+* Docker compose 1.22.0+
 
 1. Create a `docker-compose.env.yaml` file in the project folder:
    * You can use `docker-compose.env.yaml.template` as a base, it does not need any changes
@@ -18,6 +27,7 @@
 
 The project is now running at [localhost:8082](http://localhost:8082)
 
+
 ## Development without Docker
 
 Prerequisites:
@@ -26,10 +36,12 @@ Prerequisites:
 * PostGIS 2.5
 * Python 3.8
 
+
 ### Installing Python requirements
 
 * Run `pip install -r requirements.txt`
 * Run `pip install -r requirements-dev.txt` (development requirements)
+
 
 ### Database
 
@@ -48,6 +60,7 @@ Allow user to create test database
 
     sudo -u postgres psql -c "ALTER USER ahti CREATEDB;"
 
+
 ### Daily running
 
 * Create `.env` file: `touch .env`
@@ -57,6 +70,7 @@ Allow user to create test database
 * Run `python manage.py runserver localhost:8082`
 
 The project is now running at [localhost:8082](http://localhost:8082)
+
 
 ## Keeping Python requirements up to date
 
@@ -79,6 +93,7 @@ The project is now running at [localhost:8082](http://localhost:8082)
 
     * `pip-sync requirements.txt`
 
+
 ## Code format
 
 This project uses
@@ -96,3 +111,34 @@ Basic `black` commands:
 [`pre-commit`](https://pre-commit.com/) can be used to install and
 run all the formatting tools as git hooks automatically before a
 commit.
+
+
+## Running tests
+
+* Set the `DEBUG` environment variable to `1`.
+* Run `pytest`.
+
+
+## Issue tracking
+
+* [Github issue list](https://github.com/City-of-Helsinki/ahti/issues)
+* [Jira issues](https://helsinkisolutionoffice.atlassian.net/projects/AHTI/issues/?filter=allissues)
+
+
+## API documentation
+
+View the API documentation by visiting: https://ahti-api.test.kuva.hel.ninja/graphql and see
+the `Documentation Explorer` section. Documentation is also available from the
+[local environment](http://localhost:8082/graphql).
+
+
+## Environments
+
+* Test: https://ahti-api.test.kuva.hel.ninja/graphql
+* Production: https://ahti-api.prod.kuva.hel.ninja/graphql
+
+
+## Dependent services
+
+For a complete service the following additional components are also required:
+* [ahti-ui](https://github.com/City-of-Helsinki/ahti-ui) provides UI
