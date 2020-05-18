@@ -372,10 +372,15 @@ def test_price_list(snapshot, api_client):
 
 
 def test_feature_category(snapshot, api_client):
-    category = CategoryFactory(
+    c1 = CategoryFactory(
         id="ahti:category:island", name="Island", description="Island description"
     )
-    FeatureFactory(category=category)
+    c2 = CategoryFactory(
+        id="ahti:category:cafe", name="Cafe", description="Cafe description"
+    )
+
+    f = FeatureFactory()
+    f.categories.add(c1, c2)
 
     executed = api_client.execute(
         """
@@ -384,7 +389,7 @@ def test_feature_category(snapshot, api_client):
         edges {
           node {
             properties {
-              category {
+              categories {
                 id
                 name
                 description

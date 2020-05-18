@@ -27,7 +27,7 @@ def test_category_mapping_rules(mapped_names, expected):
     }
     mapper = CategoryMapper(config)
 
-    category = mapper.get_category(data)
+    category = mapper.get_category(data["name"].lower())
 
     if expected:
         assert isinstance(category, Category)
