@@ -77,7 +77,9 @@ class Feature(TranslatableModel, TimestampedModel):
             verbose_name=_("name"), max_length=200, help_text=_("Name of the feature")
         ),
         url=models.URLField(
-            verbose_name=_("url"), blank=True, help_text=_("URL of the feature")
+            verbose_name=_("url"),
+            blank=True,
+            help_text=_("URL for more information about this feature"),
         ),
         one_liner=models.CharField(
             verbose_name=_("one-liner"),
@@ -85,7 +87,11 @@ class Feature(TranslatableModel, TimestampedModel):
             blank=True,
             help_text=_("A short description limited to 64 chars"),
         ),
-        description=models.TextField(verbose_name=_("description"), blank=True),
+        description=models.TextField(
+            verbose_name=_("description"),
+            blank=True,
+            help_text=_("Description of the feature"),
+        ),
     )
     geometry = models.GeometryField(
         verbose_name=_("geometry"),
@@ -109,6 +115,7 @@ class Feature(TranslatableModel, TimestampedModel):
         blank=True,
         null=True,
         verbose_name=_("category"),
+        help_text=_("Category the feature belongs to"),
     )
     tags = models.ManyToManyField("Tag", related_name="features", through="FeatureTag")
     parents = models.ManyToManyField(
@@ -185,15 +192,20 @@ class Image(models.Model):
         related_name="images",
         verbose_name=_("feature"),
     )
-    url = models.URLField(verbose_name=_("url"), max_length=2000)
+    url = models.URLField(
+        verbose_name=_("url"), max_length=2000, help_text=_("URL of the image")
+    )
     copyright_owner = models.CharField(
-        verbose_name=_("copyright owner"), max_length=200
+        verbose_name=_("copyright owner"),
+        max_length=200,
+        help_text=_("Copyright owner of the image (person)"),
     )
     license = models.ForeignKey(
         "License",
         on_delete=models.CASCADE,
         related_name="images",
         verbose_name=_("license"),
+        help_text=_("License associated with the image"),
     )
 
     class Meta:
@@ -207,7 +219,11 @@ class Image(models.Model):
 
 class License(TranslatableModel):
     translations = TranslatedFields(
-        name=models.CharField(verbose_name=_("name"), max_length=200),
+        name=models.CharField(
+            verbose_name=_("name"),
+            max_length=200,
+            help_text=_("Display name of the license"),
+        ),
     )
 
     class Meta:
@@ -248,7 +264,11 @@ class Link(models.Model):
 class Tag(TranslatableModel):
     id = models.CharField(max_length=200, primary_key=True)
     translations = TranslatedFields(
-        name=models.CharField(verbose_name=_("name"), max_length=200),
+        name=models.CharField(
+            verbose_name=_("name"),
+            max_length=200,
+            help_text=_("Display name of the tag"),
+        ),
     )
 
     class Meta:
@@ -266,17 +286,23 @@ class PriceTag(TranslatableModel):
     )
     translations = TranslatedFields(
         item=models.CharField(
-            max_length=25, verbose_name=_("name"), help_text=_("Name of the item.")
+            max_length=25, verbose_name=_("name"), help_text=_("Name of the item")
         ),
         unit=models.CharField(
             max_length=15,
             verbose_name=_("unit"),
             blank=True,
-            help_text=_("Per kilo, cup, day, or anything else."),
+            help_text=_(
+                "Unit of the price (e.g. 'hour', 'day', 'piece', 'person', 'child', "
+                "'one way')"
+            ),
         ),
     )
     price = models.DecimalField(
-        max_digits=7, decimal_places=2, validators=[MinValueValidator(Decimal("0.0"))]
+        max_digits=7,
+        decimal_places=2,
+        validators=[MinValueValidator(Decimal("0.0"))],
+        help_text=_("Price of the item in EUR"),
     )
 
 
@@ -319,7 +345,7 @@ class FeatureTeaser(TranslatableModel):
             max_length=64,
             blank=True,
             verbose_name=_("header"),
-            help_text=_("An opening, e.g. Starting' from 'Starting from 7€/day.'"),
+            help_text=_("An opening, e.g. 'Starting' from 'Starting from 7€/day.'"),
         ),
         main=models.CharField(
             max_length=128,
@@ -344,6 +370,7 @@ class ContactInfo(models.Model):
         verbose_name=_("feature"),
         related_name="contact_info",
         on_delete=models.CASCADE,
+        help_text=_("Contact information for the given feature"),
     )
     street_address = models.CharField(
         verbose_name=_("street address"), blank=True, max_length=200
@@ -393,7 +420,14 @@ class OpeningHoursPeriod(TranslatableModel):
         help_text=_("Last day of validity"),
     )
     translations = TranslatedFields(
-        comment=models.TextField(blank=True, verbose_name=_("comment")),
+        comment=models.TextField(
+            blank=True,
+            verbose_name=_("comment"),
+            help_text=_(
+                "Comment for this opening hour period (e.g. 'Exceptional opening hours "
+                "during Midsummer')"
+            ),
+        ),
     )
 
     class Meta:
@@ -414,7 +448,7 @@ class OpeningHours(models.Model):
         related_name="opening_hours",
         verbose_name=_("opening hours"),
     )
-    day = models.IntegerField(choices=Weekday.choices)
+    day = models.IntegerField(choices=Weekday.choices, help_text=_("Day of week"))
     opens = models.TimeField(
         blank=True, null=True, verbose_name=_("opens"), help_text=_("Time of opening")
     )

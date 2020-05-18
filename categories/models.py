@@ -4,10 +4,22 @@ from parler.models import TranslatableModel, TranslatedFields
 
 
 class Category(TranslatableModel):
-    id = models.CharField(max_length=200, primary_key=True)
+    id = models.CharField(
+        max_length=200,
+        primary_key=True,
+        help_text=_("Identifier of the category (e.g. 'ahti:category:island', etc.)"),
+    )
     translations = TranslatedFields(
-        name=models.CharField(verbose_name=_("name"), max_length=200),
-        description=models.TextField(verbose_name=_("description"), blank=True),
+        name=models.CharField(
+            verbose_name=_("name"),
+            max_length=200,
+            help_text=_("Display name of the category"),
+        ),
+        description=models.TextField(
+            verbose_name=_("description"),
+            blank=True,
+            help_text=_("Category description"),
+        ),
     )
 
     class Meta:
