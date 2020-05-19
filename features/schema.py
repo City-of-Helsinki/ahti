@@ -310,7 +310,6 @@ class Feature(graphql_geojson.GeoJSONType):
             "contact_info",
             "teaser",
             "details",
-            "price_tag",
             "geometry",
             "images",
             "links",
@@ -356,9 +355,6 @@ class Feature(graphql_geojson.GeoJSONType):
         ),
     )
 
-    def resolve_priceList(self: models.Feature, info, **kwargs):
-        return self.price_tags.all()
-
     def resolve_source(self: models.Feature, info, **kwargs):
         return {
             "system": self.source_type.system,
@@ -385,6 +381,9 @@ class Feature(graphql_geojson.GeoJSONType):
         for detail in self.details.all():
             # Default dict resolver will resolve this for FeatureDetails
             details[detail.type.lower()] = detail
+
+        # PriceTags have a relation to Feature model, so we resolve it separately
+        details["price_list"] = self.price_tags.all()
         return details if details else None
 
     def resolve_parents(self: models.Feature, info, **kwargs):
