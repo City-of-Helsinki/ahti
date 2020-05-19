@@ -72,6 +72,11 @@ Allow user to create test database
 The project is now running at [localhost:8082](http://localhost:8082)
 
 
+### Periodic tasks
+
+In order to get updates to imported features, `./manage.py import_features` needs to be run periodically.
+
+
 ## Keeping Python requirements up to date
 
 1. Install `pip-tools`:

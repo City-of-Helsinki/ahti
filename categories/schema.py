@@ -6,6 +6,8 @@ from categories import models
 
 
 class FeatureCategory(DjangoObjectType):
+    """Category of a feature."""
+
     class Meta:
         model = models.Category
         fields = (
@@ -13,8 +15,8 @@ class FeatureCategory(DjangoObjectType):
             "features",
         )
 
-    name = graphene.String(required=True)
-    description = graphene.String()
+    name = graphene.String(required=True, description=_("Display name of the category"))
+    description = graphene.String(description=_("Category description"))
 
 
 class Query(graphene.ObjectType):

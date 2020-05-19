@@ -18,7 +18,15 @@ class Migration(migrations.Migration):
             fields=[
                 (
                     "id",
-                    models.CharField(max_length=200, primary_key=True, serialize=False),
+                    models.CharField(
+                        max_length=200,
+                        primary_key=True,
+                        serialize=False,
+                        help_text=(
+                            "Identifier of the category (e.g. 'ahti:category:island', "
+                            "etc.)"
+                        ),
+                    ),
                 ),
             ],
             options={
@@ -46,10 +54,21 @@ class Migration(migrations.Migration):
                         db_index=True, max_length=15, verbose_name="Language"
                     ),
                 ),
-                ("name", models.CharField(max_length=200, verbose_name="name")),
+                (
+                    "name",
+                    models.CharField(
+                        max_length=200,
+                        verbose_name="name",
+                        help_text="Display name of the category",
+                    ),
+                ),
                 (
                     "description",
-                    models.TextField(blank=True, verbose_name="description"),
+                    models.TextField(
+                        blank=True,
+                        verbose_name="description",
+                        help_text="Category description",
+                    ),
                 ),
                 (
                     "master",

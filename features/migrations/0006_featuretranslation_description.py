@@ -13,6 +13,10 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name="featuretranslation",
             name="description",
-            field=models.TextField(blank=True, verbose_name="description"),
+            field=models.TextField(
+                blank=True,
+                verbose_name="description",
+                help_text="Description of the feature",
+            ),
         ),
     ]

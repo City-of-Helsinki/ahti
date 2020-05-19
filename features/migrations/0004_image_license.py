@@ -45,10 +45,21 @@ class Migration(migrations.Migration):
                         verbose_name="ID",
                     ),
                 ),
-                ("url", models.URLField(max_length=2000, verbose_name="url")),
+                (
+                    "url",
+                    models.URLField(
+                        max_length=2000,
+                        verbose_name="url",
+                        help_text="URL of the image",
+                    ),
+                ),
                 (
                     "copyright_owner",
-                    models.CharField(max_length=200, verbose_name="copyright owner"),
+                    models.CharField(
+                        max_length=200,
+                        verbose_name="copyright owner",
+                        help_text="Copyright owner of the image (person)",
+                    ),
                 ),
                 (
                     "feature",
@@ -62,6 +73,7 @@ class Migration(migrations.Migration):
                 (
                     "license",
                     models.ForeignKey(
+                        help_text="License associated with the image",
                         on_delete=django.db.models.deletion.CASCADE,
                         related_name="images",
                         to="features.License",
@@ -93,7 +105,14 @@ class Migration(migrations.Migration):
                         db_index=True, max_length=15, verbose_name="Language"
                     ),
                 ),
-                ("name", models.CharField(max_length=200, verbose_name="name")),
+                (
+                    "name",
+                    models.CharField(
+                        max_length=200,
+                        verbose_name="name",
+                        help_text="Display name of the license",
+                    ),
+                ),
                 (
                     "master",
                     parler.fields.TranslationsForeignKey(

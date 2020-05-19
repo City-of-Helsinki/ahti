@@ -30,6 +30,8 @@ class Address(ObjectType):
 
 
 class ContactInfo(DjangoObjectType):
+    """Contact information for the given feature."""
+
     class Meta:
         model = models.ContactInfo
         fields = ("email", "phone_number")
@@ -45,7 +47,7 @@ class ContactInfo(DjangoObjectType):
 
 
 class ExternalLink(DjangoObjectType):
-    """Link to an external system
+    """Link to an external system.
 
     Link can be e.g. to an online store, a berth rental or to ferry information.
     """
@@ -59,33 +61,59 @@ class ExternalLink(DjangoObjectType):
 
 
 class FeatureSource(ObjectType):
-    """Source information for a feature."""
+    """Source system information for a feature."""
 
-    system = graphene.String(required=True)
-    type = graphene.String(required=True)
+    system = graphene.String(
+        required=True,
+        description=_(
+            "Name of the source system (e.g. 'myhelsinki', 'ahti', "
+            "'ulkoliikuntakartta', 'digitransit')"
+        ),
+    )
+    type = graphene.String(
+        required=True,
+        description=_(
+            "Type of the feature in the source system, if applicable (e.g. 'place', "
+            "'activity', 'event', 'route')"
+        ),
+    )
     id = graphene.String(
         required=True, description="ID of the current feature in source system"
     )
 
 
 class PriceTag(DjangoObjectType):
+    """An item displayed in a price list."""
+
     class Meta:
         model = models.PriceTag
+        fields = ("price",)
 
-    item = graphene.String(required=True)
-    price = graphene.Decimal(required=True)
-    unit = graphene.String()
+    item = graphene.String(required=True, description=_("Name of the item"))
+    price = graphene.Decimal(required=True, description=_("Price of the item in EUR"))
+    unit = graphene.String(
+        description=_(
+            "Unit of the price (e.g. 'hour', 'day', 'piece', 'person', 'child', "
+            "'one way')"
+        ),
+    )
 
 
 class Teaser(DjangoObjectType):
+    """Simple content element (e.g. something special about a feature)."""
+
     class Meta:
         model = models.FeatureTeaser
 
-    header = graphene.String()
-    main = graphene.String()
+    header = graphene.String(
+        description=_("An opening, e.g. 'Starting' from 'Starting from 7€/day.'")
+    )
+    main = graphene.String(description=_("The meat of the deal, '7€/day' part"))
 
 
 class FeatureTranslations(DjangoObjectType):
+    "Values in other languages for the feature attributes that can have translations."
+
     class Meta:
         model = apps.get_model("features", "FeatureTranslation")
         exclude = ("id", "master")
@@ -106,18 +134,22 @@ class License(DjangoObjectType):
         model = models.License
         fields = ("id",)
 
-    name = graphene.String(required=True)
+    name = graphene.String(required=True, description=_("Display name of the license"))
 
 
 class Tag(DjangoObjectType):
+    """Tags are associated with things (like features)."""
+
     class Meta:
         model = models.Tag
         fields = ("id", "features")
 
-    name = graphene.String(required=True)
+    name = graphene.String(required=True, description=_("Display name of the tag"))
 
 
 class OpeningHoursPeriod(DjangoObjectType):
+    """A period during which certain opening hours are valid."""
+
     class Meta:
         model = models.OpeningHoursPeriod
         fields = (
@@ -126,10 +158,17 @@ class OpeningHoursPeriod(DjangoObjectType):
             "opening_hours",
         )
 
-    comment = graphene.String()
+    comment = graphene.String(
+        description=_(
+            "Comment for this opening hour period (e.g. 'Exceptional opening hours "
+            "during Midsummer')"
+        ),
+    )
 
 
 class OpeningHours(DjangoObjectType):
+    """The daily opening hours / hours of operation of something."""
+
     class Meta:
         model = models.OpeningHours
         fields = (
@@ -138,7 +177,7 @@ class OpeningHours(DjangoObjectType):
             "all_day",
         )
 
-    day = WeekdayEnum(required=True)
+    day = WeekdayEnum(required=True, description=_("Day of week"))
 
 
 class Depth(ObjectType):
@@ -191,14 +230,18 @@ class HarborDetails(ObjectType):
 
 
 class FeatureDetails(ObjectType):
-    """Detailed information a Feature might have."""
+    """Detailed information a feature might have."""
 
     harbor = graphene.Field(HarborDetails, description=_("Details of a harbor"))
-    price_list = graphene.List("features.schema.PriceTag", required=True)
+    price_list = graphene.List(
+        "features.schema.PriceTag",
+        required=True,
+        description=_("Price list related to a feature"),
+    )
 
 
 class FeatureFilter(django_filters.FilterSet):
-    """Contains the filters to use when retrieving Features."""
+    """Contains the filters to use when retrieving features."""
 
     class Meta:
         model = models.Feature
@@ -251,6 +294,13 @@ class FeatureFilter(django_filters.FilterSet):
 
 
 class Feature(graphql_geojson.GeoJSONType):
+    """Features in Ahti are structured according to GeoJSON specification.
+
+    All Ahti specific attributes are contained within attribute `properties`.
+
+    **Note!** `Feature.type` always has the value `Feature`.
+    """
+
     class Meta:
         fields = (
             "id",
@@ -272,16 +322,38 @@ class Feature(graphql_geojson.GeoJSONType):
         geojson_field = "geometry"
         interfaces = (relay.Node,)
 
-    ahti_id = graphene.String(required=True)
-    source = graphene.Field(FeatureSource, required=True)
-    name = graphene.String(required=True)
-    one_liner = graphene.String(required=True)
-    description = graphene.String()
-    details = graphene.Field(FeatureDetails)
-    url = graphene.String()
+    ahti_id = graphene.String(
+        required=True,
+        description=_(
+            "Human readable ID. Format examples: "
+            "'ahti:feature:12C4' or 'myhelsinki:place:5678'"
+        ),
+    )
+    source = graphene.Field(
+        FeatureSource, required=True, description=_("Source of the feature")
+    )
+    name = graphene.String(required=True, description=_("Name of the feature"))
+    one_liner = graphene.String(
+        required=True, description=_("Short introductory text or a tagline")
+    )
+    description = graphene.String(description=_("Description of the feature"))
+    details = graphene.Field(
+        FeatureDetails, description=_("Detailed information a feature might have")
+    )
+    url = graphene.String(description=_("URL for more information about this feature"))
     modified_at = graphene.DateTime(required=True)
-    parents = graphene.List("features.schema.Feature", required=True)
-    children = graphene.List("features.schema.Feature", required=True)
+    parents = graphene.List(
+        "features.schema.Feature",
+        required=True,
+        description=_("Parents of this feature"),
+    )
+    children = graphene.List(
+        "features.schema.Feature",
+        required=True,
+        description=_(
+            "Children of this feature (ex. stops along a route, piers of a harbor etc.)"
+        ),
+    )
 
     def resolve_priceList(self: models.Feature, info, **kwargs):
         return self.price_tags.all()

@@ -83,7 +83,8 @@ class Migration(migrations.Migration):
                             (5, "Friday"),
                             (6, "Saturday"),
                             (7, "Sunday"),
-                        ]
+                        ],
+                        help_text="Day of week",
                     ),
                 ),
                 (
@@ -144,7 +145,15 @@ class Migration(migrations.Migration):
                         db_index=True, max_length=15, verbose_name="Language"
                     ),
                 ),
-                ("comment", models.TextField(blank=True, verbose_name="comment")),
+                (
+                    "comment",
+                    models.TextField(
+                        blank=True,
+                        verbose_name="comment",
+                        help_text="Comment for this opening hour period (e.g. "
+                        "'Exceptional opening hours during Midsummer')",
+                    ),
+                ),
                 (
                     "master",
                     parler.fields.TranslationsForeignKey(
