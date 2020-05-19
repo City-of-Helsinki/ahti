@@ -104,6 +104,7 @@ class Teaser(DjangoObjectType):
 
     class Meta:
         model = models.FeatureTeaser
+        fields = ()  # Don't include any fields from the model automatically
 
     header = graphene.String(
         description=_("An opening, e.g. 'Starting' from 'Starting from 7€/day.'")
