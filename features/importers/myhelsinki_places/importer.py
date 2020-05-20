@@ -24,7 +24,7 @@ feature_expression = jmespath.compile(
     """
 data[*].{
     id: id,
-    name: name.fi,
+    name: name,
     description: description.body,
     url: info_url,
     modified_at: modified_at,
@@ -61,6 +61,7 @@ data[*].{
 class MyHelsinkiImporter(FeatureImporterBase):
     source_system = "myhelsinki"
     source_type = "place"
+    main_lang = "fi"
 
     def __init__(self):
         super().__init__()
@@ -72,30 +73,56 @@ class MyHelsinkiImporter(FeatureImporterBase):
         mhc = MyHelsinkiPlacesClient()
 
         for call_parameters in app_settings.API_CALLS:
-            places = mhc.fetch_places(parameters=call_parameters).json()
+            places = mhc.fetch_places(
+                lang=self.main_lang, parameters=call_parameters
+            ).json()
             self._process_features(places, source_type)
 
-    def _process_features(self, places: dict, source_type: SourceType):
-        for place in feature_expression.search(places):
-            feature = self._import_feature(place, source_type)
-            self._import_feature_images(feature, place["images"])
-            self._import_feature_tags(feature, place["tags"])
-            self._import_feature_category(feature, place["tags"])
-            self._import_feature_contact_info(feature, place["address"])
-            self._import_opening_hours(feature, place["opening_hours"])
+            for lang in app_settings.ADDITIONAL_LANGUAGES:
+                trans_places = mhc.fetch_places(
+                    lang=lang, parameters=call_parameters,
+                ).json()
+                self._process_features(trans_places, source_type, lang=lang)
 
-    @staticmethod
-    def _import_feature(place: dict, st: SourceType) -> Feature:
+    def _process_features(
+        self, places: dict, source_type: SourceType, lang: str = "fi"
+    ):
+        """Import data for features represented in the source data.
+
+        Translations are imported only for objects that have translations in
+        the source data.
+        """
+        for place in feature_expression.search(places):
+            feature = self._import_feature(place, source_type, lang=lang)
+            self._import_opening_hours(feature, place["opening_hours"], lang=lang)
+
+            if lang == self.main_lang:
+                self._import_feature_images(feature, place["images"])
+                self._import_feature_tags(feature, place["tags"])
+                self._import_feature_category(feature, place["tags"])
+                self._import_feature_contact_info(feature, place["address"])
+
+    def _import_feature(self, place: dict, st: SourceType, lang: str) -> Feature:
+        """Imports basic information for a feature.
+
+        Only translated fields are updated when importing translations.
+        """
         values = {
-            "name": place["name"],
+            "name": place["name"][lang],
             "description": place["description"],
             "url": place["url"],
-            "mapped_at": timezone.now(),
-            "source_modified_at": parse_datetime(place["modified_at"]),
-            "geometry": Point(place["lon"], place["lat"], srid=settings.DEFAULT_SRID),
-            "source_type": st,
         }
-        feature, created = Feature.objects.language("fi").update_or_create(
+
+        if lang == self.main_lang:
+            main_values = {
+                "mapped_at": timezone.now(),
+                "source_modified_at": parse_datetime(place["modified_at"]),
+                "geometry": Point(
+                    place["lon"], place["lat"], srid=settings.DEFAULT_SRID
+                ),
+            }
+            values.update(main_values)
+        feature, created = Feature.objects.language(lang).update_or_create(
             source_type=st, source_id=place["id"], defaults=values,
         )
         return feature
@@ -185,8 +212,11 @@ class MyHelsinkiImporter(FeatureImporterBase):
                 },
             )
 
-    def _import_opening_hours(self, feature: Feature, opening_hours: dict):
-        """Imports opening hours for the given feature."""
+    def _import_opening_hours(self, feature: Feature, opening_hours: dict, lang: str):
+        """Imports opening hours for the given feature.
+
+        Only translated fields are updated when importing translations.
+        """
 
         def has_data(hours):
             return bool(hours["opens"] or hours["closes"] or hours["all_day"])
@@ -203,9 +233,14 @@ class MyHelsinkiImporter(FeatureImporterBase):
                 # start from a clean state.
                 ohps.delete()
 
-            ohp, created = OpeningHoursPeriod.objects.update_or_create(
+            ohp, created = OpeningHoursPeriod.objects.language(lang).update_or_create(
                 feature=feature, defaults={"comment": opening_hours["comment"]}
             )
+
+            if lang != self.main_lang:
+                # We only need to process translated fields if
+                # not the primary language
+                return
 
             for h in hours:
                 day = Weekday(h["day"])
@@ -232,13 +267,11 @@ class MyHelsinkiPlacesClient:
     base_url = "http://open-api.myhelsinki.fi"
     places_url = "/v1/places/"
     place_url = "/v1/place/{id}"
-    main_lang = "fi"
-    translation_langs = ("en", "sv")
     timeout = 10
 
-    def fetch_places(self, parameters: dict = None) -> requests.Response:
+    def fetch_places(self, lang: str, parameters: dict = None) -> requests.Response:
         params = {
-            "language_filter": self.main_lang,
+            "language_filter": lang,
         }
         if parameters:
             params.update(parameters)

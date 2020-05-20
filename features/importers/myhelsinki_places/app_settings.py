@@ -35,6 +35,17 @@ class AppSettings:
         return self._setting("API_CALLS", self.config["api_calls"])
 
     @property
+    def ADDITIONAL_LANGUAGES(self) -> Iterable[str]:
+        """Additional languages to import besides Finnish (`fi`).
+
+        Example:
+        additional_languages = ["en", "sv"]
+        """
+        return self._setting(
+            "ADDITIONAL_LANGUAGES", self.config["additional_languages"]
+        )
+
+    @property
     def TAG_CONFIG(self) -> Mapping:
         """Tag mapping configuration.
 

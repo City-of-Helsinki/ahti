@@ -15,6 +15,9 @@ def setup_test_environment(settings):
         {}
     ]  # Response is mocked, parameters are redundant
 
+    # Only import Finnish on tests by default
+    settings.MYHELSINKI_PLACES_ADDITIONAL_LANGUAGES = []
+
 
 @pytest.fixture
 def importer():
@@ -24,3 +27,11 @@ def importer():
 @pytest.fixture
 def places_response():
     return read_json_file(__file__, "responses", "places_response.json")
+
+
+@pytest.fixture
+def translations_responses():
+    return {
+        "en": read_json_file(__file__, "responses", "places_en.json"),
+        "sv": read_json_file(__file__, "responses", "places_sv.json"),
+    }
