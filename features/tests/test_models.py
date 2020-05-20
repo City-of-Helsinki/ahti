@@ -138,7 +138,7 @@ def test_override():
     assert Feature.objects.count() == 1
 
 
-def test_pricetag():
+def test_price_tag():
     PriceTagFactory()
 
     assert PriceTag.objects.count() == 1

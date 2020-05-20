@@ -6,17 +6,6 @@ from snapshottest import Snapshot
 
 snapshots = Snapshot()
 
-snapshots["test_price_list 1"] = {
-    "data": {
-        "features": {
-            "edges": [
-                {"node": {"properties": {"details": None}}},
-                {"node": {"properties": {"details": None}}},
-            ]
-        }
-    }
-}
-
 snapshots["test_features_query 1"] = {
     "data": {
         "features": {
@@ -216,6 +205,41 @@ snapshots["test_feature_opening_hours 1"] = {
                         }
                     }
                 }
+            ]
+        }
+    }
+}
+
+snapshots["test_price_list 1"] = {
+    "data": {
+        "features": {
+            "edges": [
+                {
+                    "node": {
+                        "properties": {
+                            "details": {
+                                "priceList": [
+                                    {
+                                        "item": "Season ticket",
+                                        "price": "100.01",
+                                        "unit": "a year",
+                                    }
+                                ]
+                            }
+                        }
+                    }
+                },
+                {
+                    "node": {
+                        "properties": {
+                            "details": {
+                                "priceList": [
+                                    {"item": "Coffee", "price": "200.01", "unit": ""}
+                                ]
+                            }
+                        }
+                    }
+                },
             ]
         }
     }

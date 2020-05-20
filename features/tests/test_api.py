@@ -344,8 +344,8 @@ def test_feature_opening_hours(snapshot, api_client):
 
 
 def test_price_list(snapshot, api_client):
-    PriceTagFactory(price=Decimal("100.01"), unit="a month")
-    PriceTagFactory(price=Decimal("200.01"), unit="a year")
+    PriceTagFactory(item="Season ticket", price=Decimal("100.01"), unit="a year")
+    PriceTagFactory(item="Coffee", price=Decimal("200.01"), unit="")
 
     executed = api_client.execute(
         """
