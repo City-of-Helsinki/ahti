@@ -1,7 +1,7 @@
-import json
 import sys
-from pathlib import PurePath
 from typing import Mapping
+
+from utils.utils import read_json_file
 
 
 class AppSettings:
@@ -68,9 +68,7 @@ class AppSettings:
         return self._setting("MOORING_MAPPING", self.config["mooring_mapping"])
 
 
-path = PurePath(__file__).parent.joinpath("config.json")
-with open(path.as_posix(), "r") as f:
-    config = json.loads(f.read())
+config = read_json_file(__file__, "config.json")
 
 # Ugly? Guido recommends this himself ...
 # http://mail.python.org/pipermail/python-ideas/2012-May/014969.html
