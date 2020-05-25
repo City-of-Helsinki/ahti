@@ -9,7 +9,7 @@ from graphene_django import DjangoObjectType
 from graphene_django.filter import DjangoFilterConnectionField
 from graphql import GraphQLError
 from graphql_geojson.filters import DistanceFilter
-from utils.graphene import StringListFilter
+from utils.graphene import LanguageEnum, StringListFilter
 
 from features import models
 from features.enums import HarborMooringType, OverrideFieldType, Visibility, Weekday
@@ -114,6 +114,8 @@ class Teaser(DjangoObjectType):
 
 class FeatureTranslations(DjangoObjectType):
     "Values in other languages for the feature attributes that can have translations."
+
+    language_code = LanguageEnum(required=True)
 
     class Meta:
         model = apps.get_model("features", "FeatureTranslation")
