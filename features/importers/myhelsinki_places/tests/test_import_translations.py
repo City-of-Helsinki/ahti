@@ -1,8 +1,8 @@
 import pytest
-from utils.pytest import pytest_regex
 
 from features.importers.myhelsinki_places.importer import MyHelsinkiPlacesClient
 from features.models import Feature
+from utils.pytest import pytest_regex
 
 PLACES_URL = MyHelsinkiPlacesClient.base_url + MyHelsinkiPlacesClient.places_url
 

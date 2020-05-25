@@ -1,11 +1,10 @@
 import datetime
 
-from utils.pytest import pytest_regex
-
 from features.enums import Weekday
 from features.importers.myhelsinki_places.importer import MyHelsinkiPlacesClient
 from features.models import Feature
 from features.tests.factories import OpeningHoursFactory
+from utils.pytest import pytest_regex
 
 PLACES_URL = MyHelsinkiPlacesClient.base_url + MyHelsinkiPlacesClient.places_url
 

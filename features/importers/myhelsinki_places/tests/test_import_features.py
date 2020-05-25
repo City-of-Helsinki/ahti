@@ -4,10 +4,10 @@ import math
 from django.contrib.gis.geos import Point
 from django.utils.timezone import utc
 from freezegun import freeze_time
-from utils.pytest import pytest_regex
 
 from features.importers.myhelsinki_places.importer import MyHelsinkiPlacesClient
 from features.models import Feature, SourceType
+from utils.pytest import pytest_regex
 
 PLACES_URL = MyHelsinkiPlacesClient.base_url + MyHelsinkiPlacesClient.places_url
 

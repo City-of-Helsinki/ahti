@@ -8,7 +8,6 @@ from django.utils.translation import gettext
 from django.utils.translation import gettext_lazy as _
 from parler.managers import TranslatableQuerySet
 from parler.models import TranslatableModel, TranslatedFields
-from utils.models import TimestampedModel
 
 from ahti import settings
 from features.enums import (
@@ -18,6 +17,7 @@ from features.enums import (
     Visibility,
     Weekday,
 )
+from utils.models import TimestampedModel
 
 
 class SourceType(models.Model):

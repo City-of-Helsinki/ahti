@@ -6,7 +6,6 @@ from django.contrib.gis.geos import Point
 from freezegun import freeze_time
 from graphene.test import Client
 from graphql_relay import to_global_id
-from utils.pytest import pytest_regex
 
 from ahti.schema import schema
 from categories.tests.factories import CategoryFactory
@@ -27,6 +26,7 @@ from features.tests.factories import (
     SourceTypeFactory,
     TagFactory,
 )
+from utils.pytest import pytest_regex
 
 
 def get_response_ids(response):
