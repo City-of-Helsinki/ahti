@@ -37,8 +37,9 @@ class OverrideFieldType(models.TextChoices):
 class Visibility(models.IntegerChoices):
     """Used to show/hide individual features from the API output."""
 
-    VISIBLE = 1, _("Visible")
     HIDDEN = 0, _("Hidden")
+    VISIBLE = 1, _("Visible")
+    DRAFT = 2, _("Draft")
 
 
 class Weekday(models.IntegerChoices):

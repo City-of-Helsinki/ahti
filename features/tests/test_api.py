@@ -10,7 +10,6 @@ from graphql_relay import to_global_id
 from ahti.schema import schema
 from categories.tests.factories import CategoryFactory
 from features.enums import HarborMooringType, OverrideFieldType, Visibility, Weekday
-from features.models import Feature as FeatureModel
 from features.schema import Feature
 from features.tests.factories import (
     ContactInfoFactory,
@@ -109,7 +108,8 @@ def test_features_query(snapshot, api_client):
 
 def test_features_visibility(snapshot, api_client):
     FeatureFactory()
-    FeatureFactory()
+    hidden = FeatureFactory()
+    draft = FeatureFactory()
 
     request = """
     query Features {
@@ -124,11 +124,12 @@ def test_features_visibility(snapshot, api_client):
     """
     executed = api_client.execute(request)
     totalFeatures = len(executed["data"]["features"]["edges"])
-    f = FeatureModel.objects.last()
-    f.visibility = Visibility.HIDDEN
-    f.save()
+    hidden.visibility = Visibility.HIDDEN
+    hidden.save()
+    draft.visibility = Visibility.DRAFT
+    draft.save()
     executed = api_client.execute(request)
-    assert len(executed["data"]["features"]["edges"]) == totalFeatures - 1
+    assert len(executed["data"]["features"]["edges"]) == totalFeatures - 2
 
 
 def test_features_query_with_ids(api_client):
