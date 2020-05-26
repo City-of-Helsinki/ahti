@@ -1,7 +1,7 @@
 import pytest
-from utils.utils import read_json_file
 
 from features.importers.venepaikka_harbors.importer import VenepaikkaImporter
+from utils.utils import read_json_file
 
 
 @pytest.fixture(autouse=True)

@@ -1,9 +1,9 @@
 import pytest
-from utils.pytest import pytest_regex
 
 from features.importers.venepaikka_harbors.importer import VenepaikkaHarborsClient
 from features.models import Image, License
 from features.tests.factories import ImageFactory
+from utils.pytest import pytest_regex
 
 HARBORS_URL = VenepaikkaHarborsClient.url
 HARBOR_ID = "SGFyYm9yTm9kZTpiNzE0ODE1NC1kYmE5LTRlM2ItOWQ2ZS1jNTYzNmEyNWFhMzk="

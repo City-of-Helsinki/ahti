@@ -6,14 +6,23 @@ from graphene_django.debug import DjangoDebug
 import categories.schema
 import features.schema
 
-_debug = {"debug": graphene.Field(DjangoDebug, name="_debug")}
-_default = {"__doc__": _("Ahti GraphQL API queries")}
+_query_debug = {"debug": graphene.Field(DjangoDebug, name="_debug")}
+_query_default = {
+    "__doc__": _("Ahti GraphQL API queries."),
+}
+
+
+class Mutation(
+    features.schema.Mutation, graphene.ObjectType,
+):
+    """Ahti GraphQL API mutations."""
+
 
 Query = type(
     "Query",
     (features.schema.Query, categories.schema.Query, graphene.ObjectType),
-    {**_debug, **_default} if settings.DEBUG else _default,
+    {**_query_debug, **_query_default} if settings.DEBUG else _query_default,
 )
 
 
-schema = graphene.Schema(query=Query)
+schema = graphene.Schema(query=Query, mutation=Mutation)

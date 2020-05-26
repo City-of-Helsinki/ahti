@@ -1,17 +1,12 @@
 import datetime
 from decimal import Decimal
 
-import pytest
 from django.contrib.gis.geos import Point
 from freezegun import freeze_time
-from graphene.test import Client
 from graphql_relay import to_global_id
-from utils.pytest import pytest_regex
 
-from ahti.schema import schema
 from categories.tests.factories import CategoryFactory
 from features.enums import HarborMooringType, OverrideFieldType, Visibility, Weekday
-from features.models import Feature as FeatureModel
 from features.schema import Feature
 from features.tests.factories import (
     ContactInfoFactory,
@@ -27,20 +22,11 @@ from features.tests.factories import (
     SourceTypeFactory,
     TagFactory,
 )
+from utils.pytest import pytest_regex
 
 
 def get_response_ids(response):
     return [edge["node"]["id"] for edge in response["data"]["features"]["edges"]]
-
-
-@pytest.fixture(autouse=True)
-def autouse_db(db):
-    pass
-
-
-@pytest.fixture
-def api_client():
-    return Client(schema=schema)
 
 
 @freeze_time("2019-12-16 12:00:01")
@@ -109,7 +95,8 @@ def test_features_query(snapshot, api_client):
 
 def test_features_visibility(snapshot, api_client):
     FeatureFactory()
-    FeatureFactory()
+    hidden = FeatureFactory()
+    draft = FeatureFactory()
 
     request = """
     query Features {
@@ -124,11 +111,12 @@ def test_features_visibility(snapshot, api_client):
     """
     executed = api_client.execute(request)
     totalFeatures = len(executed["data"]["features"]["edges"])
-    f = FeatureModel.objects.last()
-    f.visibility = Visibility.HIDDEN
-    f.save()
+    hidden.visibility = Visibility.HIDDEN
+    hidden.save()
+    draft.visibility = Visibility.DRAFT
+    draft.save()
     executed = api_client.execute(request)
-    assert len(executed["data"]["features"]["edges"]) == totalFeatures - 1
+    assert len(executed["data"]["features"]["edges"]) == totalFeatures - 2
 
 
 def test_features_query_with_ids(api_client):
