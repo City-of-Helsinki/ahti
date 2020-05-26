@@ -6,8 +6,7 @@ from django.core.serializers.json import DjangoJSONEncoder
 from django.core.validators import MinValueValidator
 from django.utils.translation import gettext
 from django.utils.translation import gettext_lazy as _
-from parler.managers import TranslatableQuerySet
-from parler.models import TranslatableModel, TranslatedFields
+from parler.models import TranslatedFields
 
 from ahti import settings
 from features.enums import (
@@ -17,7 +16,7 @@ from features.enums import (
     Visibility,
     Weekday,
 )
-from utils.models import TimestampedModel
+from utils.models import TimestampedModel, TranslatableModel, TranslatableQuerySet
 
 
 class SourceType(models.Model):

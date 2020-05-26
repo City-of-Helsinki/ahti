@@ -1,18 +1,23 @@
+import uuid
+
 import django_filters
 import graphene
 import graphql_geojson
 from django.apps import apps
+from django.db import transaction
 from django.db.models import Q
+from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 from graphene import ID, ObjectType, relay, String
 from graphene_django import DjangoObjectType
 from graphene_django.filter import DjangoFilterConnectionField
 from graphql import GraphQLError
 from graphql_geojson.filters import DistanceFilter
-from utils.graphene import LanguageEnum, StringListFilter
 
+from categories.models import Category
 from features import models
 from features.enums import HarborMooringType, OverrideFieldType, Visibility, Weekday
+from utils.graphene import LanguageEnum, StringListFilter
 
 HarborMooringTypeEnum = graphene.Enum.from_enum(
     HarborMooringType, description=lambda e: e.label if e else ""
@@ -422,6 +427,80 @@ class Feature(graphql_geojson.GeoJSONType):
         )
 
 
+class FeatureTranslationsInput(graphene.InputObjectType):
+    language_code = LanguageEnum(required=True)
+    name = graphene.String(required=True, description=_("Name of the feature"))
+    description = graphene.String(description=_("Description of the feature"))
+    url = graphene.String(description=_("URL for more information about this feature"))
+    one_liner = graphene.String(description=_("Short introductory text or a tagline"))
+
+
+class ContactInfoInput(graphene.InputObjectType):
+    street_address = graphene.String()
+    postal_code = graphene.String()
+    municipality = graphene.String()
+    phone_number = graphene.String()
+    email = graphene.String()
+
+
+class CreateFeatureMutation(relay.ClientIDMutation):
+    class Input:
+        translations = graphene.List(
+            graphene.NonNull(FeatureTranslationsInput), required=True
+        )
+        geometry = graphql_geojson.Geometry(required=True)
+        contact_info = ContactInfoInput()
+        category_id = graphene.String()
+        tag_ids = graphene.List(graphene.String)
+
+    feature = graphene.Field(Feature)
+
+    @classmethod
+    def get_source_type(cls):
+        st, created = models.SourceType.objects.get_or_create(system="ahti", type="api")
+        return st
+
+    @classmethod
+    @transaction.atomic
+    def mutate_and_get_payload(cls, root, info, **kwargs):
+        contact_info_values = kwargs.pop("contact_info", None)
+        tag_ids = kwargs.pop("tag_ids", None)
+        category_id = kwargs.pop("category_id", None)
+
+        now = timezone.now()
+        values = {
+            "source_type": cls.get_source_type(),
+            "source_id": uuid.uuid4(),
+            "source_modified_at": now,
+            "mapped_at": now,
+            "visibility": Visibility.DRAFT,
+        }
+
+        values.update(kwargs)
+
+        if category_id:
+            values["category"] = Category.objects.get(id=category_id)
+
+        if tag_ids:
+            tags = [models.Tag.objects.get(id=tag_id) for tag_id in tag_ids]
+        else:
+            tags = []
+
+        feature = models.Feature.objects.create_translatable_object(**values)
+
+        if contact_info_values:
+            ci = models.ContactInfo.objects.create(
+                feature=feature, **contact_info_values
+            )
+            ci.full_clean()
+            ci.save()
+
+        if tags:
+            feature.tags.set(tags)
+
+        return CreateFeatureMutation(feature=feature)
+
+
 class Query(graphene.ObjectType):
     features = DjangoFilterConnectionField(
         Feature, description=_("Retrieve all features matching the given filters")
@@ -448,3 +527,12 @@ class Query(graphene.ObjectType):
 
     def resolve_tags(self, info, **kwargs):
         return models.Tag.objects.all()
+
+
+class Mutation(graphene.ObjectType):
+    create_feature = CreateFeatureMutation.Field(
+        description=_(
+            "Create a new feature into the system which will go through a"
+            "review before it is published into the API."
+        )
+    )

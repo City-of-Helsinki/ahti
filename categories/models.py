@@ -1,6 +1,8 @@
 from django.db import models
 from django.utils.translation import gettext_lazy as _
-from parler.models import TranslatableModel, TranslatedFields
+from parler.models import TranslatedFields
+
+from utils.models import TranslatableModel
 
 
 class Category(TranslatableModel):
