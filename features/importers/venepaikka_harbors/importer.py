@@ -128,7 +128,6 @@ class VenepaikkaImporter(FeatureImporterBase):
             "mapped_at": timezone.now(),
             "source_modified_at": timezone.now(),
             "geometry": Point(harbor["lon"], harbor["lat"], srid=settings.DEFAULT_SRID),
-            "source_type": st,
         }
         feature, created = Feature.objects.language("fi").update_or_create(
             source_type=st, source_id=harbor["id"], defaults=values,

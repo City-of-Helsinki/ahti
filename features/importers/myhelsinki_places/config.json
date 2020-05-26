@@ -1,4 +1,5 @@
 {
+  "additional_languages": ["en", "sv"],
   "api_calls":  [
     {"tags_search": ["MainAttraction", "Island", "Seaside", "Sea", "IslandRestaurant", "IceSwimming", "Beach", "Sauna", "Viewpoint", "Harbour", "Park", "Garden", "Canoeing", "Sup" ]},
     {"distance_filter": "60.118592, 24.753357, 5"},
