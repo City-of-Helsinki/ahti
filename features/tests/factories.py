@@ -3,15 +3,19 @@ from django.contrib.gis.geos import Point
 from django.utils import timezone
 from factory.random import randgen
 
-from features.enums import OverrideFieldType
+from features.enums import FeatureDetailsType, HarborMooringType, OverrideFieldType
 from features.models import (
     ContactInfo,
     Feature,
+    FeatureDetails,
+    FeatureTeaser,
     Image,
     License,
+    Link,
     OpeningHours,
     OpeningHoursPeriod,
     Override,
+    PriceTag,
     SourceType,
     Tag,
 )
@@ -31,6 +35,7 @@ class FeatureFactory(factory.django.DjangoModelFactory):
 
     name = factory.Sequence(lambda n: "Place %d" % n)
     description = factory.Sequence(lambda n: "Place %d description" % n)
+    one_liner = factory.Sequence(lambda n: "Place %d one-liner" % n)
     url = factory.Faker("url")
     source_id = factory.Sequence(lambda n: "sid%d" % n)
     source_type = factory.SubFactory(SourceTypeFactory)
@@ -43,11 +48,52 @@ class FeatureFactory(factory.django.DjangoModelFactory):
     )
 
 
+class FeatureTeaserFactory(factory.django.DjangoModelFactory):
+    class Meta:
+        model = FeatureTeaser
+
+    feature = factory.SubFactory(FeatureFactory)
+    header = "Starting from:"
+    main = "7 euro a day."
+
+
+class FeatureDetailsFactory(factory.django.DjangoModelFactory):
+    class Meta:
+        model = FeatureDetails
+
+    feature = factory.SubFactory(FeatureFactory)
+    type = factory.Faker("random_element", elements=list(FeatureDetailsType))
+
+
+class HarbourDetailsDataFactory(factory.DictFactory):
+    """Factory for building a harbour details"""
+
+    berth_min_depth = factory.Faker("pyfloat", min_value=3, max_value=5)
+    berth_max_depth = factory.Faker("pyfloat", min_value=5, max_value=20)
+    berth_moorings = factory.Faker(
+        "random_elements", elements=list(HarborMooringType), unique=True
+    )
+
+
+class HarbourFeatureDetailsFactory(FeatureDetailsFactory):
+    type = FeatureDetailsType.HARBOR
+    data = factory.SubFactory(HarbourDetailsDataFactory)
+
+
 class LicenseFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = License
 
     name = factory.Sequence(lambda n: "License %d" % n)
+
+
+class LinkFactory(factory.django.DjangoModelFactory):
+    class Meta:
+        model = Link
+
+    feature = factory.SubFactory(FeatureFactory)
+    type = factory.Faker("slug")
+    url = factory.Faker("url")
 
 
 class ImageFactory(factory.django.DjangoModelFactory):
@@ -105,3 +151,17 @@ class OverrideFactory(factory.django.DjangoModelFactory):
 
     feature = factory.SubFactory(FeatureFactory)
     field = factory.Faker("random_element", elements=OverrideFieldType)
+
+
+class PriceTagFactory(factory.django.DjangoModelFactory):
+    class Meta:
+        model = PriceTag
+
+    feature = factory.SubFactory(FeatureFactory)
+    item = factory.Sequence(lambda n: "Item name: %d" % n)
+    price = factory.Faker(
+        "pydecimal", left_digits=3, right_digits=2, positive=True, min_value=0
+    )
+    unit = factory.Faker(
+        "random_choices", elements=("kilo", "cup", "per week", "per month"), length=1
+    )

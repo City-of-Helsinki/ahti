@@ -1,11 +1,22 @@
+from decimal import Decimal
+
 from django.contrib.gis.db import models
+from django.contrib.postgres.fields import JSONField
+from django.core.serializers.json import DjangoJSONEncoder
+from django.core.validators import MinValueValidator
+from django.utils.translation import gettext
 from django.utils.translation import gettext_lazy as _
-from parler.managers import TranslatableQuerySet
-from parler.models import TranslatableModel, TranslatedFields
-from utils.models import TimestampedModel
+from parler.models import TranslatedFields
 
 from ahti import settings
-from features.enums import OverrideFieldType, Visibility, Weekday
+from features.enums import (
+    FeatureDetailsType,
+    FeatureTagSource,
+    OverrideFieldType,
+    Visibility,
+    Weekday,
+)
+from utils.models import TimestampedModel, TranslatableModel, TranslatableQuerySet
 
 
 class SourceType(models.Model):
@@ -65,9 +76,21 @@ class Feature(TranslatableModel, TimestampedModel):
             verbose_name=_("name"), max_length=200, help_text=_("Name of the feature")
         ),
         url=models.URLField(
-            verbose_name=_("url"), blank=True, help_text=_("URL of the feature")
+            verbose_name=_("url"),
+            blank=True,
+            help_text=_("URL for more information about this feature"),
         ),
-        description=models.TextField(verbose_name=_("description"), blank=True),
+        one_liner=models.CharField(
+            verbose_name=_("one-liner"),
+            max_length=64,
+            blank=True,
+            help_text=_("A short description limited to 64 chars"),
+        ),
+        description=models.TextField(
+            verbose_name=_("description"),
+            blank=True,
+            help_text=_("Description of the feature"),
+        ),
     )
     geometry = models.GeometryField(
         verbose_name=_("geometry"),
@@ -91,6 +114,7 @@ class Feature(TranslatableModel, TimestampedModel):
         blank=True,
         null=True,
         verbose_name=_("category"),
+        help_text=_("Category the feature belongs to"),
     )
     tags = models.ManyToManyField("Tag", related_name="features", through="FeatureTag")
     parents = models.ManyToManyField(
@@ -125,6 +149,41 @@ class Feature(TranslatableModel, TimestampedModel):
         return f"{self.source_type.system}:{self.source_type.type}:{self.source_id}"
 
 
+class FeatureDetails(models.Model):
+    feature = models.ForeignKey(
+        Feature,
+        on_delete=models.CASCADE,
+        related_name="details",
+        verbose_name=_("details"),
+    )
+    type = models.CharField(
+        max_length=6,
+        choices=FeatureDetailsType.choices,
+        verbose_name=_("type"),
+        help_text=_("What type of details are described in this object"),
+    )
+    data = JSONField(
+        verbose_name=_("data"),
+        default=dict,
+        blank=True,
+        null=True,
+        encoder=DjangoJSONEncoder,
+    )
+
+    class Meta:
+        verbose_name = _("feature details")
+        verbose_name_plural = _("feature details")
+        ordering = ("id",)
+        constraints = [
+            models.UniqueConstraint(
+                fields=["feature", "type"], name="unique_feature_detail_type"
+            ),
+        ]
+
+    def __str__(self):
+        return f"{gettext(FeatureDetailsType(self.type).label)}"
+
+
 class Image(models.Model):
     feature = models.ForeignKey(
         Feature,
@@ -132,15 +191,20 @@ class Image(models.Model):
         related_name="images",
         verbose_name=_("feature"),
     )
-    url = models.URLField(verbose_name=_("url"), max_length=2000)
+    url = models.URLField(
+        verbose_name=_("url"), max_length=2000, help_text=_("URL of the image")
+    )
     copyright_owner = models.CharField(
-        verbose_name=_("copyright owner"), max_length=200
+        verbose_name=_("copyright owner"),
+        max_length=200,
+        help_text=_("Copyright owner of the image (person)"),
     )
     license = models.ForeignKey(
         "License",
         on_delete=models.CASCADE,
         related_name="images",
         verbose_name=_("license"),
+        help_text=_("License associated with the image"),
     )
 
     class Meta:
@@ -154,7 +218,11 @@ class Image(models.Model):
 
 class License(TranslatableModel):
     translations = TranslatedFields(
-        name=models.CharField(verbose_name=_("name"), max_length=200),
+        name=models.CharField(
+            verbose_name=_("name"),
+            max_length=200,
+            help_text=_("Display name of the license"),
+        ),
     )
 
     class Meta:
@@ -166,10 +234,40 @@ class License(TranslatableModel):
         return self.safe_translation_getter("name", super().__str__())
 
 
+class Link(models.Model):
+    feature = models.ForeignKey(
+        Feature,
+        on_delete=models.CASCADE,
+        related_name="links",
+        verbose_name=_("feature"),
+    )
+    type = models.CharField(
+        verbose_name=_("type"), max_length=200, help_text=_("Type of the link")
+    )
+    url = models.URLField(verbose_name=_("url"), max_length=2000)
+
+    def __str__(self):
+        return f"{self.type}: {self.url}"
+
+    class Meta:
+        verbose_name = _("link")
+        verbose_name_plural = _("links")
+        ordering = ("id",)
+        constraints = [
+            models.UniqueConstraint(
+                fields=["feature", "type"], name="unique_link_feature_type"
+            ),
+        ]
+
+
 class Tag(TranslatableModel):
     id = models.CharField(max_length=200, primary_key=True)
     translations = TranslatedFields(
-        name=models.CharField(verbose_name=_("name"), max_length=200),
+        name=models.CharField(
+            verbose_name=_("name"),
+            max_length=200,
+            help_text=_("Display name of the tag"),
+        ),
     )
 
     class Meta:
@@ -181,9 +279,44 @@ class Tag(TranslatableModel):
         return self.id
 
 
+class PriceTag(TranslatableModel):
+    feature = models.ForeignKey(
+        Feature, on_delete=models.CASCADE, related_name="price_tags"
+    )
+    translations = TranslatedFields(
+        item=models.CharField(
+            max_length=25, verbose_name=_("name"), help_text=_("Name of the item")
+        ),
+        unit=models.CharField(
+            max_length=15,
+            verbose_name=_("unit"),
+            blank=True,
+            help_text=_(
+                "Unit of the price (e.g. 'hour', 'day', 'piece', 'person', 'child', "
+                "'one way')"
+            ),
+        ),
+    )
+    price = models.DecimalField(
+        max_digits=7,
+        decimal_places=2,
+        validators=[MinValueValidator(Decimal("0.0"))],
+        help_text=_("Price of the item in EUR"),
+    )
+
+
 class FeatureTag(TimestampedModel):
-    feature = models.ForeignKey(Feature, on_delete=models.CASCADE)
-    tag = models.ForeignKey(Tag, on_delete=models.CASCADE)
+    feature = models.ForeignKey(
+        Feature, on_delete=models.CASCADE, related_name="feature_tags"
+    )
+    tag = models.ForeignKey(Tag, on_delete=models.CASCADE, related_name="feature_tags")
+    source = models.CharField(
+        max_length=7,
+        choices=FeatureTagSource.choices,
+        default=FeatureTagSource.MAPPING,
+        verbose_name=_("source"),
+        help_text=_("How tag was set for the feature"),
+    )
 
     class Meta:
         verbose_name = _("feature tag")
@@ -195,6 +328,40 @@ class FeatureTag(TimestampedModel):
             ),
         ]
 
+    def __str__(self):
+        return f"{self.tag}"
+
+
+class FeatureTeaser(TranslatableModel):
+    feature = models.OneToOneField(
+        Feature,
+        on_delete=models.CASCADE,
+        related_name="teaser",
+        verbose_name=_("teaser"),
+    )
+    translations = TranslatedFields(
+        header=models.CharField(
+            max_length=64,
+            blank=True,
+            verbose_name=_("header"),
+            help_text=_("An opening, e.g. 'Starting' from 'Starting from 7€/day.'"),
+        ),
+        main=models.CharField(
+            max_length=128,
+            blank=True,
+            verbose_name=_("main content"),
+            help_text=_("The meat of the deal, '7€/day' part"),
+        ),
+    )
+
+    def __str__(self):
+        return f"{self.header} {self.main}"
+
+    class Meta:
+        verbose_name = _("teaser")
+        verbose_name_plural = _("teasers")
+        ordering = ("id",)
+
 
 class ContactInfo(models.Model):
     feature = models.OneToOneField(
@@ -202,6 +369,7 @@ class ContactInfo(models.Model):
         verbose_name=_("feature"),
         related_name="contact_info",
         on_delete=models.CASCADE,
+        help_text=_("Contact information for the given feature"),
     )
     street_address = models.CharField(
         verbose_name=_("street address"), blank=True, max_length=200
@@ -251,13 +419,25 @@ class OpeningHoursPeriod(TranslatableModel):
         help_text=_("Last day of validity"),
     )
     translations = TranslatedFields(
-        comment=models.TextField(blank=True, verbose_name=_("comment")),
+        comment=models.TextField(
+            blank=True,
+            verbose_name=_("comment"),
+            help_text=_(
+                "Comment for this opening hour period (e.g. 'Exceptional opening hours "
+                "during Midsummer')"
+            ),
+        ),
     )
 
     class Meta:
         verbose_name = _("opening hours period")
         verbose_name_plural = _("opening hours periods")
         ordering = ("id",)
+
+    def __str__(self):
+        return ", ".join(
+            [str(oh) for oh in self.opening_hours.all().order_by("day", "opens")]
+        )
 
 
 class OpeningHours(models.Model):
@@ -267,7 +447,7 @@ class OpeningHours(models.Model):
         related_name="opening_hours",
         verbose_name=_("opening hours"),
     )
-    day = models.IntegerField(choices=Weekday.choices)
+    day = models.IntegerField(choices=Weekday.choices, help_text=_("Day of week"))
     opens = models.TimeField(
         blank=True, null=True, verbose_name=_("opens"), help_text=_("Time of opening")
     )
@@ -282,6 +462,15 @@ class OpeningHours(models.Model):
         verbose_name = _("opening hours")
         verbose_name_plural = _("opening hours")
         ordering = ("id",)
+
+    def __str__(self):
+        if self.all_day:
+            hours_string = gettext("all day")
+        else:
+            opens_string = self.opens.strftime("%H.%M") if self.opens else ""
+            closes_string = self.closes.strftime("%H.%M") if self.closes else ""
+            hours_string = f"{opens_string}–{closes_string}"
+        return f"{gettext(Weekday(self.day).label)}: {hours_string}"
 
 
 class Override(TranslatableModel, TimestampedModel):

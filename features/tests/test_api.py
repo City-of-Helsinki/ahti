@@ -1,41 +1,32 @@
 import datetime
+from decimal import Decimal
 
-import pytest
 from django.contrib.gis.geos import Point
 from freezegun import freeze_time
-from graphene.test import Client
 from graphql_relay import to_global_id
-from utils.pytest import pytest_regex
 
-from ahti.schema import schema
 from categories.tests.factories import CategoryFactory
-from features.enums import OverrideFieldType, Visibility, Weekday
-from features.models import Feature as FeatureModel
+from features.enums import HarborMooringType, OverrideFieldType, Visibility, Weekday
 from features.schema import Feature
 from features.tests.factories import (
     ContactInfoFactory,
     FeatureFactory,
+    FeatureTeaserFactory,
+    HarbourFeatureDetailsFactory,
     ImageFactory,
+    LinkFactory,
     OpeningHoursFactory,
     OpeningHoursPeriodFactory,
     OverrideFactory,
+    PriceTagFactory,
     SourceTypeFactory,
     TagFactory,
 )
+from utils.pytest import pytest_regex
 
 
 def get_response_ids(response):
     return [edge["node"]["id"] for edge in response["data"]["features"]["edges"]]
-
-
-@pytest.fixture(autouse=True)
-def autouse_db(db):
-    pass
-
-
-@pytest.fixture
-def api_client():
-    return Client(schema=schema)
 
 
 @freeze_time("2019-12-16 12:00:01")
@@ -46,6 +37,7 @@ def test_features_query(snapshot, api_client):
         source_id="sid0",
         name="Place X",
         description="Place X description",
+        one_liner="Place X one-liner",
         geometry=Point(24.940967, 60.168683),
         url="https://ahti1.localhost",
     )
@@ -53,6 +45,7 @@ def test_features_query(snapshot, api_client):
         source_type=st,
         source_id="sid1",
         name="Place Y",
+        one_liner="Place Y one-liner",
         description="Place Y description",
         geometry=Point(24.952222, 60.169494),
         url="https://ahti2.localhost",
@@ -72,6 +65,7 @@ def test_features_query(snapshot, api_client):
             properties {
               name
               description
+              oneLiner
               url
               ahtiId
               createdAt
@@ -80,6 +74,7 @@ def test_features_query(snapshot, api_client):
                 languageCode
                 name
                 description
+                oneLiner
                 url
               }
               source {
@@ -100,7 +95,8 @@ def test_features_query(snapshot, api_client):
 
 def test_features_visibility(snapshot, api_client):
     FeatureFactory()
-    FeatureFactory()
+    hidden = FeatureFactory()
+    draft = FeatureFactory()
 
     request = """
     query Features {
@@ -115,11 +111,12 @@ def test_features_visibility(snapshot, api_client):
     """
     executed = api_client.execute(request)
     totalFeatures = len(executed["data"]["features"]["edges"])
-    f = FeatureModel.objects.last()
-    f.visibility = Visibility.HIDDEN
-    f.save()
+    hidden.visibility = Visibility.HIDDEN
+    hidden.save()
+    draft.visibility = Visibility.DRAFT
+    draft.save()
     executed = api_client.execute(request)
-    assert len(executed["data"]["features"]["edges"]) == totalFeatures - 1
+    assert len(executed["data"]["features"]["edges"]) == totalFeatures - 2
 
 
 def test_features_query_with_ids(api_client):
@@ -151,6 +148,7 @@ def test_features_image_query(snapshot, api_client):
         feature=feature,
         copyright_owner="Photo Grapher",
         url="https://ahti1.localhost/image.png",
+        license__name="Photo license",
     )
     executed = api_client.execute(
         """
@@ -165,6 +163,32 @@ def test_features_image_query(snapshot, api_client):
                 license {
                   name
                 }
+              }
+            }
+          }
+        }
+      }
+    }
+    """
+    )
+    snapshot.assert_match(executed)
+
+
+def test_features_link_query(snapshot, api_client):
+    feature = FeatureFactory(name="Feature with external URL",)
+    LinkFactory(feature=feature, type="external_url", url="https://example.com")
+
+    executed = api_client.execute(
+        """
+    query FeatureLinks {
+      features {
+        edges {
+          node {
+            properties {
+              name
+              links {
+                type
+                url
               }
             }
           }
@@ -238,6 +262,31 @@ def test_feature_contact_info(snapshot, api_client):
     snapshot.assert_match(executed)
 
 
+def test_feature_teaser(snapshot, api_client):
+    FeatureTeaserFactory()
+
+    executed = api_client.execute(
+        """
+    query FeatureTeaser {
+      features {
+        edges {
+          node {
+            properties {
+              teaser {
+                header
+                main
+              }
+            }
+          }
+        }
+      }
+    }
+    """
+    )
+
+    snapshot.assert_match(executed)
+
+
 def test_feature_opening_hours(snapshot, api_client):
     ohp = OpeningHoursPeriodFactory(
         valid_from=datetime.date(2020, 5, 1),
@@ -270,6 +319,34 @@ def test_feature_opening_hours(snapshot, api_client):
                   opens
                   closes
                   allDay
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+    """
+    )
+    snapshot.assert_match(executed)
+
+
+def test_price_list(snapshot, api_client):
+    PriceTagFactory(item="Season ticket", price=Decimal("100.01"), unit="a year")
+    PriceTagFactory(item="Coffee", price=Decimal("200.01"), unit="")
+
+    executed = api_client.execute(
+        """
+    query FeaturePriceList {
+      features {
+        edges {
+          node {
+            properties {
+              details {
+                priceList {
+                  item
+                  price
+                  unit
                 }
               }
             }
@@ -407,6 +484,38 @@ def test_feature_name_override(api_client):
     )
 
 
+def test_feature_harbour_details(snapshot, api_client):
+    HarbourFeatureDetailsFactory(
+        data__berth_min_depth=2.5,
+        data__berth_max_depth=2.5,
+        data__berth_moorings=[HarborMooringType.SLIP, HarborMooringType.QUAYSIDE],
+    )
+    executed = api_client.execute(
+        """
+    query FeaturesHarborDetails {
+      features {
+        edges {
+          node {
+            properties {
+              details {
+                harbor {
+                  moorings
+                  depth {
+                    min
+                    max
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+    """
+    )
+    snapshot.assert_match(executed)
+
+
 def test_feature_with_id(snapshot, api_client):
     st = SourceTypeFactory(system="test", type="test")
     feature = FeatureFactory(source_type=st, source_id="sid0")
@@ -450,6 +559,50 @@ def test_feature_query_error(snapshot, api_client):
       feature {
         properties {
           ahtiId
+        }
+      }
+    }
+    """
+    )
+    snapshot.assert_match(executed)
+
+
+def test_tags_query(snapshot, api_client):
+    TagFactory(id="tag:1", name="Tag 1")
+    TagFactory(id="tag:2", name="Tag 2")
+
+    executed = api_client.execute(
+        """
+    query Tags {
+      tags {
+        id
+        name
+      }
+    }
+    """
+    )
+    snapshot.assert_match(executed)
+
+
+def test_query_features_through_tags_query(snapshot, api_client):
+    st = SourceTypeFactory(system="test", type="test")
+    feature = FeatureFactory(source_type=st, source_id="sid0")
+    feature.tags.add(TagFactory(id="tag:1", name="Tag 1"))
+
+    executed = api_client.execute(
+        """
+    query TagsAndFeatures {
+      tags {
+        id
+        name
+        features {
+          edges {
+            node {
+              properties {
+                ahtiId
+              }
+            }
+          }
         }
       }
     }

@@ -3,22 +3,29 @@ import pytest
 from features.models import (
     ContactInfo,
     Feature,
+    FeatureDetails,
     Image,
     License,
+    Link,
     OpeningHours,
     OpeningHoursPeriod,
     Override,
+    PriceTag,
     SourceType,
     Tag,
 )
 from features.tests.factories import (
     ContactInfoFactory,
+    FeatureDetailsFactory,
     FeatureFactory,
+    HarbourFeatureDetailsFactory,
     ImageFactory,
     LicenseFactory,
+    LinkFactory,
     OpeningHoursFactory,
     OpeningHoursPeriodFactory,
     OverrideFactory,
+    PriceTagFactory,
     SourceTypeFactory,
     TagFactory,
 )
@@ -44,6 +51,7 @@ def test_feature():
 
 def test_feature_ahti_id_field():
     f = FeatureFactory()
+
     assert f.ahti_id == f"{f.source_type.system}:{f.source_type.type}:{f.source_id}"
 
 
@@ -58,6 +66,22 @@ def test_feature_ahti_id_does_not_exist():
         Feature.objects.ahti_id("Nope")
 
 
+def test_feature_details():
+    FeatureDetailsFactory()
+
+    assert Feature.objects.count() == 1
+    assert FeatureDetails.objects.count() == 1
+
+
+def test_harbor_feature_details():
+    HarbourFeatureDetailsFactory()
+
+    fd = FeatureDetails.objects.first()
+    assert "berth_min_depth" in fd.data
+    assert "berth_max_depth" in fd.data
+    assert "berth_moorings" in fd.data
+
+
 def test_image():
     ImageFactory()
 
@@ -70,6 +94,13 @@ def test_license():
     LicenseFactory()
 
     assert License.objects.count() == 1
+
+
+def test_link():
+    LinkFactory()
+
+    assert Link.objects.count() == 1
+    assert Feature.objects.count() == 1
 
 
 def test_tag():
@@ -104,4 +135,11 @@ def test_override():
     OverrideFactory()
 
     assert Override.objects.count() == 1
+    assert Feature.objects.count() == 1
+
+
+def test_price_tag():
+    PriceTagFactory()
+
+    assert PriceTag.objects.count() == 1
     assert Feature.objects.count() == 1

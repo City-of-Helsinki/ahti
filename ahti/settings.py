@@ -102,7 +102,7 @@ INSTALLED_APPS = [
     "users",
     "utils",
     "features",
-    # "features.importers.dummy",
+    "features.importers.venepaikka_harbors",
     "features.importers.myhelsinki_places",
     "categories",
 ]
@@ -156,6 +156,8 @@ DEFAULT_SRID = 4326  # WGS84
 
 PARLER_LANGUAGES = {None: ({"code": "fi"}, {"code": "sv"}, {"code": "en"})}
 PARLER_DEFAULT_LANGUAGE_CODE = "fi"
+# Ahti specific setting
+PARLER_SUPPORTED_LANGUAGE_CODES = [lang["code"] for lang in PARLER_LANGUAGES[None]]
 
 GRAPHENE = {
     "SCHEMA": "ahti.schema.schema",

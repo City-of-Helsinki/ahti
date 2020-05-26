@@ -1,0 +1,202 @@
+{
+  "meta": {
+    "count": "1"
+  },
+  "data": [
+    {
+      "id": "416",
+      "name": {
+        "fi": "Suomenlinnan merilinnoitus",
+        "en": "Suomenlinna Sea Fortress",
+        "sv": "Sveaborgs sjöfästning",
+        "zh": "芬兰堡海上要塞"
+      },
+      "source_type": {
+        "id": 2,
+        "name": "Matko"
+      },
+      "info_url": "http://www.suomenlinna.fi",
+      "modified_at": "2020-03-19T13:49:16.000Z",
+      "location": {
+        "lat": 60.14891815185547,
+        "lon": 24.984798431396484,
+        "address": {
+          "street_address": "Suomenlinna",
+          "postal_code": "00190",
+          "locality": "Helsinki"
+        }
+      },
+      "description": {
+        "intro": null,
+        "body": "Sveaborg är ett magnifikt Unescos världsarvsobjekt och ett av de mest populära besöksmålen i Finland. Sveaborg är också en del av Helsingfors med cirka 800 invånare. Fästningen har fått sin nuvarande form via olika historiska faser som en del av det svenska, ryska och finländska försvarssystemet. Det finns 6 km murar, 100 kanoner, spännande tunnlar och vackra parkområden i Sveaborg. Fästningen är med sina museer, guidade rundvandringar, evenemang och restauranger en minnesvärd upplevelse för besökare i alla åldrar. \r\n\r\nGuidade rundvandringar ordnas i september-maj på veckosluten samt i juni-augusti dagligen. Under sommarmånaderna ordnas även specialguidningar. Biljetter kan man köpa från Sveaborgsmuseet eller på förhand på nätet (www.suomenlinnatours.com).\r\n\r\nFästningen är lätt tillgänglig året runt med HRT:s färja från Salutorget, restiden är ca. 15minuter. Sommartid, från maj till september, trafikerar även en vattenbuss.",
+        "images": [
+          {
+            "url": "https://edit.myhelsinki.fi/sites/default/files/styles/api_1980x1020/public/2018-09/suomenlinna_kesalla_suomen_ilmakuva_suomenlinnan_hoitokunta_location_only.jpg?h=deaec4b9&itok=fh-Wj_dU",
+            "copyright_holder": "Suomen Ilmakuva / Suomenlinnan hoitokunta",
+            "license_type": {
+              "id": 2,
+              "name": "MyHelsinki license type A"
+            }
+          },
+          {
+            "url": "https://edit.myhelsinki.fi/sites/default/files/styles/api_1980x1020/public/2018-09/suomenlinna_aino_heininen_suomenlinnan_hoitokunta_location_only.jpg?h=a77b26fc&itok=55YR1tIm",
+            "copyright_holder": "Aino Heininen / Suomenlinnan hoitokunta",
+            "license_type": {
+              "id": 2,
+              "name": "MyHelsinki license type A"
+            }
+          },
+          {
+            "url": "https://edit.myhelsinki.fi/sites/default/files/styles/api_1980x1020/public/2018-09/suomenlinna_suomen_ilmakuva_suomenlinnan_hoitokunta_location_only.jpg?h=603de84b&itok=L7heeTHT",
+            "copyright_holder": "Suomen Ilmakuva / Suomenlinnan hoitokunta",
+            "license_type": {
+              "id": 2,
+              "name": "MyHelsinki license type A"
+            }
+          }
+        ]
+      },
+      "tags": [
+        {
+          "id": "matko2:25",
+          "name": "Church"
+        },
+        {
+          "id": "matko2:122",
+          "name": "Free"
+        },
+        {
+          "id": "matko2:240",
+          "name": "Family"
+        },
+        {
+          "id": "matko2:47",
+          "name": "Island"
+        },
+        {
+          "id": "matko2:a-:Curated",
+          "name": "Curated"
+        },
+        {
+          "id": "matko1:4",
+          "name": "SIGHTS & ATTRACTIONS"
+        },
+        {
+          "id": "matko2:218",
+          "name": "Viewpoint"
+        },
+        {
+          "id": "matko2:21",
+          "name": "Art"
+        },
+        {
+          "id": "matko2:251",
+          "name": "Monument"
+        },
+        {
+          "id": "matko2:22",
+          "name": "Gallery"
+        },
+        {
+          "id": "matko2:15",
+          "name": "Banquet"
+        },
+        {
+          "id": "matko2:165",
+          "name": "Activity"
+        },
+        {
+          "id": "matko2:77",
+          "name": "History"
+        },
+        {
+          "id": "matko2:24",
+          "name": "Architecture"
+        },
+        {
+          "id": "matko2:181",
+          "name": "Sea"
+        },
+        {
+          "id": "matko2:19",
+          "name": "MainAttraction"
+        },
+        {
+          "id": "matko2:20",
+          "name": "Park"
+        },
+        {
+          "id": "matko2:74",
+          "name": "Nature"
+        }
+      ],
+      "opening_hours": {
+        "hours": [
+          {
+            "weekday_id": 1,
+            "opens": null,
+            "closes": null,
+            "open24h": false
+          },
+          {
+            "weekday_id": 2,
+            "opens": null,
+            "closes": null,
+            "open24h": false
+          },
+          {
+            "weekday_id": 3,
+            "opens": null,
+            "closes": null,
+            "open24h": false
+          },
+          {
+            "weekday_id": 4,
+            "opens": null,
+            "closes": null,
+            "open24h": false
+          },
+          {
+            "weekday_id": 5,
+            "opens": null,
+            "closes": null,
+            "open24h": false
+          },
+          {
+            "weekday_id": 6,
+            "opens": null,
+            "closes": null,
+            "open24h": false
+          },
+          {
+            "weekday_id": 7,
+            "opens": null,
+            "closes": null,
+            "open24h": false
+          }
+        ],
+        "openinghours_exception": "Sveaborg är en av Helsingfors stadsdelar och har öppet året om. Vänligen se tjänsternas öppettider från hemsidan."
+      }
+    }
+  ],
+  "tags": {
+    "matko1:4": "SIGHTS & ATTRACTIONS",
+    "matko2:122": "Free",
+    "matko2:15": "Banquet",
+    "matko2:165": "Activity",
+    "matko2:181": "Sea",
+    "matko2:19": "MainAttraction",
+    "matko2:20": "Park",
+    "matko2:21": "Art",
+    "matko2:218": "Viewpoint",
+    "matko2:22": "Gallery",
+    "matko2:24": "Architecture",
+    "matko2:240": "Family",
+    "matko2:25": "Church",
+    "matko2:251": "Monument",
+    "matko2:47": "Island",
+    "matko2:74": "Nature",
+    "matko2:77": "History",
+    "matko2:a-:Curated": "Curated"
+  }
+}

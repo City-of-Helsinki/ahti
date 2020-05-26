@@ -14,7 +14,9 @@ class Migration(migrations.Migration):
             model_name="featuretranslation",
             name="url",
             field=models.URLField(
-                blank=True, help_text="URL of the feature", verbose_name="url"
+                blank=True,
+                help_text="URL for more information about this feature",
+                verbose_name="url",
             ),
         ),
     ]

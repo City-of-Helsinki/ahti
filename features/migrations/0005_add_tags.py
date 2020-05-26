@@ -95,7 +95,14 @@ class Migration(migrations.Migration):
                         db_index=True, max_length=15, verbose_name="Language"
                     ),
                 ),
-                ("name", models.CharField(max_length=200, verbose_name="name")),
+                (
+                    "name",
+                    models.CharField(
+                        max_length=200,
+                        verbose_name="name",
+                        help_text="Display name of the tag",
+                    ),
+                ),
                 (
                     "master",
                     parler.fields.TranslationsForeignKey(

@@ -29,3 +29,14 @@ def test_running_single_importer(mocker):
     for import_method in other_mocked:
         assert not import_method.called
     mhp_mocked.assert_called_once()
+
+
+def test_listing_importers_will_not_run_them(mocker):
+    mocked = []
+    for cls in ImporterRegistry.registry.values():
+        mocked.append(mocker.patch.object(cls, "import_features"))
+
+    call_command("import_features", list=True)
+
+    for import_method in mocked:
+        assert not import_method.called

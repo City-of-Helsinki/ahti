@@ -1,7 +1,7 @@
-import json
 import sys
-from pathlib import PurePath
 from typing import Iterable, Mapping
+
+from utils.utils import read_json_file
 
 
 class AppSettings:
@@ -33,6 +33,17 @@ class AppSettings:
         ]
         """
         return self._setting("API_CALLS", self.config["api_calls"])
+
+    @property
+    def ADDITIONAL_LANGUAGES(self) -> Iterable[str]:
+        """Additional languages to import besides Finnish (`fi`).
+
+        Example:
+        additional_languages = ["en", "sv"]
+        """
+        return self._setting(
+            "ADDITIONAL_LANGUAGES", self.config["additional_languages"]
+        )
 
     @property
     def TAG_CONFIG(self) -> Mapping:
@@ -86,9 +97,7 @@ class AppSettings:
         )
 
 
-path = PurePath(__file__).parent.joinpath("config.json")
-with open(path.as_posix(), "r") as f:
-    config = json.loads(f.read())
+config = read_json_file(__file__, "config.json")
 
 # Ugly? Guido recommends this himself ...
 # http://mail.python.org/pipermail/python-ideas/2012-May/014969.html

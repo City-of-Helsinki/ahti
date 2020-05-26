@@ -1,13 +1,62 @@
 {
+  "additional_languages": ["en", "sv"],
   "api_calls":  [
-    {}
+    {"tags_search": ["MainAttraction", "Island", "Seaside", "Sea", "IslandRestaurant", "IceSwimming", "Beach", "Sauna", "Viewpoint", "Harbour", "Park", "Garden", "Canoeing", "Sup" ]},
+    {"distance_filter": "60.118592, 24.753357, 5"},
+    {"distance_filter": "60.175191, 24.851546, 3.9"},
+    {"distance_filter": "60.136761, 24.911432, 3.0"},
+    {"distance_filter": "60.180182, 24.941102, 0.6"},
+    {"distance_filter": "60.178056, 24.973920, 1.1"},
+    {"distance_filter": "60.164136, 24.968156, 1.0"},
+    {"distance_filter": "60.145295, 24.987946, 2.4"},
+    {"distance_filter": "60.201080, 25.002729, 2.0"},
+    {"distance_filter": "60.161035, 25.082786, 5.3"},
+    {"distance_filter": "60.180624, 25.177178, 6"}
   ],
   "tag_config": {
-    "rules": [{"mapped_names": ["Island"], "id": "ahti:tag:island", "name": "saaristo"}],
-    "whitelist": []
+    "rules": [
+      {"mapped_names": ["Island"], "id": "ahti:tag:island", "name": "saaristo"},
+      {"mapped_names": ["Canoeing"], "id": "ahti:tag:canoeing", "name": "kanootit"},
+      {"mapped_names": ["Sup"], "id": "ahti:tag:sup", "name": "suppaus"},
+      {"mapped_names": ["Sauna"], "id": "ahti:tag:sauna", "name": "sauna"},
+      {"mapped_names": ["Finnish", "TraditionalFinnish"], "id": "ahti:tag:finnish", "name": "suomalainen"},
+      {"mapped_names": ["Vegan", "Vegetarian"], "id": "ahti:tag:vegetarian", "name": "kasvisruoka"},
+      {"mapped_names": ["Coffee", "Cafe", "CafeSummer" ], "id": "ahti:tag:cafe", "name": "kahvila"},
+      {"mapped_names": ["Swimming", "IceSwimming"], "id": "ahti:tag:swimming", "name": "uinti"},
+      {"mapped_names": ["Viewpoint"], "id": "ahti:tag:viewpoint", "name": "näköala"},
+      {"mapped_names": ["Nature", "Park", "Garden", "NationalPark", "BotanicalGarden", "Arboretum"], "id": "ahti:tag:nature", "name": "viheralue"},
+      {"mapped_names": ["Music", "LiveMusic", "Rock", "IndieMusic", "Jazz", "Concert"], "id": "ahti:tag:music", "name": "musiikki"},
+      {"mapped_names": ["MainAttraction"], "id": "ahti:tag:attraction", "name": "nähtävyys"},
+      {"mapped_names": ["Sea"], "id": "ahti:tag:sea", "name": "meri"},
+      {"mapped_names": ["Playground"], "id": "ahti:tag:playground", "name": "leikkipaikka"},
+      {"mapped_names": ["NATURE & SPORTS"], "id": "ahti:tag:sports", "name": "liikunta"},
+      {"mapped_names": ["WORK & STUDY"], "id": "ahti:tag:education", "name": "koulutus"},
+      {"mapped_names": ["SportOutdoor", "RecreationalArea"], "id": "ahti:tag:sportoutdoor", "name": "liikuntapaikka"}
+    ],
+    "whitelist": ["Brunch", "Breakfast", "Lunch", "Architecture"]
   },
   "category_config": {
-    "rules": [{"mapped_names": ["Island"], "id": "ahti:category:island", "name": "Saaret"}]
+    "rules": [
+      {"mapped_names": ["Island"], "id": "ahti:category:island", "name": "Saaret"},
+      {"mapped_names": ["Viewpoint"], "id": "ahti:category:viewpoint", "name": "Näköalapaikat"},
+      {"mapped_names": ["Nature"], "id": "ahti:category:nature", "name": "Luonto"},
+      {"mapped_names": ["Beach"], "id": "ahti:category:beach", "name": "Rannat"},
+      {"mapped_names": ["Sauna"], "id": "ahti:category:sauna", "name": "Saunat"},
+      {"mapped_names": ["Park", "Garden"], "id": "ahti:category:park", "name": "Puistot"},
+      {"mapped_names": ["Harbour"], "id": "ahti:category:harbor", "name": "Satamat"},
+      {"mapped_names": ["Cafe", "CafeSummer", "Coffee"], "id": "ahti:category:cafe", "name": "Kahvilat"},
+      {"mapped_names": ["RESTAURANTS & CAFES"], "id": "ahti:category:restaurant", "name": "Ravintolat"},
+      {"mapped_names": ["BARS & NIGHTLIFE"], "id": "ahti:category:bar", "name": "Baarit"},
+      {"mapped_names": ["ACCOMMODATION"], "id": "ahti:category:accommodation", "name": "Majoitus"},
+      {"mapped_names": ["MEETING PLACES", "VENUES", "BANQUET VENUES"], "id": "ahti:category:venue", "name": "Tapahtumapaikat"},
+      {"mapped_names": ["SIGHTS & ATTRACTIONS"], "id": "ahti:category:sightseeing", "name": "Nähtävyydet"},
+      {"mapped_names": ["SAUNA & WELLNESS"], "id": "ahti:category:sauna", "name": "Saunat"},
+      {"mapped_names": ["MUSEUMS & GALLERIES"], "id": "ahti:category:art", "name": "Taide"},
+      {"mapped_names": ["NATURE & SPORTS"], "id": "ahti:category:sports", "name": "Harrastaminen"},
+      {"mapped_names": ["WORK & STUDY"], "id": "ahti:category:education", "name": "Oppilaitokset"},
+      {"mapped_names": ["SHOPPING"], "id": "ahti:category:shopping", "name": "Kaupat"},
+      {"mapped_names": ["SERVICES"], "id": "ahti:category:service", "name": "Palvelut"}
+    ]
   },
   "allowed_image_licenses": ["All rights reserved.", "MyHelsinki license type A"]
 }

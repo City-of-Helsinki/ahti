@@ -54,6 +54,7 @@ class Migration(migrations.Migration):
                 (
                     "feature",
                     models.OneToOneField(
+                        help_text="Contact information for the given feature",
                         on_delete=django.db.models.deletion.CASCADE,
                         related_name="contact_info",
                         to="features.Feature",

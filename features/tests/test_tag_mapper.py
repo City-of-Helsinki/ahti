@@ -4,11 +4,6 @@ from features.importers.base import TagMapper
 from features.models import Tag
 
 
-@pytest.fixture(autouse=True)
-def autouse_db(db):
-    pass
-
-
 @pytest.mark.parametrize(
     "whitelist,expected",
     [

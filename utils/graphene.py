@@ -1,18 +1,19 @@
-"""
-Programatically generate a bunch of Filters fields that allow us to have
-graphene.List types in filtersets.
-
-From https://github.com/graphql-python/graphene-django/issues/190
-"""
-
 import django.forms
 import django_filters
 import graphene
+from django.conf import settings
 from graphene_django.forms.converter import convert_form_field
+
+LanguageEnum = graphene.Enum(
+    "Language", [(lang[0].upper(), lang[0]) for lang in settings.LANGUAGES]
+)
 
 
 def _generate_list_filter_class(inner_type):
-    """
+    """Generate set of Filter fields that allow using graphene.List types in filtersets.
+
+    From https://github.com/graphql-python/graphene-django/issues/190
+
     Returns a Filter class that will resolve into a List(`inner_type`) graphene
     type.
 

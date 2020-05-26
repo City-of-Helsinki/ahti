@@ -1,10 +1,8 @@
 import pytest
 from django.contrib.gis.geos import Point
 from freezegun import freeze_time
-from graphene.test import Client
 from graphql_relay import to_global_id
 
-from ahti.schema import schema
 from categories.tests.factories import CategoryFactory
 from features.enums import OverrideFieldType
 from features.schema import Feature
@@ -13,16 +11,6 @@ from features.tests.factories import FeatureFactory, OverrideFactory, TagFactory
 
 def get_response_ids(response):
     return [edge["node"]["id"] for edge in response["data"]["features"]["edges"]]
-
-
-@pytest.fixture(autouse=True)
-def autouse_db(db):
-    pass
-
-
-@pytest.fixture
-def api_client():
-    return Client(schema=schema)
 
 
 @pytest.mark.parametrize(

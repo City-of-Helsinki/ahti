@@ -1,18 +1,27 @@
+import uuid
+
 import django_filters
 import graphene
 import graphql_geojson
 from django.apps import apps
+from django.db import transaction
 from django.db.models import Q
+from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 from graphene import ID, ObjectType, relay, String
 from graphene_django import DjangoObjectType
 from graphene_django.filter import DjangoFilterConnectionField
 from graphql import GraphQLError
 from graphql_geojson.filters import DistanceFilter
-from utils.graphene import StringListFilter
 
+from categories.models import Category
 from features import models
-from features.enums import OverrideFieldType, Visibility, Weekday
+from features.enums import HarborMooringType, OverrideFieldType, Visibility, Weekday
+from utils.graphene import LanguageEnum, StringListFilter
+
+HarborMooringTypeEnum = graphene.Enum.from_enum(
+    HarborMooringType, description=lambda e: e.label if e else ""
+)
 
 WeekdayEnum = graphene.Enum.from_enum(
     Weekday, description=lambda e: e.label if e else ""
@@ -26,6 +35,8 @@ class Address(ObjectType):
 
 
 class ContactInfo(DjangoObjectType):
+    """Contact information for the given feature."""
+
     class Meta:
         model = models.ContactInfo
         fields = ("email", "phone_number")
@@ -40,17 +51,77 @@ class ContactInfo(DjangoObjectType):
         }
 
 
-class FeatureSource(ObjectType):
-    """Source information for a feature."""
+class ExternalLink(DjangoObjectType):
+    """Link to an external system.
 
-    system = graphene.String(required=True)
-    type = graphene.String(required=True)
+    Link can be e.g. to an online store, a berth rental or to ferry information.
+    """
+
+    class Meta:
+        model = models.Link
+        fields = (
+            "type",
+            "url",
+        )
+
+
+class FeatureSource(ObjectType):
+    """Source system information for a feature."""
+
+    system = graphene.String(
+        required=True,
+        description=_(
+            "Name of the source system (e.g. 'myhelsinki', 'ahti', "
+            "'ulkoliikuntakartta', 'digitransit')"
+        ),
+    )
+    type = graphene.String(
+        required=True,
+        description=_(
+            "Type of the feature in the source system, if applicable (e.g. 'place', "
+            "'activity', 'event', 'route')"
+        ),
+    )
     id = graphene.String(
         required=True, description="ID of the current feature in source system"
     )
 
 
+class PriceTag(DjangoObjectType):
+    """An item displayed in a price list."""
+
+    class Meta:
+        model = models.PriceTag
+        fields = ("price",)
+
+    item = graphene.String(required=True, description=_("Name of the item"))
+    price = graphene.Decimal(required=True, description=_("Price of the item in EUR"))
+    unit = graphene.String(
+        description=_(
+            "Unit of the price (e.g. 'hour', 'day', 'piece', 'person', 'child', "
+            "'one way')"
+        ),
+    )
+
+
+class Teaser(DjangoObjectType):
+    """Simple content element (e.g. something special about a feature)."""
+
+    class Meta:
+        model = models.FeatureTeaser
+        fields = ()  # Don't include any fields from the model automatically
+
+    header = graphene.String(
+        description=_("An opening, e.g. 'Starting' from 'Starting from 7€/day.'")
+    )
+    main = graphene.String(description=_("The meat of the deal, '7€/day' part"))
+
+
 class FeatureTranslations(DjangoObjectType):
+    "Values in other languages for the feature attributes that can have translations."
+
+    language_code = LanguageEnum(required=True)
+
     class Meta:
         model = apps.get_model("features", "FeatureTranslation")
         exclude = ("id", "master")
@@ -71,18 +142,22 @@ class License(DjangoObjectType):
         model = models.License
         fields = ("id",)
 
-    name = graphene.String(required=True)
+    name = graphene.String(required=True, description=_("Display name of the license"))
 
 
 class Tag(DjangoObjectType):
+    """Tags are associated with things (like features)."""
+
     class Meta:
         model = models.Tag
-        fields = ("id",)
+        fields = ("id", "features")
 
-    name = graphene.String(required=True)
+    name = graphene.String(required=True, description=_("Display name of the tag"))
 
 
 class OpeningHoursPeriod(DjangoObjectType):
+    """A period during which certain opening hours are valid."""
+
     class Meta:
         model = models.OpeningHoursPeriod
         fields = (
@@ -91,10 +166,17 @@ class OpeningHoursPeriod(DjangoObjectType):
             "opening_hours",
         )
 
-    comment = graphene.String()
+    comment = graphene.String(
+        description=_(
+            "Comment for this opening hour period (e.g. 'Exceptional opening hours "
+            "during Midsummer')"
+        ),
+    )
 
 
 class OpeningHours(DjangoObjectType):
+    """The daily opening hours / hours of operation of something."""
+
     class Meta:
         model = models.OpeningHours
         fields = (
@@ -103,11 +185,71 @@ class OpeningHours(DjangoObjectType):
             "all_day",
         )
 
-    day = WeekdayEnum(required=True)
+    day = WeekdayEnum(required=True, description=_("Day of week"))
+
+
+class Depth(ObjectType):
+    """The depth of something, in meters.
+
+    Can be a single value (min and max are equal) or a range.
+    (Consider: harbor/lake/pool/mineshaft)."
+    """
+
+    min = graphene.Float(
+        required=True,
+        description=_(
+            "An approximation of the minimum depth (or lower end of the range)"
+        ),
+    )
+    max = graphene.Float(
+        required=True,
+        description=_(
+            "An approximation of the maximum depth (or deeper end of the range)"
+        ),
+    )
+
+
+class HarborDetails(ObjectType):
+    """Information specific to harbors (and piers)."""
+
+    moorings = graphene.List(
+        graphene.NonNull(HarborMooringTypeEnum),
+        description=_("Mooring types available in the harbor"),
+    )
+    depth = graphene.Field(
+        Depth, description=_("Approximate depth of the harbor, in meters")
+    )
+
+    def resolve_moorings(self: models.FeatureDetails, info, **kwargs):
+        return self.data["berth_moorings"]
+
+    def resolve_depth(self: models.FeatureDetails, info, **kwargs):
+        """Minimum depth is mandatory, maximum is included for a range."""
+        min = self.data.get("berth_min_depth")
+        max = self.data.get("berth_max_depth")
+
+        if min is None:
+            return None
+
+        return {
+            "min": min,
+            "max": max,
+        }
+
+
+class FeatureDetails(ObjectType):
+    """Detailed information a feature might have."""
+
+    harbor = graphene.Field(HarborDetails, description=_("Details of a harbor"))
+    price_list = graphene.List(
+        "features.schema.PriceTag",
+        required=True,
+        description=_("Price list related to a feature"),
+    )
 
 
 class FeatureFilter(django_filters.FilterSet):
-    """Contains the filters to use when retrieving Features."""
+    """Contains the filters to use when retrieving features."""
 
     class Meta:
         model = models.Feature
@@ -160,14 +302,24 @@ class FeatureFilter(django_filters.FilterSet):
 
 
 class Feature(graphql_geojson.GeoJSONType):
+    """Features in Ahti are structured according to GeoJSON specification.
+
+    All Ahti specific attributes are contained within attribute `properties`.
+
+    **Note!** `Feature.type` always has the value `Feature`.
+    """
+
     class Meta:
         fields = (
             "id",
             "category",
             "created_at",
             "contact_info",
+            "teaser",
+            "details",
             "geometry",
             "images",
+            "links",
             "opening_hours_periods",
             "tags",
             "translations",
@@ -177,14 +329,38 @@ class Feature(graphql_geojson.GeoJSONType):
         geojson_field = "geometry"
         interfaces = (relay.Node,)
 
-    ahti_id = graphene.String(required=True)
-    source = graphene.Field(FeatureSource, required=True)
-    name = graphene.String(required=True)
-    description = graphene.String()
-    url = graphene.String()
+    ahti_id = graphene.String(
+        required=True,
+        description=_(
+            "Human readable ID. Format examples: "
+            "'ahti:feature:12C4' or 'myhelsinki:place:5678'"
+        ),
+    )
+    source = graphene.Field(
+        FeatureSource, required=True, description=_("Source of the feature")
+    )
+    name = graphene.String(required=True, description=_("Name of the feature"))
+    one_liner = graphene.String(
+        required=True, description=_("Short introductory text or a tagline")
+    )
+    description = graphene.String(description=_("Description of the feature"))
+    details = graphene.Field(
+        FeatureDetails, description=_("Detailed information a feature might have")
+    )
+    url = graphene.String(description=_("URL for more information about this feature"))
     modified_at = graphene.DateTime(required=True)
-    parents = graphene.List("features.schema.Feature", required=True)
-    children = graphene.List("features.schema.Feature", required=True)
+    parents = graphene.List(
+        "features.schema.Feature",
+        required=True,
+        description=_("Parents of this feature"),
+    )
+    children = graphene.List(
+        "features.schema.Feature",
+        required=True,
+        description=_(
+            "Children of this feature (ex. stops along a route, piers of a harbor etc.)"
+        ),
+    )
 
     def resolve_source(self: models.Feature, info, **kwargs):
         return {
@@ -207,6 +383,16 @@ class Feature(graphql_geojson.GeoJSONType):
             else self.source_modified_at
         )
 
+    def resolve_details(self: models.Feature, info, **kwargs):
+        details = {}
+        for detail in self.details.all():
+            # Default dict resolver will resolve this for FeatureDetails
+            details[detail.type.lower()] = detail
+
+        # PriceTags have a relation to Feature model, so we resolve it separately
+        details["price_list"] = self.price_tags.all()
+        return details if details else None
+
     def resolve_parents(self: models.Feature, info, **kwargs):
         return self.parents.all()
 
@@ -217,32 +403,115 @@ class Feature(graphql_geojson.GeoJSONType):
     def get_queryset(cls, queryset, info):
         return (
             queryset.filter(visibility=Visibility.VISIBLE)
-            .select_related("source_type", "category",)
+            .select_related("source_type", "category", "teaser")
             .prefetch_related(
                 "category__translations",
                 "contact_info",
                 "children",
+                "details",
+                "price_tags",
+                "price_tags__translations",
                 "images",
                 "images__license",
                 "images__license__translations",
+                "links",
                 "opening_hours_periods",
                 "opening_hours_periods__opening_hours",
                 "opening_hours_periods__translations",
                 "parents",
                 "tags",
                 "tags__translations",
+                "teaser__translations",
                 "translations",
             )
         )
 
 
+class FeatureTranslationsInput(graphene.InputObjectType):
+    language_code = LanguageEnum(required=True)
+    name = graphene.String(required=True, description=_("Name of the feature"))
+    description = graphene.String(description=_("Description of the feature"))
+    url = graphene.String(description=_("URL for more information about this feature"))
+    one_liner = graphene.String(description=_("Short introductory text or a tagline"))
+
+
+class ContactInfoInput(graphene.InputObjectType):
+    street_address = graphene.String()
+    postal_code = graphene.String()
+    municipality = graphene.String()
+    phone_number = graphene.String()
+    email = graphene.String()
+
+
+class CreateFeatureMutation(relay.ClientIDMutation):
+    class Input:
+        translations = graphene.List(
+            graphene.NonNull(FeatureTranslationsInput), required=True
+        )
+        geometry = graphql_geojson.Geometry(required=True)
+        contact_info = ContactInfoInput()
+        category_id = graphene.String()
+        tag_ids = graphene.List(graphene.String)
+
+    feature = graphene.Field(Feature)
+
+    @classmethod
+    def get_source_type(cls):
+        st, created = models.SourceType.objects.get_or_create(system="ahti", type="api")
+        return st
+
+    @classmethod
+    @transaction.atomic
+    def mutate_and_get_payload(cls, root, info, **kwargs):
+        contact_info_values = kwargs.pop("contact_info", None)
+        tag_ids = kwargs.pop("tag_ids", None)
+        category_id = kwargs.pop("category_id", None)
+
+        now = timezone.now()
+        values = {
+            "source_type": cls.get_source_type(),
+            "source_id": uuid.uuid4(),
+            "source_modified_at": now,
+            "mapped_at": now,
+            "visibility": Visibility.DRAFT,
+        }
+
+        values.update(kwargs)
+
+        if category_id:
+            values["category"] = Category.objects.get(id=category_id)
+
+        if tag_ids:
+            tags = [models.Tag.objects.get(id=tag_id) for tag_id in tag_ids]
+        else:
+            tags = []
+
+        feature = models.Feature.objects.create_translatable_object(**values)
+
+        if contact_info_values:
+            ci = models.ContactInfo.objects.create(
+                feature=feature, **contact_info_values
+            )
+            ci.full_clean()
+            ci.save()
+
+        if tags:
+            feature.tags.set(tags)
+
+        return CreateFeatureMutation(feature=feature)
+
+
 class Query(graphene.ObjectType):
-    features = DjangoFilterConnectionField(Feature)
+    features = DjangoFilterConnectionField(
+        Feature, description=_("Retrieve all features matching the given filters")
+    )
     feature = graphene.Field(
         Feature,
         id=ID(description=_("The ID of the object")),
         ahti_id=String(description=_("Ahti ID of the object")),
+        description=_("Retrieve a single feature"),
     )
+    tags = graphene.List(Tag, description=_("Retrieve all tags"))
 
     def resolve_feature(self, info, id=None, ahti_id=None, **kwargs):
         if id:
@@ -255,3 +524,15 @@ class Query(graphene.ObjectType):
             except models.Feature.DoesNotExist:
                 return None
         raise GraphQLError("You must provide either `id` or `ahtiId`.")
+
+    def resolve_tags(self, info, **kwargs):
+        return models.Tag.objects.all()
+
+
+class Mutation(graphene.ObjectType):
+    create_feature = CreateFeatureMutation.Field(
+        description=_(
+            "Create a new feature into the system which will go through a"
+            "review before it is published into the API."
+        )
+    )

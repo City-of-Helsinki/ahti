@@ -1,9 +1,7 @@
-import json
-from pathlib import PurePath
-
 import pytest
 
 from features.importers.myhelsinki_places.importer import MyHelsinkiImporter
+from utils.utils import read_json_file
 
 
 @pytest.fixture(autouse=True)
@@ -17,6 +15,9 @@ def setup_test_environment(settings):
         {}
     ]  # Response is mocked, parameters are redundant
 
+    # Only import Finnish on tests by default
+    settings.MYHELSINKI_PLACES_ADDITIONAL_LANGUAGES = []
+
 
 @pytest.fixture
 def importer():
@@ -25,7 +26,12 @@ def importer():
 
 @pytest.fixture
 def places_response():
-    path = PurePath(__file__).parent.joinpath("responses", "places_response.json")
-    with open(path.as_posix(), "r") as f:
-        response = json.loads(f.read())
-    return response
+    return read_json_file(__file__, "responses", "places_response.json")
+
+
+@pytest.fixture
+def translations_responses():
+    return {
+        "en": read_json_file(__file__, "responses", "places_en.json"),
+        "sv": read_json_file(__file__, "responses", "places_sv.json"),
+    }

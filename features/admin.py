@@ -1,17 +1,27 @@
 from django.contrib.gis import admin
+from django.db.models.functions import Concat
 from parler.admin import TranslatableAdmin, TranslatableTabularInline
 
+from features.enums import Visibility
 from features.models import (
     ContactInfo,
     Feature,
     FeatureTag,
+    FeatureTeaser,
     Image,
     License,
+    Link,
     OpeningHours,
     OpeningHoursPeriod,
     Override,
+    PriceTag,
+    SourceType,
     Tag,
 )
+
+
+class ContactInfoInline(admin.StackedInline):
+    model = ContactInfo
 
 
 class FeatureTagInline(admin.TabularInline):
@@ -20,8 +30,8 @@ class FeatureTagInline(admin.TabularInline):
     extra = 0
 
 
-class ContactInfoInline(admin.StackedInline):
-    model = ContactInfo
+class FeatureTeaserInLine(TranslatableTabularInline):
+    model = FeatureTeaser
 
 
 class ImageInline(admin.TabularInline):
@@ -29,10 +39,17 @@ class ImageInline(admin.TabularInline):
     extra = 0
 
 
+class LinkInline(admin.TabularInline):
+    model = Link
+    extra = 0
+
+
 class OpeningHourInline(admin.TabularInline):
     model = OpeningHours
-    min_num = 7
-    extra = 0
+    extra = 7
+
+    def get_extra(self, request, obj=None, **kwargs):
+        return self.extra - obj.opening_hours.count() if obj else self.extra
 
 
 class OpeningHoursPeriodInline(TranslatableTabularInline):
@@ -46,18 +63,23 @@ class OverrideInline(TranslatableTabularInline):
     extra = 1
 
 
+class PriceTagInLine(TranslatableTabularInline):
+    model = PriceTag
+    extra = 0
+
+
 @admin.register(Feature)
 class FeatureAdmin(TranslatableAdmin, admin.OSMGeoAdmin):
     # Helsinki
     default_lon = 2777215
     default_lat = 8434296
     default_zoom = 11
+    actions = ["hide_features"]
 
     list_display = (
+        "ahti_id",
         "name",
         "category",
-        "source_type",
-        "source_id",
         "visibility",
         "language_column",
     )
@@ -67,20 +89,42 @@ class FeatureAdmin(TranslatableAdmin, admin.OSMGeoAdmin):
         "visibility",
         "translations__language_code",
     )
-    search_fields = ("translations__name",)
-    ordering = ("translations__name",)
+    search_fields = (
+        "source_type__system",
+        "source_type__type",
+        "source_id",
+        "translations__name",
+    )
+    ordering = ("source_type__system", "source_type__type", "source_id")
     autocomplete_fields = ("category", "parents")
     inlines = (
         FeatureTagInline,
+        FeatureTeaserInLine,
         ContactInfoInline,
         ImageInline,
         OpeningHoursPeriodInline,
+        LinkInline,
+        PriceTagInLine,
         OverrideInline,
     )
 
+    def ahti_id(self, obj: Feature):
+        return obj.ahti_id
+
+    ahti_id.admin_order_field = Concat(
+        "source_type__system", "source_type__type", "source_id"
+    )
+
+    def hide_features(self, request, queryset):
+        features_hidden = queryset.update(visibility=Visibility.HIDDEN)
+        if features_hidden == 1:
+            message = "1 feature was hidden"
+        else:
+            message = f"{features_hidden} features were hidden"
+        self.message_user(request, message)
+
     def get_queryset(self, request):
-        # Ordering by translated name might cause duplicates in the queryset
-        return super().get_queryset(request).distinct()
+        return super().get_queryset(request).prefetch_related("category__translations")
 
 
 @admin.register(License)
@@ -91,6 +135,11 @@ class LicenseAdmin(TranslatableAdmin):
     )
     search_fields = ("translations__name",)
     list_filter = ("translations__language_code",)
+
+
+@admin.register(SourceType)
+class SourceTypeAdmin(admin.ModelAdmin):
+    search_fields = ("system", "type")
 
 
 @admin.register(OpeningHoursPeriod)
