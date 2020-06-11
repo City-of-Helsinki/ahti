@@ -22,7 +22,7 @@ django-graphql-geojson==0.1.4  # via -r requirements.in
 django-graphql-jwt==0.3.0  # via -r requirements.in
 django-helusers==0.5.6    # via -r requirements.in
 django-parler==2.0.1      # via -r requirements.in
-django==3.0.3             # via -r requirements.in, django-cors-headers, django-filter, django-graphql-geojson, django-graphql-jwt, django-helusers, djangorestframework, drf-oidc-auth, graphene-django
+django==3.0.7             # via -r requirements.in, django-cors-headers, django-filter, django-graphql-geojson, django-graphql-jwt, django-helusers, djangorestframework, drf-oidc-auth, graphene-django
 djangorestframework==3.11.0  # via drf-oidc-auth
 drf-oidc-auth==0.9        # via django-helusers
 ecdsa==0.15               # via python-jose
