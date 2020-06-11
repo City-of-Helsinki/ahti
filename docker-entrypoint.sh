@@ -11,6 +11,12 @@ if [ -z "$SKIP_DATABASE_CHECK" -o "$SKIP_DATABASE_CHECK" = "0" ]; then
   echo "Database is up!"
 fi
 
+# Restore a DB dump
+if [[ "$RESTORE_DB_DUMP_DEV" = "1" ]]; then
+    echo "Restoring a database dump over the current db..."
+    wormhole receive --hide-progress --accept-file -o /tmp/pg.sql "$RESTORE_DB_DUMP_MWH_CODE"
+    psql "$DATABASE_URL" -f /tmp/pg.sql
+fi
 
 # Apply database migrations
 if [[ "$APPLY_MIGRATIONS" = "1" ]]; then

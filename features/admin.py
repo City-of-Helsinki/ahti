@@ -80,6 +80,7 @@ class FeatureAdmin(TranslatableAdmin, admin.OSMGeoAdmin):
         "ahti_id",
         "name",
         "category",
+        "modified_at",
         "visibility",
         "language_column",
     )
