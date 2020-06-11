@@ -10,6 +10,7 @@ RUN apt-install.sh \
         git \
         netcat \
         libpq-dev \
+        postgresql-client \
         gdal-bin \
         build-essential \
     && pip install -U pip \

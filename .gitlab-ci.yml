@@ -19,6 +19,9 @@ review:
     K8S_SECRET_ALLOWED_HOSTS: "*"
     K8S_SECRET_CORS_ORIGIN_ALLOW_ALL: 1
     K8S_SECRET_DEBUG: 1
+    K8S_SECRET_RESTORE_DB_DUMP: "$GL_RESTORE_DB_DUMP_PR"
+    K8S_SECRET_RESTORE_DB_DUMP_MWH_CODE: "$GL_RESTORE_DB_DUMP_MWH_CODE"
+    POSTGRES_IMAGE: "docker.io/andersinnovations/postgis:11-bitnami"
 
 staging:
   # By default the staging environment is created from the master-branch.
@@ -50,3 +53,5 @@ production:
     K8S_SECRET_SENTRY_ENVIRONMENT: "production"
     # Disable indexing for now
     K8S_INGRESS_PREVENT_ROBOTS: 1
+    K8S_SECRET_RESTORE_DB_DUMP: "$GL_RESTORE_DB_DUMP"
+    K8S_SECRET_RESTORE_DB_DUMP_MWH_CODE: "$GL_RESTORE_DB_DUMP_MWH_CODE"

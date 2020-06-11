@@ -1,7 +1,7 @@
 version: '3.7'
 services:
     postgres:
-        image: helsinkitest/postgis:10-2.5-alpine
+        image: docker.io/andersinnovations/postgis:11-bitnami
         restart: on-failure
         environment:
             POSTGRES_USER: ahti
@@ -20,7 +20,7 @@ services:
         env_file:
             - docker-compose.env.yaml
         environment:
-            DATABASE_URL: postgis://ahti:ahti@ahti-db/ahti
+            DATABASE_URL: postgres://ahti:ahti@ahti-db/ahti
             DATABASE_HOST: ahti-db.helsinki
         volumes:
             - .:/app

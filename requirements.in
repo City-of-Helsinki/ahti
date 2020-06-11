@@ -11,3 +11,4 @@ jmespath
 psycopg2
 requests
 sentry-sdk
+magic-wormhole
