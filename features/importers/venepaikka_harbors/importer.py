@@ -255,7 +255,7 @@ class VenepaikkaImporter(FeatureImporterBase):
 
 class VenepaikkaHarborsClient:
     url = "https://api.hel.fi/berths/graphql_v2/"
-    timeout = 10
+    timeout = 20
 
     def fetch_harbors(self, query: str) -> requests.Response:
         response = requests.post(self.url, json={"query": query}, timeout=self.timeout)

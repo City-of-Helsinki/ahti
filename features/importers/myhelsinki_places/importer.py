@@ -267,7 +267,7 @@ class MyHelsinkiPlacesClient:
     base_url = "http://open-api.myhelsinki.fi"
     places_url = "/v1/places/"
     place_url = "/v1/place/{id}"
-    timeout = 10
+    timeout = 20
 
     def fetch_places(self, lang: str, parameters: dict = None) -> requests.Response:
         params = {
