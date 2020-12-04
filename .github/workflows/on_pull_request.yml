@@ -14,6 +14,7 @@ env:
   DATABASE_USER: user
   DATABASE_PASSWORD: testing-password
   K8S_CLUSTER_ISSUER: "certificate-letsencrypt-prod"
+  K8S_SECRET_SECRET_KEY: ${{ secrets.SECRET_KEY }}
   APP_MIGRATE_COMMAND: /app/.prod/on_deploy.sh
 
 jobs:
@@ -46,6 +47,7 @@ jobs:
           projects: CITY_OF_HELSINKI_AHTI
         env:
           ENVIRONMENT_URL: https://${{ env.K8S_NAMESPACE }}.newtest.kuva.hel.ninja
+          POSTGRES_IMAGE: "docker.io/andersinnovations/postgis:11-bitnami"
 
       - name: Deploy
         uses: andersinno/kolga-deploy-action@v2
