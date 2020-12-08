@@ -4,8 +4,8 @@ on: [pull_request]
 env:
   CONTAINER_REGISTRY: ghcr.io
   CONTAINER_REGISTRY_USER: ${{ secrets.GHCR_CONTAINER_REGISTRY_USER }}
-  CONTAINER_REGISTRY_PASSWORD: ${{ secrets.GHCR_CONTAINER_REGISTRY_PASSWORD }}
-  CONTAINER_REGISTRY_REPO: ghcr.io/joonvena/${{ github.event.repository.name }}
+  CONTAINER_REGISTRY_PASSWORD: ${{ secrets.GHCR_TOKEN }}
+  CONTAINER_REGISTRY_REPO: ghcr.io/city-of-helsinki/${{ github.event.repository.name }}
   KUBECONFIG_RAW: ${{ secrets.KUBECONFIG_RAW }}
   BUILD_ARTIFACT_FOLDER: "build_artifacts"
   SERVICE_ARTIFACT_FOLDER: "service_artifacts"
