@@ -12,7 +12,6 @@ env:
   KUBECONFIG_RAW: ${{ secrets.KUBECONFIG_RAW_STAGING }}
   BUILD_ARTIFACT_FOLDER: "build_artifacts"
   SERVICE_ARTIFACT_FOLDER: "service_artifacts"
-  K8S_CLUSTER_ISSUER: "certificate-letsencrypt-prod"
   K8S_SECRET_SECRET_KEY: ${{ secrets.SECRET_KEY }}
   APP_MIGRATE_COMMAND: /app/.prod/on_deploy.sh
 
@@ -56,6 +55,6 @@ jobs:
           K8S_SECRET_DATABASE_DB: ${{ secrets.K8S_SECRET_DATABASE_DB_STAGING }}
           K8S_SECRET_DATABASE_USERNAME: ${{ secrets.K8S_SECRET_DATABASE_USERNAME_STAGING }}
           K8S_SECRET_DATABASE_PASSWORD: ${{ secrets.K8S_SECRET_DATABASE_PASSWORD_STAGING }}
-          K8S_SECRET_SENTRY_DSN: ${{ secrets.GL_SENTRY_DSN }}
+          K8S_SECRET_SENTRY_DSN: ${{ secrets.GH_SENTRY_DSN }}
           K8S_SECRET_SENTRY_ENVIRONMENT: "staging"
 
