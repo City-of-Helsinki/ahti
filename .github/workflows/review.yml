@@ -42,7 +42,7 @@ jobs:
       - name: Review-Services
         uses: andersinno/kolga-deploy-service-action@v2
         with:
-          projects: CITY_OF_HELSINKI_AHTI
+          projects: AHTI
         env:
           POSTGRES_IMAGE: "docker.io/andersinnovations/postgis:11-bitnami"
 
@@ -54,4 +54,4 @@ jobs:
           K8S_SECRET_CORS_ORIGIN_ALLOW_ALL: 1
           K8S_SECRET_DEBUG: 1
           K8S_SECRET_RESTORE_DB_DUMP: ${{ secrets.GH_RESTORE_DB_DUMP_PR }}
-          K8S_SECRET_RESTORE_DB_DUMP_MWH_CODE: ${{ GH_RESTORE_DB_DUMP_MWH_CODE }}
+          K8S_SECRET_RESTORE_DB_DUMP_MWH_CODE: ${{ secrets.GH_RESTORE_DB_DUMP_MWH_CODE }}
