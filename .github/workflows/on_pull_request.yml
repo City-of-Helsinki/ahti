@@ -1,4 +1,4 @@
-name: Build & Deploy
+name: Build & Review
 on: [pull_request]
 
 env:
@@ -9,6 +9,7 @@ env:
   KUBECONFIG_RAW: ${{ secrets.KUBECONFIG_RAW }}
   BUILD_ARTIFACT_FOLDER: "build_artifacts"
   SERVICE_ARTIFACT_FOLDER: "service_artifacts"
+  BASE_DOMAIN: ${{ secrets.BASE_DOMAIN_STAGING }}
   # Default usernames and passwords for postgres setups
   # Note: These are the credentials that will be used for testing
   DATABASE_USER: user
@@ -25,8 +26,6 @@ jobs:
       - uses: actions/checkout@v2
       - name: Build
         uses: andersinno/kolga-build-action@v2
-        with:
-          disable_cache: true
 
       - uses: actions/upload-artifact@v2
         with:
@@ -52,9 +51,8 @@ jobs:
       - name: Deploy
         uses: andersinno/kolga-deploy-action@v2
         env:
+          ENVIRONMENT_URL: https://${{ env.K8S_NAMESPACE }}.${{ env.BASE_DOMAIN }}
           K8S_SECRET_ALLOWED_HOSTS: "*"
           K8S_SECRET_CORS_ORIGIN_ALLOW_ALL: 1
           K8S_SECRET_RESTORE_DB_DUMP: "$GL_RESTORE_DB_DUMP_PR"
           K8S_SECRET_RESTORE_DB_DUMP_MWH_CODE: "$GL_RESTORE_DB_DUMP_MWH_CODE"
-          ENVIRONMENT_URL: https://${{ env.K8S_NAMESPACE }}.newtest.kuva.hel.ninja
-
