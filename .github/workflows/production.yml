@@ -1,21 +1,21 @@
-name: Build & Deploy to staging environment
+name: Build & Deploy to production environment
 on:
   push:
-    branches:
-      - develop
+    tags:
+       - 'release-*'
 
 env:
   CONTAINER_REGISTRY: ghcr.io
   CONTAINER_REGISTRY_USER: ${{ secrets.GHCR_CONTAINER_REGISTRY_USER }}
   CONTAINER_REGISTRY_PASSWORD: ${{ secrets.GHCR_TOKEN }}
   CONTAINER_REGISTRY_REPO: ghcr.io/city-of-helsinki/${{ github.event.repository.name }}
-  KUBECONFIG_RAW: ${{ secrets.KUBECONFIG_RAW_STAGING }}
+  KUBECONFIG_RAW: ${{ secrets.KUBECONFIG_RAW_STABLE }}
   BUILD_ARTIFACT_FOLDER: "build_artifacts"
   SERVICE_ARTIFACT_FOLDER: "service_artifacts"
   K8S_CLUSTER_ISSUER: "certificate-letsencrypt-prod"
   K8S_SECRET_SECRET_KEY: ${{ secrets.SECRET_KEY }}
   APP_MIGRATE_COMMAND: /app/.prod/on_deploy.sh
-
+       
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -43,21 +43,24 @@ jobs:
       - name: Deploy
         uses: andersinno/kolga-deploy-action@v2
         with:
-          track: 'staging'
+          track: 'stable'
         env:
-          K8S_NAMESPACE: ${{ secrets.K8S_NAMESPACE_STAGING }}
-          ENVIRONMENT_URL: https://${{ secrets.ENVIRONMENT_URL_STAGING }}
+          K8S_NAMESPACE: ${{ secrets.K8S_NAMESPACE_STABLE }}
+          ENVIRONMENT_URL: https://${{ secrets.ENVIRONMENT_URL_STABLE }}
           K8S_SECRET_ALLOWED_HOSTS: "*"
           K8S_SECRET_CORS_ORIGIN_ALLOW_ALL: 1
+          K8S_SECRET_SECRET_KEY: "$GL_PRODUCTION_DJANGO_SECRET_KEY"
           K8S_SECRET_SKIP_DATABASE_CHECK: 1
           K8S_SECRET_CREATE_SUPERUSER: 1
-          K8S_SECRET_TOKEN_AUTH_AUTHSERVER_URL: "https://tunnistamo.test.kuva.hel.ninja/openid"
-          K8S_SECRET_DATABASE_HOST: ${{ secrets.K8S_SECRET_DATABASE_HOST_STAGING }}
-          K8S_SECRET_DATABASE_URL: ${{ secrets.K8S_SECRET_DATABASE_URL_STAGING }}
-          K8S_SECRET_DATABASE_PORT: ${{ secrets.K8S_SECRET_DATABASE_PORT_STAGING }}
-          K8S_SECRET_DATABASE_DB: ${{ secrets.K8S_SECRET_DATABASE_DB_STAGING }}
-          K8S_SECRET_DATABASE_USERNAME: ${{ secrets.K8S_SECRET_DATABASE_USERNAME_STAGING }}
-          K8S_SECRET_DATABASE_PASSWORD: ${{ secrets.K8S_SECRET_DATABASE_PASSWORD_STAGING }}
+          K8S_SECRET_TOKEN_AUTH_AUTHSERVER_URL: "https://api.hel.fi/sso/openid"
           #K8S_SECRET_SENTRY_DSN: "$GL_SENTRY_DSN"
-          #K8S_SECRET_SENTRY_ENVIRONMENT: "staging"
-
+          #K8S_SECRET_SENTRY_ENVIRONMENT: "production"
+          K8S_INGRESS_PREVENT_ROBOTS: 1
+          K8S_SECRET_RESTORE_DB_DUMP: "$GL_RESTORE_DB_DUMP"
+          K8S_SECRET_RESTORE_DB_DUMP_MWH_CODE: "$GL_RESTORE_DB_DUMP_MWH_CODE"
+          K8S_SECRET_DATABASE_HOST: ${{ secrets.K8S_SECRET_DATABASE_HOST_STABLE }}
+          K8S_SECRET_DATABASE_URL: ${{ secrets.K8S_SECRET_DATABASE_URL_STABLE }}
+          K8S_SECRET_DATABASE_PORT: ${{ secrets.K8S_SECRET_DATABASE_PORT_STABLE }}
+          K8S_SECRET_DATABASE_DB: ${{ secrets.K8S_SECRET_DATABASE_DB_STABLE }}
+          K8S_SECRET_DATABASE_USERNAME: ${{ secrets.K8S_SECRET_DATABASE_USERNAME_STABLE }}
+          K8S_SECRET_DATABASE_PASSWORD: ${{ secrets.K8S_SECRET_DATABASE_PASSWORD_STABLE }}
