@@ -25,6 +25,8 @@ jobs:
       - uses: actions/checkout@v2
       - name: Build
         uses: andersinno/kolga-build-action@v2
+        with:
+          disable_cache: false
 
       - uses: actions/upload-artifact@v2
         with:
