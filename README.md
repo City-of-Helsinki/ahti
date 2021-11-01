@@ -1,9 +1,9 @@
 # AHTI
 
+**Note! Ahti project has ended and is no longer being actively developed.**
+
 :ocean: AHTI API :anchor:
 
-[![status](https://travis-ci.com/City-of-Helsinki/ahti.svg)](https://github.com/City-of-Helsinki/ahti)
-[![pipeline status](https://gitlab.com/City-of-Helsinki/KuVa/github-mirrors/ahti/badges/develop/pipeline.svg)](https://gitlab.com/City-of-Helsinki/KuVa/github-mirrors/ahti/-/commits/develop)
 [![codecov](https://codecov.io/gh/City-of-Helsinki/ahti/branch/develop/graph/badge.svg)](https://codecov.io/gh/City-of-Helsinki/ahti)
 
 
@@ -124,23 +124,10 @@ commit.
 * Run `pytest`.
 
 
-## Issue tracking
-
-* [Github issue list](https://github.com/City-of-Helsinki/ahti/issues)
-* [Jira issues](https://helsinkisolutionoffice.atlassian.net/projects/AHTI/issues/?filter=allissues)
-
-
 ## API documentation
 
-View the API documentation by visiting: https://ahti-api.test.kuva.hel.ninja/graphql and see
-the `Documentation Explorer` section. Documentation is also available from the
-[local environment](http://localhost:8082/graphql).
-
-
-## Environments
-
-* Test: https://ahti-api.test.kuva.hel.ninja/graphql
-* Production: https://ahti-api.prod.kuva.hel.ninja/graphql
+View the API documentation by visiting your [local environment](http://localhost:8082/graphql) and see
+the `Documentation Explorer` section.
 
 
 ## Dependent services
