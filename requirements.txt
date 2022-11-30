@@ -4,68 +4,202 @@
 #
 #    pip-compile requirements.in
 #
-aniso8601==7.0.0          # via graphene
-asgiref==3.2.3            # via django
-attrs==19.3.0             # via autobahn, automat, magic-wormhole, service-identity, twisted
-autobahn[twisted]==20.4.3  # via magic-wormhole
-automat==20.2.0           # via magic-wormhole, twisted, txtorcon
-certifi==2020.4.5.1       # via requests, sentry-sdk
-cffi==1.14.0              # via cryptography, pynacl
-chardet==3.0.4            # via requests
-click==7.1.2              # via magic-wormhole
-constantly==15.1.0        # via twisted
-cryptography==2.9.2       # via autobahn, pyopenssl, service-identity, txtorcon
-django-cors-headers==3.2.1  # via -r requirements.in
-django-environ==0.4.5     # via -r requirements.in
-django-filter==2.2.0      # via -r requirements.in
-django-graphql-geojson==0.1.4  # via -r requirements.in
-django-graphql-jwt==0.3.0  # via -r requirements.in
-django-helusers==0.5.6    # via -r requirements.in
-django-parler==2.0.1      # via -r requirements.in
-django==3.0.3             # via -r requirements.in, django-cors-headers, django-filter, django-graphql-geojson, django-graphql-jwt, django-helusers, djangorestframework, drf-oidc-auth, graphene-django
-djangorestframework==3.11.0  # via drf-oidc-auth
-drf-oidc-auth==0.9        # via django-helusers
-ecdsa==0.15               # via python-jose
-future==0.18.2            # via pyjwkest
-graphene-django==2.10.1   # via -r requirements.in, django-graphql-geojson, django-graphql-jwt
-graphene==2.1.8           # via graphene-django
-graphql-core==2.3.1       # via django-graphql-jwt, graphene, graphene-django, graphql-relay
-graphql-relay==2.0.1      # via graphene
-hkdf==0.0.3               # via magic-wormhole, spake2
-humanize==2.4.0           # via magic-wormhole
-hyperlink==19.0.0         # via twisted
-idna==2.9                 # via hyperlink, requests, twisted
-incremental==17.5.0       # via twisted, txtorcon
-jmespath==0.9.5           # via -r requirements.in
-magic-wormhole==0.12.0    # via -r requirements.in
-promise==2.3              # via graphene-django, graphql-core, graphql-relay
-psycopg2==2.8.4           # via -r requirements.in
-pyasn1-modules==0.2.8     # via service-identity
-pyasn1==0.4.8             # via pyasn1-modules, python-jose, rsa, service-identity
-pycparser==2.20           # via cffi
-pycryptodomex==3.9.7      # via pyjwkest
-pyhamcrest==2.0.2         # via twisted
-pyjwkest==1.4.2           # via drf-oidc-auth
-pyjwt==1.7.1              # via django-graphql-jwt
-pynacl==1.4.0             # via magic-wormhole
-pyopenssl==19.1.0         # via twisted
-python-jose==3.1.0        # via django-helusers
-pytz==2019.3              # via django
-requests==2.23.0          # via -r requirements.in, django-helusers, pyjwkest
-rsa==4.0                  # via python-jose
-rx==1.6.1                 # via graphql-core
-sentry-sdk==0.14.1        # via -r requirements.in
-service-identity==18.1.0  # via twisted
-singledispatch==3.4.0.3   # via graphene-django
-six==1.14.0               # via automat, cryptography, django-parler, ecdsa, graphene, graphene-django, graphql-core, graphql-relay, magic-wormhole, promise, pyjwkest, pynacl, pyopenssl, python-jose, singledispatch
-spake2==0.8               # via magic-wormhole
-sqlparse==0.3.0           # via django
-tqdm==4.46.1              # via magic-wormhole
-twisted[tls]==20.3.0      # via autobahn, magic-wormhole, txtorcon
-txaio==20.4.1             # via autobahn
-txtorcon==20.0.0          # via magic-wormhole
-urllib3==1.25.9           # via requests, sentry-sdk
-zope.interface==5.1.0     # via autobahn, twisted, txtorcon
+aniso8601==7.0.0
+    # via graphene
+asgiref==3.2.3
+    # via django
+attrs==19.3.0
+    # via
+    #   autobahn
+    #   automat
+    #   magic-wormhole
+    #   service-identity
+    #   twisted
+autobahn[twisted]==20.4.3
+    # via magic-wormhole
+automat==20.2.0
+    # via
+    #   magic-wormhole
+    #   twisted
+    #   txtorcon
+certifi==2020.4.5.1
+    # via
+    #   requests
+    #   sentry-sdk
+cffi==1.14.0
+    # via
+    #   cryptography
+    #   pynacl
+chardet==3.0.4
+    # via requests
+click==7.1.2
+    # via magic-wormhole
+constantly==15.1.0
+    # via twisted
+cryptography==2.9.2
+    # via
+    #   autobahn
+    #   pyopenssl
+    #   service-identity
+    #   txtorcon
+django-cors-headers==3.2.1
+    # via -r requirements.in
+django-environ==0.4.5
+    # via -r requirements.in
+django-filter==2.2.0
+    # via -r requirements.in
+django-graphql-geojson==0.1.4
+    # via -r requirements.in
+django-graphql-jwt==0.3.0
+    # via -r requirements.in
+django-helusers==0.5.6
+    # via -r requirements.in
+django-parler==2.0.1
+    # via -r requirements.in
+django==3.0.3
+    # via
+    #   -r requirements.in
+    #   django-cors-headers
+    #   django-filter
+    #   django-graphql-geojson
+    #   django-graphql-jwt
+    #   django-helusers
+    #   djangorestframework
+    #   drf-oidc-auth
+    #   graphene-django
+djangorestframework==3.11.0
+    # via drf-oidc-auth
+drf-oidc-auth==0.9
+    # via django-helusers
+ecdsa==0.15
+    # via python-jose
+future==0.18.2
+    # via pyjwkest
+graphene-django==2.10.1
+    # via
+    #   -r requirements.in
+    #   django-graphql-geojson
+    #   django-graphql-jwt
+graphene==2.1.8
+    # via graphene-django
+graphql-core==2.3.1
+    # via
+    #   django-graphql-jwt
+    #   graphene
+    #   graphene-django
+    #   graphql-relay
+graphql-relay==2.0.1
+    # via graphene
+hkdf==0.0.3
+    # via
+    #   magic-wormhole
+    #   spake2
+humanize==2.4.0
+    # via magic-wormhole
+hyperlink==19.0.0
+    # via twisted
+idna==2.9
+    # via
+    #   hyperlink
+    #   requests
+    #   twisted
+incremental==17.5.0
+    # via
+    #   twisted
+    #   txtorcon
+jmespath==0.9.5
+    # via -r requirements.in
+magic-wormhole==0.12.0
+    # via -r requirements.in
+promise==2.3
+    # via
+    #   graphene-django
+    #   graphql-core
+    #   graphql-relay
+psycopg2==2.8.4
+    # via -r requirements.in
+pyasn1-modules==0.2.8
+    # via service-identity
+pyasn1==0.4.8
+    # via
+    #   pyasn1-modules
+    #   python-jose
+    #   rsa
+    #   service-identity
+pycparser==2.20
+    # via cffi
+pycryptodomex==3.9.7
+    # via pyjwkest
+pyhamcrest==2.0.2
+    # via twisted
+pyjwkest==1.4.2
+    # via drf-oidc-auth
+pyjwt==1.7.1
+    # via django-graphql-jwt
+pynacl==1.4.0
+    # via magic-wormhole
+pyopenssl==19.1.0
+    # via twisted
+python-jose==3.1.0
+    # via django-helusers
+pytz==2019.3
+    # via django
+requests==2.23.0
+    # via
+    #   -r requirements.in
+    #   django-helusers
+    #   pyjwkest
+rsa==4.7
+    # via python-jose
+rx==1.6.1
+    # via graphql-core
+sentry-sdk==0.14.1
+    # via -r requirements.in
+service-identity==18.1.0
+    # via twisted
+singledispatch==3.4.0.3
+    # via graphene-django
+six==1.14.0
+    # via
+    #   automat
+    #   cryptography
+    #   django-parler
+    #   ecdsa
+    #   graphene
+    #   graphene-django
+    #   graphql-core
+    #   graphql-relay
+    #   magic-wormhole
+    #   promise
+    #   pyjwkest
+    #   pynacl
+    #   pyopenssl
+    #   python-jose
+    #   singledispatch
+spake2==0.8
+    # via magic-wormhole
+sqlparse==0.3.0
+    # via django
+tqdm==4.46.1
+    # via magic-wormhole
+twisted[tls]==20.3.0
+    # via
+    #   autobahn
+    #   magic-wormhole
+    #   txtorcon
+txaio==20.4.1
+    # via autobahn
+txtorcon==20.0.0
+    # via magic-wormhole
+urllib3==1.25.9
+    # via
+    #   requests
+    #   sentry-sdk
+zope.interface==5.1.0
+    # via
+    #   autobahn
+    #   twisted
+    #   txtorcon
 
 # The following packages are considered to be unsafe in a requirements file:
 # setuptools
